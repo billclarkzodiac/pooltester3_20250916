@@ -1,0 +1,13 @@
+/***************************************************************
+Service mode proto file 
+- command/response definition
+****************************************************************/
+syntax = "proto3";
+option go_package = "pooltester3/ned";
+
+package ned;
+
+
+message SetServiceModeStatusRequestPayload {
+    bool is_service_mode_on = 1;
+}
