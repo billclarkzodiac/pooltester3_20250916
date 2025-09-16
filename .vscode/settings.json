@@ -1,0 +1,48 @@
+{
+    "cSpell.words": [
+        "Heatsink",
+        "MQTT"
+    ],
+    "idf.pythonInstallPath": "/usr/bin/python3",
+    // AUTO-SAVE SAFETY SETTINGS
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 2000,
+    "files.autoSaveWhenNoErrors": true,
+    // BACKUP AND RECOVERY SETTINGS
+    "files.hotExit": "onExitAndWindowClose",
+    "files.enableTrash": true,
+    "workbench.editor.restoreViewState": true,
+    "workbench.editor.reopenClosedTabsDirection": "forward",
+    // REMOTE DEVELOPMENT SAFETY
+    "remote.SSH.connectTimeout": 60,
+    "remote.SSH.maxReconnectionAttempts": 8,
+    "remote.SSH.reconnectOnAnyKeyPress": true,
+    // FILE WATCHING AND MONITORING
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/*/**": true,
+        "**/.hg/store/**": true
+    },
+    // GIT SAFETY SETTINGS
+    "git.autofetch": true,
+    "git.autofetchPeriod": 180,
+    "git.autoStash": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "git.promptToSaveFilesBeforeCommit": "always",
+    // EDITOR SAFETY FEATURES
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+    "editor.rulers": [
+        80,
+        120
+    ],
+    "editor.trimAutoWhitespace": true,
+    // PREVENT ACCIDENTAL OVERWRITES
+    "explorer.confirmDelete": true,
+    "explorer.confirmDragAndDrop": true,
+    "diffEditor.ignoreTrimWhitespace": false
+}

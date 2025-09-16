@@ -1,0 +1,132 @@
+The project name is NgaSim - original document date  2025-09-10.  bc.
+
+This is a list of attributes that this tester's Go code "NgaSim" should have.
+
+NgaSim is software to simulate the behavior of an NGA pool automation.
+NgaSim is intended not to completely replace an NGA for the purpose of controlling a pool 
+but to stimulate and therefore test the connected devices normally found with an NGA.
+
+Currently only devices that operate via MQTT over WiFi and or SLIP can be tested.
+
+Supported devices must use a protocol locally called "gen2". 
+The gen2 protocol uses Protobuf to send and receive structured packets of data containing commands and status.
+MQTT and SLIP uses TCP to encapsulate the protobuf packets, not at the same time.
+
+Devices: 
+    Sanitizer   - locally called "Salty" that creates chlorine,
+    VSP         - a Jandy variable speed called "VSP",
+    Heater      - based on a Jandy JXI that uses gas,
+    TruSense    - a pH and ORP sensor pair, was called JOP
+    Heatpump    - a heater/chiller combo based on Jandy JE
+    ICL         - an Infinite Color Light controller.
+
+Of the devices listed only the Sanitizer and ICL have their protobuf structures defined.
+
+< IMPORTANT STEP >
+For reference only I'm attaching a python script that actually sends and 
+receives protobuf packets over MQTT. This script also knows how to display announce messages 
+and others like telemetry etc. Use this script to see how to send commands and display responses.
+
+I will also "add context" by attaching all the protobuf pb.go programs.
+< / IMPORTANT STEP >
+
+<IMPORTANT>
+The NgaSim when running on the Raspberry Pi launches a program call "poller", to run type:-
+sudo ./poller
+</IMPORTANT>
+
+NgaSim is being ported to an x86 Linux laptop, its not required to use the 
+Raspberry Pi  poller utility since Claude has convinced me ! that the topology
+message can be done with Go alone.
+
+I'm attaching an analysis of the poller utility. "poller_howto.md"
+
+Poller sends Topology messages intended only for devices on SLIP.
+The NgaSim  does not need to react to topology messages.
+A topology message helps device on SLIP determine their IP address.
+
+The NgaSim must accept all messages including Announce, Telemetry, Responses including status.
+
+Display:
+The demo code display is good for the overall status, the home page, ie. the index page, 
+please re-use the demo code display for the home/index page.
+
+This index page should allow displayed devices to be selectable so that the 
+device's extended details are shown, details like serial number, 
+device name, type, telemetry, status indicators, command buttons and details.
+
+If a device that was discovered by its announce message becomes un-responsive,
+or a NOT READY status is seen then gray the device's display and indicate "OFF LINE".
+As soon as a device's READY status is received the display should become color again
+with an "ON LINE" status.
+
+When a device is selected from the index page the devices extended details are shown
+AND also device specific command buttons and dials or sliders are made available.
+
+Command 'buttons' (widgets) should send a request packet via protobuf or just change 
+a mode locally.
+
+Device Specific Displays when selected from the index:
+VSP - Serial number (from announce message)
+    - number ? of max number found
+    - Status: RPM returned via a telemetry message,
+            : Temperature,
+            : Power (Watts),
+            : time since last run to determine if RPM needs to be set at priming speed (2500)
+    - Command: STOP  set to 0 RPM.
+             : SDEM set demand, setting RPM, (limit to 600..3450)
+             : GO   turn on pump at speed set by SDEM
+Note:  SDEM+GO commands MUST be sent as a pair so that a GO cmd is never
+  sent without knowing the speed.
+  The same command can have the GO bit cleared and is still valid,
+  except the pump will not run.
+Note2: If a GO command is sent after a STOP command, or unknown/idle status
+  then put pump in 'PRIMING' mode at 2500 RPM for duration of 3 minutes, 
+  duration should be settable from  0..180 seconds. (set by a dial)
+            : find me (flash external LED)
+
+
+Sanitizer (Salty)
+ - Serial number (from announce message)
+ - number ? of max number found
+ - Status:(from it's telemetry message)
+   : power level set to (0..101 %)
+   : power on ?
+   : Salinity (also is it valid yet)
+   : Cell Temperature
+   : Cell Voltage
+   : Cell Current
+   : Cell current direction (ie reverse ?)
+   : time till next reversal (minutes)
+   : cell total power on time (minute resolution)
+   : PIB Heatsink Temperature (PIB = power interface board)
+ - Command: set power level (0..101) Note: 101 special case = BOOST Mode (dial)
+   : duration of BOOST mode, hours+minutes. (dial)
+   : read serial number PIB  (button)
+   : read serial number Cell (button)
+   : find me.  (flash external LED) (button)
+
+
+ICL (LED color lights)
+  - Serial number (from announce message) (also used for a logging key)
+  - Status: current RGBW level (each color LED can be set to 0..255)
+            Show an approximation of actual RGBW light expected (light bulb)
+          : Temperature (dial with color heat index)
+  - Command: set RGBW levels, 0,0,0,0 == OFF (slider)
+           : find me. (button)
+
+ORION (another type of sanitation controller, I don't know how it works)
+  - Serial number
+
+ORION and other new devices we don't have full details of, but may have
+pb.go definitions available to use Go Reflection to extract the protobuf
+member's type to then construct a command (button,dial,slider...), 
+also for status since we know the type, reflection can tell us how to format
+and display the number/string... etc.
+
+Attaching an old working python script that used reflection and also knew how to
+display the Announce, Telemetry and other status information that I would like
+integrated into NgaSim.
+
+thank you.
+

@@ -1,0 +1,53 @@
+# SSH Configuration for VS Code Remote Development Safety
+# Add this to your ~/.ssh/config file on your CLIENT machine (not the remote server)
+
+# Pool Tester Remote Development Server
+Host pooltester-remote
+    HostName YOUR_REMOTE_SERVER_IP  # Replace with your actual server IP
+    User bill
+    Port 22
+    
+    # Connection Stability Settings
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    TCPKeepAlive yes
+    
+    # Compression for better performance over slow connections
+    Compression yes
+    
+    # Connection multiplexing to reduce reconnection overhead
+    ControlMaster auto
+    ControlPath ~/.ssh/control-%r@%h:%p
+    ControlPersist 600
+    
+    # Faster connection establishment
+    GSSAPIAuthentication no
+    
+    # Forward agent for git operations
+    ForwardAgent yes
+    
+    # Prevent connection drops
+    IPQoS throughput
+    
+    # Log level for debugging connection issues
+    LogLevel INFO
+
+# Global settings for all remote connections
+Host *
+    # Keep connections alive
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    
+    # Use connection multiplexing
+    ControlMaster auto
+    ControlPath ~/.ssh/control-%r@%h:%p
+    ControlPersist 600
+    
+    # Compression for slower connections
+    Compression yes
+    
+    # Prevent hanging on broken connections
+    ConnectTimeout 30
+    
+    # Hash known hosts for security
+    HashKnownHosts yes

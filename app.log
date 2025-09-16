@@ -1,0 +1,34 @@
+nohup: ignoring input
+2025/09/12 11:28:23 Starting NgaSim - NGA Pool Device Simulator
+2025/09/12 11:28:23 Setting up web server...
+2025/09/12 11:28:23 Web server setup complete
+2025/09/12 11:28:23 Starting network-based SLIP device detection on sl0
+2025/09/12 11:28:23 Failed to create network SLIP detector: failed to find interface sl0: route ip+net: no such network interface
+2025/09/12 11:28:23 Falling back to simulated devices only
+2025/09/12 11:28:23 Poller started successfully
+2025/09/12 11:28:24 NgaSim web interface running at http://localhost:8080
+2025/09/12 11:28:24 Connecting to MQTT broker at localhost:1883
+2025/09/12 11:28:24 Press Ctrl+C to stop NgaSim
+2025/09/12 11:28:24 Connected to MQTT broker
+2025/09/12 11:28:24 Starting web server on port 8080...
+2025/09/12 11:28:24 Subscribed to async/+/+/anc
+2025/09/12 11:28:24 Subscribed to async/+/+/info
+2025/09/12 11:28:24 Subscribed to async/+/+/dt
+2025/09/12 11:28:24 Subscribed to async/+/+/error
+2025/09/12 11:28:24 Subscribed to cmd/+/+/res
+2025/09/12 11:28:26 Simulated device discovered: VSP VSP001 (VSP001)
+2025/09/12 11:28:27 Simulated device discovered: VSP VSP002 (VSP002)
+2025/09/12 11:28:27 Simulated device discovered: Sanitizer SAL001 (SAL001)
+2025/09/12 11:28:28 Simulated device discovered: Sanitizer SAL002 (SAL002)
+2025/09/12 11:28:28 Simulated device discovered: TruSense TRU001 (TRU001)
+2025/09/12 11:28:29 Simulated device discovered: TruSense TRU002 (TRU002)
+2025/09/12 11:28:29 Simulated device discovered: ICL ICL001 (ICL001)
+2025/09/12 11:28:30 Simulated device discovered: Heater HTR001 (HTR001)
+2025/09/12 11:29:09 Handling index request from 127.0.0.1:50950
+2025/09/12 11:29:23 Handling index request from 127.0.0.1:44788
+2025/09/12 11:44:32 Handling index request from 127.0.0.1:41278
+2025/09/12 11:44:46 Handling index request from 127.0.0.1:34986
+2025/09/12 11:45:33 Handling index request from 127.0.0.1:49646
+2025/09/12 11:47:40 Handling index request from 127.0.0.1:58822
+2025/09/12 11:49:40 Handling index request from 127.0.0.1:33606
+signal: terminated
