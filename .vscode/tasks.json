@@ -5,7 +5,9 @@
             "label": "Auto Backup Now",
             "type": "shell",
             "command": "${workspaceFolder}/.vscode/auto-backup.sh",
-            "args": ["backup"],
+            "args": [
+                "backup"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -20,7 +22,9 @@
             "label": "Check File Corruption",
             "type": "shell",
             "command": "${workspaceFolder}/.vscode/auto-backup.sh",
-            "args": ["check"],
+            "args": [
+                "check"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -34,7 +38,11 @@
             "label": "Build Pool Controller",
             "type": "shell",
             "command": "go",
-            "args": ["build", "-o", "pool-controller"],
+            "args": [
+                "build",
+                "-o",
+                "pool-controller"
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -45,7 +53,9 @@
                 "focus": false,
                 "panel": "shared"
             },
-            "problemMatcher": ["$go"]
+            "problemMatcher": [
+                "$go"
+            ]
         },
         {
             "label": "Run Pool Controller",

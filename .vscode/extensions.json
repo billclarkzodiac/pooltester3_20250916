@@ -4,35 +4,27 @@
         "alefragnani.project-manager",
         "ms-vscode.vscode-json",
         "streetsidesoftware.code-spell-checker",
-        
         // FILE HISTORY AND VERSION CONTROL
         "donjayamanne.githistory",
         "eamodio.gitlens",
         "mhutchie.git-graph",
-        
         // REMOTE DEVELOPMENT SAFETY
         "ms-vscode-remote.remote-ssh",
         "ms-vscode-remote.remote-ssh-edit",
         "ms-vscode-remote.remote-containers",
-        
         // GO DEVELOPMENT
         "golang.go",
-        
         // FILE MONITORING AND BACKUP
         "alefragnani.bookmarks",
         "formulahendry.auto-rename-tag",
-        
         // PRODUCTIVITY AND SAFETY
         "ms-vscode.vscode-typescript-next",
         "bradlc.vscode-tailwindcss",
         "esbenp.prettier-vscode",
-        
         // NETWORK AND CONNECTION MONITORING
         "ms-vscode.remote-server",
-        
         // FILE COMPARISON AND RECOVERY
         "ryu1kn.partial-diff",
-        
         // WORKSPACE SAFETY
         "alefragnani.project-manager"
     ]
