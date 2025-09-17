@@ -8,9 +8,12 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
+	"os/exec"
 	"sort"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -85,20 +88,171 @@ type Device struct {
 	Properties map[string]interface{} `json:"properties,omitempty"`
 }
 
-type NgaSim struct {
-	devices      map[string]*Device
-	devicesMutex sync.RWMutex
-	mqttClient   mqtt.Client
-	slipDetector *NetworkSlipDetector
-	webServer    *http.Server
+// PollerManager manages the poller executable process
+type PollerManager struct {
+	process      *os.Process
+	cmd          *exec.Cmd
 	running      bool
+	stopChan     chan bool
+	restartChan  chan bool
+	restartCount int
+	maxRestarts  int
+}
+
+// NewPollerManager creates a new poller manager
+func NewPollerManager() *PollerManager {
+	return &PollerManager{
+		stopChan:    make(chan bool),
+		restartChan: make(chan bool),
+		maxRestarts: 3, // Limit restart attempts
+	}
+}
+
+// Start starts the poller executable with sudo privileges
+func (pm *PollerManager) Start() error {
+	if pm.running {
+		return fmt.Errorf("poller is already running")
+	}
+
+	// Check if poller executable exists
+	if _, err := os.Stat("./poller"); os.IsNotExist(err) {
+		return fmt.Errorf("poller executable not found: %v", err)
+	}
+
+	// Start poller with sudo privileges
+	pm.cmd = exec.Command("sudo", "./poller")
+	pm.cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setpgid: true, // Create new process group for clean shutdown
+	}
+
+	// Capture stderr to help with debugging
+	pm.cmd.Stderr = os.Stderr
+	pm.cmd.Stdout = os.Stdout
+
+	if err := pm.cmd.Start(); err != nil {
+		return fmt.Errorf("failed to start poller: %v", err)
+	}
+
+	pm.process = pm.cmd.Process
+	pm.running = true
+
+	// Start monitoring goroutine
+	go pm.monitor()
+
+	log.Printf("Poller started successfully with sudo privileges (PID %d)", pm.process.Pid)
+	return nil
+}
+
+// Stop stops the poller process
+func (pm *PollerManager) Stop() error {
+	if !pm.running {
+		return nil
+	}
+
+	close(pm.stopChan)
+	pm.running = false
+
+	if pm.process != nil {
+		// Send SIGTERM to process group
+		syscall.Kill(-pm.process.Pid, syscall.SIGTERM)
+
+		// Wait for process to exit
+		pm.cmd.Wait()
+		pm.process = nil
+	}
+
+	log.Println("Poller stopped")
+	return nil
+}
+
+// monitor watches the poller process and handles restarts
+func (pm *PollerManager) monitor() {
+	defer func() {
+		pm.running = false
+		pm.process = nil
+		pm.cmd = nil
+	}()
+
+	// Wait for the poller process to exit
+	if pm.cmd != nil {
+		go func() {
+			err := pm.cmd.Wait()
+			if pm.running {
+				log.Printf("Poller process exited: %v", err)
+				// Try to restart if still running
+				if pm.running {
+					pm.restart()
+				}
+			}
+		}()
+	}
+
+	// Monitor for stop signal
+	<-pm.stopChan
+}
+
+// restart attempts to restart the poller process
+func (pm *PollerManager) restart() {
+	if !pm.running {
+		return
+	}
+
+	pm.restartCount++
+	if pm.restartCount > pm.maxRestarts {
+		log.Printf("Poller exceeded maximum restart attempts (%d). Stopping restart attempts.", pm.maxRestarts)
+		log.Println("This is normal if running on a system without SLIP interface or with glibc version issues.")
+		return
+	}
+
+	log.Printf("Attempting to restart poller (attempt %d/%d)...", pm.restartCount, pm.maxRestarts)
+	time.Sleep(2 * time.Second) // Wait before restart
+
+	pm.cmd = exec.Command("sudo", "./poller")
+	pm.cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setpgid: true,
+	}
+	pm.cmd.Stderr = os.Stderr
+	pm.cmd.Stdout = os.Stdout
+
+	if err := pm.cmd.Start(); err != nil {
+		log.Printf("Failed to restart poller: %v", err)
+		// Try again in 5 seconds if under restart limit
+		if pm.restartCount < pm.maxRestarts {
+			time.AfterFunc(5*time.Second, pm.restart)
+		}
+		return
+	}
+
+	pm.process = pm.cmd.Process
+	log.Printf("Poller restarted successfully (PID %d)", pm.process.Pid)
+
+	// Start monitoring the new process
+	go func() {
+		err := pm.cmd.Wait()
+		if pm.running {
+			log.Printf("Poller process exited: %v", err)
+			if pm.running {
+				pm.restart()
+			}
+		}
+	}()
+}
+
+type NgaSim struct {
+	devices       map[string]*Device
+	devicesMutex  sync.RWMutex
+	mqttClient    mqtt.Client
+	pollerManager *PollerManager
+	webServer     *http.Server
+	running       bool
 }
 
 // NewNgaSim creates a new NgaSim instance
 func NewNgaSim() *NgaSim {
 	nga := &NgaSim{
-		devices: make(map[string]*Device),
-		running: false,
+		devices:       make(map[string]*Device),
+		pollerManager: NewPollerManager(),
+		running:       false,
 	}
 	return nga
 }
@@ -113,9 +267,9 @@ func (nga *NgaSim) Start() error {
 		return fmt.Errorf("failed to initialize MQTT: %v", err)
 	}
 
-	// Initialize SLIP detector
-	if err := nga.initSLIP(); err != nil {
-		log.Printf("Warning: SLIP initialization failed: %v", err)
+	// Initialize poller
+	if err := nga.initPoller(); err != nil {
+		log.Printf("Warning: Poller initialization failed: %v", err)
 	}
 
 	// Start web server
@@ -313,44 +467,15 @@ func (nga *NgaSim) handleError(device *Device, category string, payload []byte) 
 	device.Status = StatusOffline
 }
 
-// Initialize SLIP detector
-func (nga *NgaSim) initSLIP() error {
-	var err error
-	nga.slipDetector, err = NewNetworkSlipDetector("sl0", nga.onSLIPDevice)
+// Initialize poller
+func (nga *NgaSim) initPoller() error {
+	err := nga.pollerManager.Start()
 	if err != nil {
 		return err
 	}
 
-	// Start the SLIP detector which will begin sending topology messages
-	err = nga.slipDetector.Start()
-	if err != nil {
-		return err
-	}
-
-	log.Println("SLIP detector started - topology messages will be sent every 4 seconds")
+	log.Println("Poller started - topology messages will be sent every 4 seconds")
 	return nil
-}
-
-// Handle SLIP device discovery
-func (nga *NgaSim) onSLIPDevice(slipDevice *NetworkSlipDevice) {
-	nga.devicesMutex.Lock()
-	defer nga.devicesMutex.Unlock()
-
-	device := nga.devices[slipDevice.DeviceID]
-	if device == nil {
-		device = &Device{
-			ID:         slipDevice.DeviceID,
-			Serial:     slipDevice.DeviceID,
-			Name:       fmt.Sprintf("SLIP Device %s", slipDevice.IP.String()),
-			Type:       DeviceSanitizer, // Default assumption for SLIP devices
-			Status:     StatusOnline,
-			Properties: make(map[string]interface{}),
-		}
-		nga.devices[slipDevice.DeviceID] = device
-	}
-
-	device.LastSeen = time.Now()
-	log.Printf("SLIP device discovered: %s at %s", slipDevice.DeviceID, slipDevice.IP.String())
 }
 
 // Helper functions for templates
@@ -865,13 +990,8 @@ func (nga *NgaSim) processSanitizerCommand(device *Device, command string, value
 			log.Printf("Sanitizer %s power set to %d%%", device.ID, device.PowerLevel)
 		}
 	case "send_topology":
-		// Manually trigger SLIP topology message for testing
-		if nga.slipDetector != nil {
-			log.Printf("Manually sending SLIP topology message for Sanitizer testing")
-			nga.slipDetector.SendSLIPTopologyPacket(len(nga.devices))
-		} else {
-			log.Printf("SLIP detector not available - cannot send topology message")
-		}
+		// The poller executable handles topology messages automatically
+		log.Printf("Topology messages are handled by the poller executable")
 	case "find_me":
 		log.Printf("Sanitizer %s find me command sent", device.ID)
 	}
@@ -1605,8 +1725,8 @@ func (nga *NgaSim) Stop() error {
 		nga.mqttClient.Disconnect(250)
 	}
 
-	if nga.slipDetector != nil {
-		nga.slipDetector.Stop()
+	if nga.pollerManager != nil {
+		nga.pollerManager.Stop()
 	}
 
 	if nga.webServer != nil {
