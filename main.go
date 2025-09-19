@@ -1,834 +1,605 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"os/exec"
-	"sort"
+	"os/signal"
 	"strings"
 	"sync"
 	"syscall"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"google.golang.org/protobuf/proto"
-
-	"NgaSim/ned"
 )
 
-// Version information
-const (
-	NgaSimVersion = "2.0.0"
-	BuildDate     = "2025-09-16"
-)
-
-type DeviceType string
-
-const (
-	DeviceVSP       DeviceType = "VSP"
-	DeviceSanitizer DeviceType = "Sanitizer"
-	DeviceHeater    DeviceType = "Heater"
-	DeviceTruSense  DeviceType = "TruSense"
-	DeviceHeatpump  DeviceType = "Heatpump"
-	DeviceICL       DeviceType = "ICL"
-	DeviceOrion     DeviceType = "Orion"
-)
-
-type DeviceStatus string
-
-const (
-	StatusOnline  DeviceStatus = "ONLINE"
-	StatusOffline DeviceStatus = "OFFLINE"
-	StatusUnknown DeviceStatus = "UNKNOWN"
-)
+const NgaSimVersion = "2.1.0"
 
 type Device struct {
-	ID       string       `json:"id"`
-	Type     DeviceType   `json:"type"`
-	Name     string       `json:"name"`
-	Serial   string       `json:"serial"`
-	Status   DeviceStatus `json:"status"`
-	LastSeen time.Time    `json:"last_seen"`
+	ID       string    `json:"id"`
+	Type     string    `json:"type"`
+	Name     string    `json:"name"`
+	Serial   string    `json:"serial"`
+	Status   string    `json:"status"`
+	LastSeen time.Time `json:"last_seen"`
 
-	// VSP specific
-	RPM         int     `json:"rpm,omitempty"`
-	RPMTarget   int     `json:"rpm_target,omitempty"`
-	Temperature float64 `json:"temperature,omitempty"`
-	PowerWatts  int     `json:"power_watts,omitempty"`
+	// VSP fields
+	RPM   int     `json:"rpm,omitempty"`
+	Temp  float64 `json:"temperature,omitempty"`
+	Power int     `json:"power,omitempty"`
 
-	// Sanitizer specific
-	PowerLevel   int     `json:"power_level,omitempty"`
-	PowerOn      bool    `json:"power_on,omitempty"`
-	Salinity     float64 `json:"salinity,omitempty"`
-	CellTemp     float64 `json:"cell_temp,omitempty"`
-	CellVoltage  float64 `json:"cell_voltage,omitempty"`
-	CellCurrent  float64 `json:"cell_current,omitempty"`
-	CellReverse  bool    `json:"cell_reverse,omitempty"`
-	NextReversal int     `json:"next_reversal,omitempty"`
-	TotalRunTime int     `json:"total_run_time,omitempty"`
-	HeatsinkTemp float64 `json:"heatsink_temp,omitempty"`
+	// Sanitizer fields
+	PowerLevel  int     `json:"power_level,omitempty"`  // 0-101%
+	Salinity    int     `json:"salinity,omitempty"`     // ppm
+	CellTemp    float64 `json:"cell_temp,omitempty"`    // Celsius
+	CellVoltage float64 `json:"cell_voltage,omitempty"` // Volts
+	CellCurrent float64 `json:"cell_current,omitempty"` // Amps
 
-	// TruSense specific
-	PH  float64 `json:"ph,omitempty"`
-	ORP float64 `json:"orp,omitempty"`
+	// ICL fields
+	Red   int `json:"red,omitempty"`   // 0-255
+	Green int `json:"green,omitempty"` // 0-255
+	Blue  int `json:"blue,omitempty"`  // 0-255
+	White int `json:"white,omitempty"` // 0-255
 
-	// ICL specific
-	Red   int `json:"red,omitempty"`
-	Green int `json:"green,omitempty"`
-	Blue  int `json:"blue,omitempty"`
-	White int `json:"white,omitempty"`
+	// TruSense fields
+	PH  float64 `json:"ph,omitempty"`  // pH level
+	ORP int     `json:"orp,omitempty"` // mV
 
-	// Generic properties for reflection-based devices
-	Properties map[string]interface{} `json:"properties,omitempty"`
-}
-
-// PollerManager manages the poller executable process
-type PollerManager struct {
-	process      *os.Process
-	cmd          *exec.Cmd
-	running      bool
-	stopChan     chan bool
-	restartChan  chan bool
-	restartCount int
-	maxRestarts  int
-}
-
-// NewPollerManager creates a new poller manager
-func NewPollerManager() *PollerManager {
-	return &PollerManager{
-		stopChan:    make(chan bool),
-		restartChan: make(chan bool),
-		maxRestarts: 3, // Limit restart attempts
-	}
-}
-
-// Start starts the poller executable with sudo privileges
-func (pm *PollerManager) Start() error {
-	if pm.running {
-		return fmt.Errorf("poller is already running")
-	}
-
-	// Check if poller executable exists
-	if _, err := os.Stat("./poller"); os.IsNotExist(err) {
-		return fmt.Errorf("poller executable not found: %v", err)
-	}
-
-	// Start poller with sudo privileges
-	pm.cmd = exec.Command("sudo", "./poller")
-	pm.cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setpgid: true, // Create new process group for clean shutdown
-	}
-
-	// Capture stderr to help with debugging
-	pm.cmd.Stderr = os.Stderr
-	pm.cmd.Stdout = os.Stdout
-
-	if err := pm.cmd.Start(); err != nil {
-		return fmt.Errorf("failed to start poller: %v", err)
-	}
-
-	pm.process = pm.cmd.Process
-	pm.running = true
-
-	// Start monitoring goroutine
-	go pm.monitor()
-
-	log.Printf("Poller started successfully with sudo privileges (PID %d)", pm.process.Pid)
-	return nil
-}
-
-// Stop stops the poller process
-func (pm *PollerManager) Stop() error {
-	if !pm.running {
-		return nil
-	}
-
-	close(pm.stopChan)
-	pm.running = false
-
-	if pm.process != nil {
-		// Send SIGTERM to process group
-		syscall.Kill(-pm.process.Pid, syscall.SIGTERM)
-
-		// Wait for process to exit
-		pm.cmd.Wait()
-		pm.process = nil
-	}
-
-	log.Println("Poller stopped")
-	return nil
-}
-
-// monitor watches the poller process and handles restarts
-func (pm *PollerManager) monitor() {
-	defer func() {
-		pm.running = false
-		pm.process = nil
-		pm.cmd = nil
-	}()
-
-	// Wait for the poller process to exit
-	if pm.cmd != nil {
-		go func() {
-			err := pm.cmd.Wait()
-			if pm.running {
-				log.Printf("Poller process exited: %v", err)
-				// Try to restart if still running
-				if pm.running {
-					pm.restart()
-				}
-			}
-		}()
-	}
-
-	// Monitor for stop signal
-	<-pm.stopChan
-}
-
-// restart attempts to restart the poller process
-func (pm *PollerManager) restart() {
-	if !pm.running {
-		return
-	}
-
-	pm.restartCount++
-	if pm.restartCount > pm.maxRestarts {
-		log.Printf("Poller exceeded maximum restart attempts (%d). Stopping restart attempts.", pm.maxRestarts)
-		log.Println("This is normal if running on a system without SLIP interface or with glibc version issues.")
-		return
-	}
-
-	log.Printf("Attempting to restart poller (attempt %d/%d)...", pm.restartCount, pm.maxRestarts)
-	time.Sleep(2 * time.Second) // Wait before restart
-
-	pm.cmd = exec.Command("sudo", "./poller")
-	pm.cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setpgid: true,
-	}
-	pm.cmd.Stderr = os.Stderr
-	pm.cmd.Stdout = os.Stdout
-
-	if err := pm.cmd.Start(); err != nil {
-		log.Printf("Failed to restart poller: %v", err)
-		// Try again in 5 seconds if under restart limit
-		if pm.restartCount < pm.maxRestarts {
-			time.AfterFunc(5*time.Second, pm.restart)
-		}
-		return
-	}
-
-	pm.process = pm.cmd.Process
-	log.Printf("Poller restarted successfully (PID %d)", pm.process.Pid)
-
-	// Start monitoring the new process
-	go func() {
-		err := pm.cmd.Wait()
-		if pm.running {
-			log.Printf("Poller process exited: %v", err)
-			if pm.running {
-				pm.restart()
-			}
-		}
-	}()
+	// Heater/HeatPump fields
+	SetTemp     float64 `json:"set_temp,omitempty"`     // Target temperature
+	WaterTemp   float64 `json:"water_temp,omitempty"`   // Current water temp
+	HeatingMode string  `json:"heating_mode,omitempty"` // OFF/HEAT/COOL
 }
 
 type NgaSim struct {
-	devices       map[string]*Device
-	devicesMutex  sync.RWMutex
-	mqttClient    mqtt.Client
-	pollerManager *PollerManager
-	webServer     *http.Server
-	running       bool
+	devices   map[string]*Device
+	mutex     sync.RWMutex
+	mqtt      mqtt.Client
+	server    *http.Server
+	pollerCmd *exec.Cmd
 }
 
-// NewNgaSim creates a new NgaSim instance
-func NewNgaSim() *NgaSim {
-	nga := &NgaSim{
-		devices:       make(map[string]*Device),
-		pollerManager: NewPollerManager(),
-		running:       false,
-	}
-	return nga
-}
+// MQTT connection parameters
+const (
+	MQTTBroker   = "tcp://169.254.1.1:1883"
+	MQTTClientID = "NgaSim-WebUI"
+)
 
-// Start initializes and starts the NgaSim
-func (nga *NgaSim) Start() error {
-	log.Println("Starting NgaSim Pool Controller Simulator v" + NgaSimVersion)
-	nga.running = true
+// MQTT Topics for device discovery
+const (
+	TopicAnnounce  = "devices/+/announce"
+	TopicTelemetry = "devices/+/telemetry"
+	TopicStatus    = "devices/+/status"
+)
 
-	// Initialize MQTT client
-	if err := nga.initMQTT(); err != nil {
-		return fmt.Errorf("failed to initialize MQTT: %v", err)
-	}
-
-	// Initialize poller
-	if err := nga.initPoller(); err != nil {
-		log.Printf("Warning: Poller initialization failed: %v", err)
-	}
-
-	// Start web server
-	if err := nga.startWebServer(); err != nil {
-		return fmt.Errorf("failed to start web server: %v", err)
-	}
-
-	log.Println("NgaSim started successfully on http://localhost:8080")
-	return nil
-}
-
-// Initialize MQTT client and handlers
-func (nga *NgaSim) initMQTT() error {
+// connectMQTT initializes MQTT client and connects to broker
+func (sim *NgaSim) connectMQTT() error {
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker("tcp://localhost:1883")
-	opts.SetClientID(fmt.Sprintf("NgaSim-%d", time.Now().Unix()))
-	opts.SetDefaultPublishHandler(nga.onMQTTMessage)
-	opts.OnConnect = nga.onMQTTConnect
-	opts.OnConnectionLost = nga.onMQTTConnectionLost
+	opts.AddBroker(MQTTBroker)
+	opts.SetClientID(MQTTClientID)
+	opts.SetCleanSession(true)
+	opts.SetAutoReconnect(true)
+	opts.SetKeepAlive(30 * time.Second)
 
-	nga.mqttClient = mqtt.NewClient(opts)
+	// Set connection lost handler
+	opts.SetConnectionLostHandler(func(client mqtt.Client, err error) {
+		log.Printf("MQTT connection lost: %v", err)
+	})
 
-	if token := nga.mqttClient.Connect(); token.Wait() && token.Error() != nil {
-		return token.Error()
+	// Set connection handler
+	opts.SetOnConnectHandler(func(client mqtt.Client) {
+		log.Println("Connected to MQTT broker at", MQTTBroker)
+		sim.subscribeToTopics()
+	})
+
+	sim.mqtt = mqtt.NewClient(opts)
+	if token := sim.mqtt.Connect(); token.Wait() && token.Error() != nil {
+		return fmt.Errorf("failed to connect to MQTT broker: %v", token.Error())
 	}
 
-	log.Println("MQTT client connected")
 	return nil
 }
 
-// MQTT connection handler
-func (nga *NgaSim) onMQTTConnect(client mqtt.Client) {
-	log.Println("Connected to MQTT broker")
+// startPoller starts the C poller as a subprocess to wake up devices
+func (sim *NgaSim) startPoller() error {
+	log.Println("Starting C poller subprocess...")
 
-	// Subscribe to device announcement topics
-	topics := map[string]byte{
-		"async/+/+/anc":   0, // Announcements
-		"async/+/+/dt":    0, // Telemetry
-		"async/+/+/info":  0, // Device info
-		"async/+/+/error": 0, // Errors
+	sim.pollerCmd = exec.Command("sudo", "./poller")
+
+	// Start the poller in the background
+	if err := sim.pollerCmd.Start(); err != nil {
+		return fmt.Errorf("failed to start poller: %v", err)
 	}
 
-	for topic, qos := range topics {
-		if token := client.Subscribe(topic, qos, nga.onMQTTMessage); token.Wait() && token.Error() != nil {
-			log.Printf("Failed to subscribe to %s: %v", topic, token.Error())
-		}
-	}
+	log.Printf("Started C poller with PID: %d", sim.pollerCmd.Process.Pid)
 
-	log.Println("Subscribed to MQTT topics")
-}
-
-// MQTT connection lost handler
-func (nga *NgaSim) onMQTTConnectionLost(client mqtt.Client, err error) {
-	log.Printf("MQTT connection lost: %v", err)
-}
-
-// MQTT message handler
-func (nga *NgaSim) onMQTTMessage(client mqtt.Client, msg mqtt.Message) {
-	topicParts := strings.Split(msg.Topic(), "/")
-	if len(topicParts) < 4 {
-		return
-	}
-
-	category := topicParts[1]
-	serial := topicParts[2]
-	msgType := topicParts[3]
-
-	nga.devicesMutex.Lock()
-	defer nga.devicesMutex.Unlock()
-
-	device := nga.devices[serial]
-	if device == nil {
-		device = &Device{
-			Serial:     serial,
-			ID:         serial,
-			Status:     StatusUnknown,
-			Properties: make(map[string]interface{}),
-		}
-		nga.devices[serial] = device
-	}
-
-	device.LastSeen = time.Now()
-
-	switch msgType {
-	case "anc":
-		nga.handleAnnouncement(device, category, msg.Payload())
-	case "dt":
-		nga.handleTelemetry(device, category, msg.Payload())
-	case "info":
-		nga.handleDeviceInfo(device, category, msg.Payload())
-	case "error":
-		nga.handleError(device, category, msg.Payload())
-	}
-}
-
-// Handle device announcements
-func (nga *NgaSim) handleAnnouncement(device *Device, category string, payload []byte) {
-	// Parse protobuf announcement
-	announcement := &ned.GetDeviceInformationResponsePayload{}
-	if err := proto.Unmarshal(payload, announcement); err != nil {
-		log.Printf("Failed to parse announcement for %s: %v", device.Serial, err)
-		return
-	}
-
-	device.Name = announcement.GetProductName()
-	device.Status = StatusOnline // Determine device type based on category and announcement
-	switch strings.ToLower(category) {
-	case "sanitizer":
-		device.Type = DeviceSanitizer
-	case "vsp":
-		device.Type = DeviceVSP
-	case "icl", "dct":
-		device.Type = DeviceICL
-	case "heater":
-		device.Type = DeviceHeater
-	case "trusense":
-		device.Type = DeviceTruSense
-	case "heatpump":
-		device.Type = DeviceHeatpump
-	case "orion":
-		device.Type = DeviceOrion
-	default:
-		// Use reflection to determine device type
-		device.Type = DeviceType(strings.ToUpper(category))
-	}
-
-	log.Printf("Device announced: %s (%s) - %s", device.Name, device.Type, device.Serial)
-}
-
-// Handle device telemetry
-func (nga *NgaSim) handleTelemetry(device *Device, category string, payload []byte) {
-	device.Status = StatusOnline
-
-	// Handle telemetry based on device type
-	switch device.Type {
-	case DeviceSanitizer:
-		nga.handleSanitizerTelemetry(device, payload)
-	case DeviceVSP:
-		nga.handleVSPTelemetry(device, payload)
-	case DeviceICL:
-		nga.handleICLTelemetry(device, payload)
-	default:
-		// Use reflection for unknown device types
-		nga.handleGenericTelemetry(device, payload)
-	}
-}
-
-// Handle sanitizer telemetry
-func (nga *NgaSim) handleSanitizerTelemetry(device *Device, payload []byte) {
-	// This would parse sanitizer-specific telemetry protobuf
-	// For now, simulate some data
-	device.PowerLevel = 50 + rand.Intn(50)
-	device.PowerOn = rand.Intn(2) == 1
-	device.Salinity = 3000 + rand.Float64()*500
-	device.CellTemp = 25 + rand.Float64()*10
-	device.CellVoltage = 12 + rand.Float64()*3
-	device.CellCurrent = 5 + rand.Float64()*10
-	device.CellReverse = rand.Intn(10) == 0
-	device.NextReversal = 30 + rand.Intn(90)
-	device.HeatsinkTemp = 30 + rand.Float64()*15
-}
-
-// Handle VSP telemetry
-func (nga *NgaSim) handleVSPTelemetry(device *Device, payload []byte) {
-	// Simulate VSP telemetry
-	device.RPM = 1000 + rand.Intn(2450)
-	device.Temperature = 20 + rand.Float64()*15
-	device.PowerWatts = int(float64(device.RPM)*0.8 + rand.Float64()*200)
-}
-
-// Handle ICL telemetry
-func (nga *NgaSim) handleICLTelemetry(device *Device, payload []byte) {
-	// Simulate ICL telemetry
-	device.Red = rand.Intn(256)
-	device.Green = rand.Intn(256)
-	device.Blue = rand.Intn(256)
-	device.White = rand.Intn(256)
-	device.Temperature = 20 + rand.Float64()*10
-}
-
-// Handle generic telemetry using reflection
-func (nga *NgaSim) handleGenericTelemetry(device *Device, payload []byte) {
-	// This would use protobuf reflection to parse unknown message types
-	log.Printf("Generic telemetry received for %s (%d bytes)", device.Serial, len(payload))
-}
-
-// Handle device info messages
-func (nga *NgaSim) handleDeviceInfo(device *Device, category string, payload []byte) {
-	log.Printf("Device info received for %s", device.Serial)
-}
-
-// Handle error messages
-func (nga *NgaSim) handleError(device *Device, category string, payload []byte) {
-	log.Printf("Error message received for %s", device.Serial)
-	device.Status = StatusOffline
-}
-
-// Initialize poller
-func (nga *NgaSim) initPoller() error {
-	err := nga.pollerManager.Start()
-	if err != nil {
-		return err
-	}
-
-	log.Println("Poller started - topology messages will be sent every 4 seconds")
-	return nil
-}
-
-// Helper functions for templates
-func mul(a, b float64) float64 { return a * b }
-func div(a, b float64) float64 {
-	if b == 0 {
-		return 0
-	}
-	return a / b
-}
-func colorFromRGBW(r, g, b, w int) string {
-	return fmt.Sprintf("rgb(%d,%d,%d)", r+w/4, g+w/4, b+w/4)
-}
-func formatDuration(minutes int) string {
-	hours := minutes / 60
-	mins := minutes % 60
-	if hours > 0 {
-		return fmt.Sprintf("%dh %dm", hours, mins)
-	}
-	return fmt.Sprintf("%dm", mins)
-}
-
-// Start web server
-func (nga *NgaSim) startWebServer() error {
-	mux := http.NewServeMux()
-
-	// Main device list page
-	mux.HandleFunc("/", nga.handleHomePage)
-
-	// Device detail pages
-	mux.HandleFunc("/device/", nga.handleDevicePage)
-
-	// API endpoints
-	mux.HandleFunc("/api/devices", nga.handleAPIDevices)
-	mux.HandleFunc("/api/command", nga.handleAPICommand)
-
-	// Static assets
-	mux.HandleFunc("/static/", nga.handleStatic)
-
-	nga.webServer = &http.Server{
-		Addr:    ":8080",
-		Handler: mux,
-	}
-
+	// Monitor the poller process in a separate goroutine
 	go func() {
-		if err := nga.webServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Printf("Web server error: %v", err)
+		if err := sim.pollerCmd.Wait(); err != nil {
+			log.Printf("Poller process exited with error: %v", err)
+		} else {
+			log.Println("Poller process exited cleanly")
 		}
 	}()
 
 	return nil
 }
 
-// Template functions
-var templateFuncs = template.FuncMap{
-	"mul":             mul,
-	"div":             div,
-	"colorFromRGBW":   colorFromRGBW,
-	"formatDuration":  formatDuration,
-	"deviceTypeColor": getDeviceTypeColor,
-	"statusColor":     getStatusColor,
+// stopPoller stops the C poller subprocess
+func (sim *NgaSim) stopPoller() {
+	if sim.pollerCmd != nil && sim.pollerCmd.Process != nil {
+		log.Printf("Stopping poller process (PID: %d)...", sim.pollerCmd.Process.Pid)
+		if err := sim.pollerCmd.Process.Kill(); err != nil {
+			log.Printf("Failed to kill poller process: %v", err)
+		}
+	}
 }
 
-func getDeviceTypeColor(deviceType DeviceType) string {
-	colors := map[DeviceType]string{
-		DeviceVSP:       "#3B82F6", // Blue
-		DeviceSanitizer: "#10B981", // Emerald
-		DeviceHeater:    "#F59E0B", // Amber
-		DeviceTruSense:  "#8B5CF6", // Violet
-		DeviceHeatpump:  "#EF4444", // Red
-		DeviceICL:       "#EC4899", // Pink
-		DeviceOrion:     "#6366F1", // Indigo
+// subscribeToTopics subscribes to device announcement and telemetry topics
+func (sim *NgaSim) subscribeToTopics() {
+	topics := []string{TopicAnnounce, TopicTelemetry, TopicStatus}
+
+	for _, topic := range topics {
+		if token := sim.mqtt.Subscribe(topic, 1, sim.messageHandler); token.Wait() && token.Error() != nil {
+			log.Printf("Failed to subscribe to topic %s: %v", topic, token.Error())
+		} else {
+			log.Printf("Subscribed to topic: %s", topic)
+		}
 	}
-	if color, ok := colors[deviceType]; ok {
-		return color
-	}
-	return "#6B7280" // Gray
 }
 
-func getStatusColor(status DeviceStatus) string {
-	switch status {
-	case StatusOnline:
-		return "#10B981" // Green
-	case StatusOffline:
-		return "#EF4444" // Red
+// messageHandler processes incoming MQTT messages
+func (sim *NgaSim) messageHandler(client mqtt.Client, msg mqtt.Message) {
+	topic := msg.Topic()
+	payload := string(msg.Payload())
+
+	log.Printf("Received MQTT message on topic: %s", topic)
+	log.Printf("Payload: %s", payload)
+
+	// Parse topic to extract device ID
+	parts := strings.Split(topic, "/")
+	if len(parts) < 3 {
+		log.Printf("Invalid topic format: %s", topic)
+		return
+	}
+
+	deviceID := parts[1]
+	messageType := parts[2]
+
+	switch messageType {
+	case "announce":
+		sim.handleDeviceAnnounce(deviceID, payload)
+	case "telemetry":
+		sim.handleDeviceTelemetry(deviceID, payload)
+	case "status":
+		sim.handleDeviceStatus(deviceID, payload)
 	default:
-		return "#F59E0B" // Yellow
+		log.Printf("Unknown message type: %s", messageType)
 	}
 }
 
-// Home page template
-var homePageTmpl = template.Must(template.New("home").Funcs(templateFuncs).Parse(`
+// handleDeviceAnnounce processes device announcement messages
+func (sim *NgaSim) handleDeviceAnnounce(deviceID, payload string) {
+	log.Printf("Device announce from %s: %s", deviceID, payload)
+
+	// Try to parse as JSON (fallback for non-protobuf devices)
+	var announceData map[string]interface{}
+	if err := json.Unmarshal([]byte(payload), &announceData); err == nil {
+		sim.updateDeviceFromAnnounce(deviceID, announceData)
+		return
+	}
+
+	// TODO: Add protobuf parsing here
+	log.Printf("Could not parse announce message as JSON, may be protobuf: %s", payload)
+}
+
+// updateDeviceFromAnnounce updates device from announcement data
+func (sim *NgaSim) updateDeviceFromAnnounce(deviceID string, data map[string]interface{}) {
+	sim.mutex.Lock()
+	defer sim.mutex.Unlock()
+
+	device, exists := sim.devices[deviceID]
+	if !exists {
+		device = &Device{
+			ID:       deviceID,
+			Name:     fmt.Sprintf("Device-%s", deviceID),
+			Status:   "DISCOVERED",
+			LastSeen: time.Now(),
+		}
+		sim.devices[deviceID] = device
+		log.Printf("New device discovered: %s", deviceID)
+	}
+
+	// Update device fields from announce data
+	if deviceType, ok := data["type"].(string); ok {
+		device.Type = deviceType
+	}
+	if name, ok := data["name"].(string); ok {
+		device.Name = name
+	}
+	if serial, ok := data["serial"].(string); ok {
+		device.Serial = serial
+	}
+
+	device.Status = "ONLINE"
+	device.LastSeen = time.Now()
+
+	log.Printf("Updated device %s: type=%s, name=%s", deviceID, device.Type, device.Name)
+}
+
+// handleDeviceTelemetry processes device telemetry messages
+func (sim *NgaSim) handleDeviceTelemetry(deviceID, payload string) {
+	log.Printf("Device telemetry from %s: %s", deviceID, payload)
+
+	// Try to parse as JSON
+	var telemetryData map[string]interface{}
+	if err := json.Unmarshal([]byte(payload), &telemetryData); err == nil {
+		sim.updateDeviceFromTelemetry(deviceID, telemetryData)
+		return
+	}
+
+	// TODO: Add protobuf parsing here
+	log.Printf("Could not parse telemetry message as JSON, may be protobuf: %s", payload)
+}
+
+// updateDeviceFromTelemetry updates device with telemetry data
+func (sim *NgaSim) updateDeviceFromTelemetry(deviceID string, data map[string]interface{}) {
+	sim.mutex.Lock()
+	defer sim.mutex.Unlock()
+
+	device, exists := sim.devices[deviceID]
+	if !exists {
+		log.Printf("Received telemetry for unknown device: %s", deviceID)
+		return
+	}
+
+	// Update common fields
+	if temp, ok := data["temperature"].(float64); ok {
+		device.Temp = temp
+	}
+	if power, ok := data["power"].(float64); ok {
+		device.Power = int(power)
+	}
+
+	// Update device-specific fields based on type
+	switch device.Type {
+	case "VSP":
+		if rpm, ok := data["rpm"].(float64); ok {
+			device.RPM = int(rpm)
+		}
+	case "Sanitizer":
+		if salinity, ok := data["salinity"].(float64); ok {
+			device.Salinity = int(salinity)
+		}
+		if output, ok := data["output"].(float64); ok {
+			device.PowerLevel = int(output)
+		}
+	case "TruSense":
+		if ph, ok := data["ph"].(float64); ok {
+			device.PH = ph
+		}
+		if orp, ok := data["orp"].(float64); ok {
+			device.ORP = int(orp)
+		}
+	case "ICL":
+		if red, ok := data["red"].(float64); ok {
+			device.Red = int(red)
+		}
+		if green, ok := data["green"].(float64); ok {
+			device.Green = int(green)
+		}
+		if blue, ok := data["blue"].(float64); ok {
+			device.Blue = int(blue)
+		}
+		if white, ok := data["white"].(float64); ok {
+			device.White = int(white)
+		}
+	}
+
+	device.LastSeen = time.Now()
+	log.Printf("Updated telemetry for device %s", deviceID)
+}
+
+// handleDeviceStatus processes device status messages
+func (sim *NgaSim) handleDeviceStatus(deviceID, payload string) {
+	log.Printf("Device status from %s: %s", deviceID, payload)
+
+	sim.mutex.Lock()
+	defer sim.mutex.Unlock()
+
+	if device, exists := sim.devices[deviceID]; exists {
+		// Simple status parsing - could be enhanced
+		if strings.Contains(strings.ToUpper(payload), "OFFLINE") {
+			device.Status = "OFFLINE"
+		} else if strings.Contains(strings.ToUpper(payload), "READY") {
+			device.Status = "ONLINE"
+		}
+		device.LastSeen = time.Now()
+	}
+}
+
+func NewNgaSim() *NgaSim {
+	return &NgaSim{
+		devices: make(map[string]*Device),
+	}
+}
+
+func (n *NgaSim) Start() error {
+	log.Println("Starting NgaSim v" + NgaSimVersion)
+
+	// Connect to MQTT broker
+	log.Println("Connecting to MQTT broker...")
+	if err := n.connectMQTT(); err != nil {
+		log.Printf("MQTT connection failed: %v", err)
+		log.Println("Falling back to demo mode...")
+		n.createDemoDevices()
+	} else {
+		log.Println("MQTT connected successfully - waiting for device announcements...")
+
+		// Start the C poller to wake up devices
+		if err := n.startPoller(); err != nil {
+			log.Printf("Failed to start poller: %v", err)
+			log.Println("Device discovery may not work properly")
+		}
+	}
+
+	// Start web server
+	return n.startWebServer()
+}
+
+func (n *NgaSim) createDemoDevices() {
+	n.mutex.Lock()
+
+	// VSP - Variable Speed Pump
+	n.devices["VSP001"] = &Device{
+		ID:       "VSP001",
+		Type:     "VSP",
+		Name:     "Pool Pump",
+		Serial:   "VSP001",
+		Status:   "ONLINE",
+		LastSeen: time.Now(),
+		RPM:      1800,
+		Temp:     22.5,
+		Power:    1200,
+	}
+
+	// Sanitizer - Salt chlorine generator
+	n.devices["SALT001"] = &Device{
+		ID:          "SALT001",
+		Type:        "Sanitizer",
+		Name:        "Salt Chlorinator",
+		Serial:      "SALT001",
+		Status:      "ONLINE",
+		LastSeen:    time.Now(),
+		PowerLevel:  75,   // 75%
+		Salinity:    3200, // ppm
+		CellTemp:    28.5, // Celsius
+		CellVoltage: 4.2,  // Volts
+		CellCurrent: 8.5,  // Amps
+		Temp:        28.5, // PIB temperature
+	}
+
+	// ICL - Infinite Color Light
+	n.devices["ICL001"] = &Device{
+		ID:       "ICL001",
+		Type:     "ICL",
+		Name:     "Pool Lights",
+		Serial:   "ICL001",
+		Status:   "ONLINE",
+		LastSeen: time.Now(),
+		Red:      128,
+		Green:    200,
+		Blue:     255,
+		White:    100,
+		Temp:     24.0, // Controller temperature
+	}
+
+	// TruSense - pH and ORP sensors
+	n.devices["TRUS001"] = &Device{
+		ID:       "TRUS001",
+		Type:     "TruSense",
+		Name:     "Water Sensors",
+		Serial:   "TRUS001",
+		Status:   "ONLINE",
+		LastSeen: time.Now(),
+		PH:       7.2,  // pH level
+		ORP:      650,  // mV
+		Temp:     25.8, // Water temperature
+	}
+
+	// Heater - Gas heater
+	n.devices["HEAT001"] = &Device{
+		ID:          "HEAT001",
+		Type:        "Heater",
+		Name:        "Gas Heater",
+		Serial:      "HEAT001",
+		Status:      "ONLINE",
+		LastSeen:    time.Now(),
+		SetTemp:     28.0, // Target temperature
+		WaterTemp:   25.8, // Current water temp
+		HeatingMode: "HEAT",
+		Temp:        45.2, // Heater internal temp
+	}
+
+	// HeatPump - Heat pump heater/chiller
+	n.devices["HP001"] = &Device{
+		ID:          "HP001",
+		Type:        "HeatPump",
+		Name:        "Heat Pump",
+		Serial:      "HP001",
+		Status:      "ONLINE",
+		LastSeen:    time.Now(),
+		SetTemp:     26.0, // Target temperature
+		WaterTemp:   25.8, // Current water temp
+		HeatingMode: "OFF",
+		Temp:        22.1, // Ambient air temp
+		Power:       2400, // Watts
+	}
+
+	// ORION - Another sanitation controller
+	n.devices["ORION001"] = &Device{
+		ID:       "ORION001",
+		Type:     "ORION",
+		Name:     "ORION Sanitizer",
+		Serial:   "ORION001",
+		Status:   "ONLINE",
+		LastSeen: time.Now(),
+		Temp:     26.5, // Controller temperature
+	}
+
+	n.mutex.Unlock()
+}
+
+func (n *NgaSim) startWebServer() error {
+	// Start web server
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", n.handleHome)
+	mux.HandleFunc("/api/devices", n.handleAPI)
+
+	n.server = &http.Server{Addr: ":8080", Handler: mux}
+
+	go func() {
+		log.Println("Web server starting on :8080")
+		if err := n.server.ListenAndServe(); err != http.ErrServerClosed {
+			log.Printf("Server error: %v", err)
+		}
+	}()
+
+	return nil
+}
+
+var tmpl = template.Must(template.New("home").Parse(`
 <!DOCTYPE html>
 <html>
 <head>
-    <title>NgaSim Pool Controller v{{.Version}}</title>
-    <meta http-equiv="refresh" content="5">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NgaSim Pool Controller</title>
+    <meta http-equiv="refresh" content="10">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        
-        .header {
-            background: rgba(255,255,255,0.95);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-        }
-        
-        .title {
-            color: #2D3748;
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .subtitle {
-            color: #4A5568;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            background: #10B981;
-            color: white;
-        }
-        
-        .container {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .device-card {
-            background: rgba(255,255,255,0.95);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .device-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-        }
-        
-        .device-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-        
-        .device-type {
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.5rem;
-            color: white;
-        }
-        
-        .device-status {
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: white;
-        }
-        
-        .device-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            color: #2D3748;
-        }
-        
-        .device-serial {
-            font-size: 0.875rem;
-            color: #718096;
-            margin-bottom: 1rem;
-        }
-        
-        .device-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 1rem;
-        }
-        
-        .metric {
-            text-align: center;
-        }
-        
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        
-        .metric-label {
-            font-size: 0.75rem;
-            color: #718096;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .dial {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            font-weight: 700;
-            margin: 0 auto 0.5rem;
-            border: 3px solid;
-            background: rgba(255,255,255,0.8);
-        }
-        
-        .color-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin: 0 auto 0.5rem;
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-        
-        .offline {
-            opacity: 0.5;
-            filter: grayscale(0.8);
-        }
-        
-        .last-seen {
-            font-size: 0.75rem;
-            color: #A0AEC0;
-            text-align: center;
-            margin-top: 1rem;
-        }
+        body { font-family: Arial; background: #667eea; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
+        .devices { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .device { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .device-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .device-type { color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; }
+        .device-type.VSP { background: #3B82F6; }
+        .device-type.Sanitizer { background: #10B981; }
+        .device-type.ICL { background: #8B5CF6; }
+        .device-type.TruSense { background: #F59E0B; }
+        .device-type.Heater { background: #EF4444; }
+        .device-type.HeatPump { background: #06B6D4; }
+        .device-type.ORION { background: #6B7280; }
+        .device-status { background: #10B981; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.8em; }
+        .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
+        .metric { text-align: center; }
+        .metric-value { font-size: 1.3em; font-weight: bold; color: #3B82F6; }
+        .metric-label { font-size: 0.8em; color: #666; margin-top: 5px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="title">NgaSim Pool Controller</div>
-        <div class="subtitle">
-            <span>{{len .Devices}} devices discovered</span>
-            <div class="status-badge">{{.Status}}</div>
-            <span>v{{.Version}}</span>
-        </div>
-    </div>
-    
     <div class="container">
-        <div class="grid">
+        <div class="header">
+            <h1>NgaSim Pool Controller v{{.Version}}</h1>
+            <p>{{len .Devices}} devices discovered</p>
+        </div>
+        <div class="devices">
             {{range .Devices}}
-            <a href="/device/{{.ID}}" class="device-card {{if eq .Status "OFFLINE"}}offline{{end}}">
+            <div class="device">
                 <div class="device-header">
-                    <div class="device-type" style="background-color: {{deviceTypeColor .Type}}">
-                        {{.Type}}
-                    </div>
-                    <div class="device-status" style="background-color: {{statusColor .Status}}">
-                        {{.Status}}
-                    </div>
+                    <div class="device-type {{.Type}}">{{.Type}}</div>
+                    <div class="device-status">{{.Status}}</div>
                 </div>
-                
-                <div class="device-name">{{.Name}}</div>
-                <div class="device-serial">{{.Serial}}</div>
-                
-                <div class="device-metrics">
+                <h3>{{.Name}}</h3>
+                <p>Serial: {{.Serial}}</p>
+                <div class="metrics">
                     {{if eq .Type "VSP"}}
                         <div class="metric">
-                            <div class="dial" style="border-color: {{deviceTypeColor .Type}}; color: {{deviceTypeColor .Type}}">
-                                {{.RPM}}
-                            </div>
+                            <div class="metric-value">{{.RPM}}</div>
                             <div class="metric-label">RPM</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{printf "%.1f°C" .Temperature}}</div>
-                            <div class="metric-label">Temp</div>
+                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
+                            <div class="metric-label">Temperature</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{.PowerWatts}}W</div>
+                            <div class="metric-value">{{.Power}}W</div>
                             <div class="metric-label">Power</div>
                         </div>
-                    {{else if eq .Type "Sanitizer"}}
+                                        {{else if eq .Type "Sanitizer"}}
                         <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{.PowerLevel}}%</div>
-                            <div class="metric-label">Power</div>
+                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
+                            <div class="metric-label">Temperature</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{printf "%.0f" .Salinity}}</div>
+                            <div class="metric-value">{{.Salinity}}ppm</div>
                             <div class="metric-label">Salinity</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{printf "%.1f°C" .CellTemp}}</div>
-                            <div class="metric-label">Cell Temp</div>
-                        </div>
-                    {{else if eq .Type "TruSense"}}
-                        <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{printf "%.1f" .PH}}</div>
-                            <div class="metric-label">pH</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{printf "%.0f" .ORP}}</div>
-                            <div class="metric-label">ORP mV</div>
+                            <div class="metric-value">{{.Output}}%</div>
+                            <div class="metric-label">Output</div>
                         </div>
                     {{else if eq .Type "ICL"}}
                         <div class="metric">
-                            <div class="color-preview" style="background-color: {{colorFromRGBW .Red .Green .Blue .White}}"></div>
+                            <div class="metric-value" style="background: rgb({{.Red}},{{.Green}},{{.Blue}}); color: white; padding: 5px; border-radius: 3px;">RGB</div>
                             <div class="metric-label">Color</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{printf "%.1f°C" .Temperature}}</div>
-                            <div class="metric-label">Temp</div>
+                            <div class="metric-value">{{.White}}</div>
+                            <div class="metric-label">White Level</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
+                            <div class="metric-label">Controller Temp</div>
+                        </div>
+                    {{else if eq .Type "TruSense"}}
+                        <div class="metric">
+                            <div class="metric-value">{{printf "%.1f" .PH}}</div>
+                            <div class="metric-label">pH</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{.ORP}}</div>
+                            <div class="metric-label">ORP (mV)</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
+                            <div class="metric-label">Water Temp</div>
+                        </div>
+                    {{else if or (eq .Type "Heater") (eq .Type "HeatPump")}}
+                        <div class="metric">
+                            <div class="metric-value">{{printf "%.1fC" .SetTemp}}</div>
+                            <div class="metric-label">Set Temp</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{printf "%.1fC" .WaterTemp}}</div>
+                            <div class="metric-label">Water Temp</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{.HeatingMode}}</div>
+                            <div class="metric-label">Mode</div>
                         </div>
                     {{else}}
                         <div class="metric">
-                            <div class="metric-value" style="color: {{deviceTypeColor .Type}}">{{printf "%.1f°C" .Temperature}}</div>
-                            <div class="metric-label">Temp</div>
+                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
+                            <div class="metric-label">Temperature</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{.Serial}}</div>
+                            <div class="metric-label">Serial</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{.Status}}</div>
+                            <div class="metric-label">Status</div>
                         </div>
                     {{end}}
                 </div>
-                
-                <div class="last-seen">Last seen: {{.LastSeen.Format "15:04:05"}}</div>
-            </a>
-            {{else}}
-            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: rgba(255,255,255,0.7);">
-                <h3>No devices discovered yet</h3>
-                <p>Waiting for device announcements via MQTT or SLIP...</p>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.9em; color: #666;">
+                    Last seen: {{.LastSeen.Format "15:04:05"}}
+                </p>
             </div>
             {{end}}
         </div>
@@ -837,991 +608,54 @@ var homePageTmpl = template.Must(template.New("home").Funcs(templateFuncs).Parse
 </html>
 `))
 
-// Web handlers
-func (nga *NgaSim) handleHomePage(w http.ResponseWriter, r *http.Request) {
-	nga.devicesMutex.RLock()
-	devices := make([]*Device, 0, len(nga.devices))
-	for _, device := range nga.devices {
+func (n *NgaSim) handleHome(w http.ResponseWriter, r *http.Request) {
+	n.mutex.RLock()
+	devices := make([]*Device, 0, len(n.devices))
+	for _, device := range n.devices {
 		devices = append(devices, device)
 	}
-	nga.devicesMutex.RUnlock()
-
-	// Sort devices alphabetically by name
-	sort.Slice(devices, func(i, j int) bool {
-		return strings.ToLower(devices[i].Name) < strings.ToLower(devices[j].Name)
-	})
+	n.mutex.RUnlock()
 
 	data := struct {
 		Devices []*Device
 		Version string
-		Status  string
-	}{
-		Devices: devices,
-		Version: NgaSimVersion,
-		Status:  "RUNNING",
-	}
+	}{Devices: devices, Version: NgaSimVersion}
 
 	w.Header().Set("Content-Type", "text/html")
-	if err := homePageTmpl.Execute(w, data); err != nil {
-		log.Printf("Error executing home template: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
+	tmpl.Execute(w, data)
 }
 
-func (nga *NgaSim) handleDevicePage(w http.ResponseWriter, r *http.Request) {
-	deviceID := strings.TrimPrefix(r.URL.Path, "/device/")
-
-	nga.devicesMutex.RLock()
-	device := nga.devices[deviceID]
-	nga.devicesMutex.RUnlock()
-
-	if device == nil {
-		http.NotFound(w, r)
-		return
-	}
-
-	data := struct {
-		Device  *Device
-		Version string
-	}{
-		Device:  device,
-		Version: NgaSimVersion,
-	}
-
-	w.Header().Set("Content-Type", "text/html")
-	if err := devicePageTmpl.Execute(w, data); err != nil {
-		log.Printf("Error executing device template: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
-}
-
-func (nga *NgaSim) handleAPIDevices(w http.ResponseWriter, r *http.Request) {
-	nga.devicesMutex.RLock()
-	devices := make([]*Device, 0, len(nga.devices))
-	for _, device := range nga.devices {
+func (n *NgaSim) handleAPI(w http.ResponseWriter, r *http.Request) {
+	n.mutex.RLock()
+	devices := make([]*Device, 0, len(n.devices))
+	for _, device := range n.devices {
 		devices = append(devices, device)
 	}
-	nga.devicesMutex.RUnlock()
-
-	// Sort devices alphabetically by name
-	sort.Slice(devices, func(i, j int) bool {
-		return strings.ToLower(devices[i].Name) < strings.ToLower(devices[j].Name)
-	})
+	n.mutex.RUnlock()
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(devices)
 }
 
-func (nga *NgaSim) handleAPICommand(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var cmd struct {
-		DeviceID string      `json:"device_id"`
-		Command  string      `json:"command"`
-		Value    interface{} `json:"value,omitempty"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&cmd); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
-		return
-	}
-
-	nga.devicesMutex.Lock()
-	device := nga.devices[cmd.DeviceID]
-	if device != nil {
-		nga.processDeviceCommand(device, cmd.Command, cmd.Value)
-	}
-	nga.devicesMutex.Unlock()
-
-	if device == nil {
-		http.Error(w, "Device not found", http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
-}
-
-func (nga *NgaSim) handleStatic(w http.ResponseWriter, r *http.Request) {
-	// Serve static assets if needed
-	http.NotFound(w, r)
-}
-
-// Process device commands
-func (nga *NgaSim) processDeviceCommand(device *Device, command string, value interface{}) {
-	log.Printf("Processing command %s for device %s: %v", command, device.ID, value)
-
-	switch device.Type {
-	case DeviceVSP:
-		nga.processVSPCommand(device, command, value)
-	case DeviceSanitizer:
-		nga.processSanitizerCommand(device, command, value)
-	case DeviceICL:
-		nga.processICLCommand(device, command, value)
-	default:
-		log.Printf("Unknown device type for command processing: %s", device.Type)
-	}
-}
-
-func (nga *NgaSim) processVSPCommand(device *Device, command string, value interface{}) {
-	switch command {
-	case "set_rpm":
-		if rpm, ok := value.(float64); ok {
-			device.RPMTarget = int(rpm)
-			// In real implementation, send protobuf command to device
-			log.Printf("VSP %s target RPM set to %d", device.ID, device.RPMTarget)
-		}
-	case "stop":
-		device.RPMTarget = 0
-		log.Printf("VSP %s stopped", device.ID)
-	case "find_me":
-		log.Printf("VSP %s find me command sent", device.ID)
-	}
-}
-
-func (nga *NgaSim) processSanitizerCommand(device *Device, command string, value interface{}) {
-	switch command {
-	case "set_power":
-		if power, ok := value.(float64); ok {
-			device.PowerLevel = int(power)
-			log.Printf("Sanitizer %s power set to %d%%", device.ID, device.PowerLevel)
-		}
-	case "send_topology":
-		// The poller executable handles topology messages automatically
-		log.Printf("Topology messages are handled by the poller executable")
-	case "find_me":
-		log.Printf("Sanitizer %s find me command sent", device.ID)
-	}
-}
-
-func (nga *NgaSim) processICLCommand(device *Device, command string, value interface{}) {
-	switch command {
-	case "set_color":
-		if colorData, ok := value.(map[string]interface{}); ok {
-			if r, ok := colorData["r"].(float64); ok {
-				device.Red = int(r)
-			}
-			if g, ok := colorData["g"].(float64); ok {
-				device.Green = int(g)
-			}
-			if b, ok := colorData["b"].(float64); ok {
-				device.Blue = int(b)
-			}
-			if w, ok := colorData["w"].(float64); ok {
-				device.White = int(w)
-			}
-			log.Printf("ICL %s color set to RGBW(%d,%d,%d,%d)", device.ID, device.Red, device.Green, device.Blue, device.White)
-		}
-	case "find_me":
-		log.Printf("ICL %s find me command sent", device.ID)
-	}
-}
-
-// Advanced device detail page template with interactive controls
-var devicePageTmpl = template.Must(template.New("device").Funcs(templateFuncs).Parse(`
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{.Device.Name}} - NgaSim Pool Controller</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        
-        .header {
-            background: rgba(255,255,255,0.95);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .back-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .back-btn:hover {
-            background: #5a6fd8;
-            transform: translateY(-1px);
-        }
-        
-        .device-title {
-            color: #2D3748;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        
-        .status-indicator {
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: white;
-        }
-        
-        .container {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .device-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        
-        .info-panel, .control-panel {
-            background: rgba(255,255,255,0.95);
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        
-        .panel-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #2D3748;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #E2E8F0;
-            padding-bottom: 0.5rem;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-        
-        .info-item {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(0,0,0,0.02);
-            border-radius: 0.75rem;
-        }
-        
-        .info-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        
-        .info-label {
-            font-size: 0.75rem;
-            color: #718096;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .control-group {
-            margin-bottom: 2rem;
-        }
-        
-        .control-label {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #4A5568;
-            margin-bottom: 1rem;
-        }
-        
-        .slider-container {
-            position: relative;
-            margin: 1rem 0;
-        }
-        
-        .slider {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: #E2E8F0;
-            outline: none;
-            -webkit-appearance: none;
-        }
-        
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        
-        .slider-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: #718096;
-            margin-top: 0.5rem;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-        }
-        
-        .btn-primary {
-            background: #10B981;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #059669;
-            transform: translateY(-1px);
-        }
-        
-        .btn-danger {
-            background: #EF4444;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #DC2626;
-            transform: translateY(-1px);
-        }
-        
-        .btn-secondary {
-            background: #6B7280;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #4B5563;
-            transform: translateY(-1px);
-        }
-        
-        .color-picker {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-        
-        .color-control {
-            text-align: center;
-        }
-        
-        .color-control label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #4A5568;
-        }
-        
-        .color-slider {
-            width: 100%;
-            margin: 0.5rem 0;
-        }
-        
-        .color-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #2D3748;
-        }
-        
-        .color-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin: 1rem auto;
-            border: 3px solid rgba(255,255,255,0.3);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        
-        .dial {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 1rem auto;
-            border: 4px solid;
-            background: rgba(255,255,255,0.8);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .priming-control {
-            background: linear-gradient(135deg, #FEF3C7 0%, #FCD34D 100%);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            margin: 1rem 0;
-        }
-        
-        .priming-title {
-            font-weight: 600;
-            color: #92400E;
-            margin-bottom: 0.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .device-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .color-picker {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="header-left">
-            <a href="/" class="back-btn">← Back</a>
-            <div class="device-title">{{.Device.Name}}</div>
-        </div>
-        <div class="status-indicator" style="background-color: {{statusColor .Device.Status}}">
-            {{.Device.Status}}
-        </div>
-    </div>
-    
-    <div class="container">
-        <div class="device-grid">
-            <!-- Device Information Panel -->
-            <div class="info-panel">
-                <div class="panel-title">Device Information</div>
-                
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-value">{{.Device.Type}}</div>
-                        <div class="info-label">Type</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value">{{.Device.Serial}}</div>
-                        <div class="info-label">Serial</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value">{{.Device.LastSeen.Format "15:04:05"}}</div>
-                        <div class="info-label">Last Seen</div>
-                    </div>
-                </div>
-                
-                <!-- Device-specific status display -->
-                {{if eq .Device.Type "VSP"}}
-                <div class="panel-title" style="margin-top: 2rem;">VSP Status</div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="dial" style="border-color: {{deviceTypeColor .Device.Type}}; color: {{deviceTypeColor .Device.Type}}">
-                            {{.Device.RPM}}
-                        </div>
-                        <div class="info-label">Current RPM</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.1f°C" .Device.Temperature}}</div>
-                        <div class="info-label">Temperature</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{.Device.PowerWatts}}W</div>
-                        <div class="info-label">Power</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{.Device.RPMTarget}}</div>
-                        <div class="info-label">Target RPM</div>
-                    </div>
-                </div>
-                {{else if eq .Device.Type "Sanitizer"}}
-                <div class="panel-title" style="margin-top: 2rem;">Sanitizer Status</div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{.Device.PowerLevel}}%</div>
-                        <div class="info-label">Power Level</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{if .Device.PowerOn}}ON{{else}}OFF{{end}}</div>
-                        <div class="info-label">Power Status</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.0f" .Device.Salinity}}</div>
-                        <div class="info-label">Salinity (ppm)</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.1f°C" .Device.CellTemp}}</div>
-                        <div class="info-label">Cell Temp</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.1fV" .Device.CellVoltage}}</div>
-                        <div class="info-label">Cell Voltage</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.1fA" .Device.CellCurrent}}</div>
-                        <div class="info-label">Cell Current</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{if .Device.CellReverse}}REV{{else}}FWD{{end}}</div>
-                        <div class="info-label">Direction</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{formatDuration .Device.NextReversal}}</div>
-                        <div class="info-label">Next Reversal</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.1f°C" .Device.HeatsinkTemp}}</div>
-                        <div class="info-label">Heatsink Temp</div>
-                    </div>
-                </div>
-                {{else if eq .Device.Type "ICL"}}
-                <div class="panel-title" style="margin-top: 2rem;">ICL Status</div>
-                <div class="color-preview" style="background-color: {{colorFromRGBW .Device.Red .Device.Green .Device.Blue .Device.White}}"></div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-value" style="color: #EF4444">{{.Device.Red}}</div>
-                        <div class="info-label">Red</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: #10B981">{{.Device.Green}}</div>
-                        <div class="info-label">Green</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: #3B82F6">{{.Device.Blue}}</div>
-                        <div class="info-label">Blue</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: #6B7280">{{.Device.White}}</div>
-                        <div class="info-label">White</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.1f°C" .Device.Temperature}}</div>
-                        <div class="info-label">Temperature</div>
-                    </div>
-                </div>
-                {{else if eq .Device.Type "TruSense"}}
-                <div class="panel-title" style="margin-top: 2rem;">Water Chemistry</div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.1f" .Device.PH}}</div>
-                        <div class="info-label">pH Level</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.0f" .Device.ORP}}</div>
-                        <div class="info-label">ORP (mV)</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-value" style="color: {{deviceTypeColor .Device.Type}}">{{printf "%.1f°C" .Device.Temperature}}</div>
-                        <div class="info-label">Temperature</div>
-                    </div>
-                </div>
-                {{end}}
-            </div>
-            
-            <!-- Device Control Panel -->
-            <div class="control-panel">
-                <div class="panel-title">Device Controls</div>
-                
-                {{if eq .Device.Type "VSP"}}
-                <!-- VSP Controls -->
-                <div class="control-group">
-                    <div class="control-label">Speed Control</div>
-                    <div class="slider-container">
-                        <input type="range" min="600" max="3450" value="{{.Device.RPMTarget}}" class="slider" id="rpmSlider">
-                        <div class="slider-labels">
-                            <span>600 RPM</span>
-                            <span id="rpmValue">{{.Device.RPMTarget}} RPM</span>
-                            <span>3450 RPM</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="priming-control">
-                    <div class="priming-title">Priming Mode</div>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="180" value="180" class="slider" id="primingSlider">
-                        <div class="slider-labels">
-                            <span>0 sec</span>
-                            <span id="primingValue">180 sec</span>
-                            <span>180 sec</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="sendVSPCommand('sdem_go')">START</button>
-                    <button class="btn btn-danger" onclick="sendVSPCommand('stop')">STOP</button>
-                    <button class="btn btn-secondary" onclick="sendVSPCommand('find_me')">FIND ME</button>
-                </div>
-                
-                {{else if eq .Device.Type "Sanitizer"}}
-                <!-- Sanitizer Controls -->
-                <div class="control-group">
-                    <div class="control-label">Power Level Control</div>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="101" value="{{.Device.PowerLevel}}" class="slider" id="powerSlider">
-                        <div class="slider-labels">
-                            <span>0%</span>
-                            <span id="powerValue">{{.Device.PowerLevel}}%</span>
-                            <span>101% (Boost)</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">Boost Duration</div>
-                    <div class="slider-container">
-                        <input type="range" min="1" max="24" value="4" class="slider" id="boostSlider">
-                        <div class="slider-labels">
-                            <span>1 hour</span>
-                            <span id="boostValue">4 hours</span>
-                            <span>24 hours</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="sendSanitizerCommand('set_power')">SET POWER</button>
-                    <button class="btn btn-secondary" onclick="sendSanitizerCommand('send_topology')">SEND TOPOLOGY</button>
-                    <button class="btn btn-secondary" onclick="sendSanitizerCommand('read_pib_serial')">READ PIB SERIAL</button>
-                    <button class="btn btn-secondary" onclick="sendSanitizerCommand('read_cell_serial')">READ CELL SERIAL</button>
-                    <button class="btn btn-secondary" onclick="sendSanitizerCommand('find_me')">FIND ME</button>
-                </div>
-                
-                {{else if eq .Device.Type "ICL"}}
-                <!-- ICL Controls -->
-                <div class="control-group">
-                    <div class="control-label">RGBW Color Control</div>
-                    <div class="color-picker">
-                        <div class="color-control">
-                            <label>Red</label>
-                            <input type="range" min="0" max="255" value="{{.Device.Red}}" class="slider color-slider" id="redSlider">
-                            <div class="color-value" id="redValue">{{.Device.Red}}</div>
-                        </div>
-                        <div class="color-control">
-                            <label>Green</label>
-                            <input type="range" min="0" max="255" value="{{.Device.Green}}" class="slider color-slider" id="greenSlider">
-                            <div class="color-value" id="greenValue">{{.Device.Green}}</div>
-                        </div>
-                        <div class="color-control">
-                            <label>Blue</label>
-                            <input type="range" min="0" max="255" value="{{.Device.Blue}}" class="slider color-slider" id="blueSlider">
-                            <div class="color-value" id="blueValue">{{.Device.Blue}}</div>
-                        </div>
-                        <div class="color-control">
-                            <label>White</label>
-                            <input type="range" min="0" max="255" value="{{.Device.White}}" class="slider color-slider" id="whiteSlider">
-                            <div class="color-value" id="whiteValue">{{.Device.White}}</div>
-                        </div>
-                    </div>
-                    <div class="color-preview" id="liveColorPreview" style="background-color: {{colorFromRGBW .Device.Red .Device.Green .Device.Blue .Device.White}}"></div>
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="sendICLCommand('set_color')">SET COLOR</button>
-                    <button class="btn btn-danger" onclick="sendICLCommand('off')">TURN OFF</button>
-                    <button class="btn btn-secondary" onclick="sendICLCommand('find_me')">FIND ME</button>
-                </div>
-                
-                {{else}}
-                <!-- Generic Device Controls -->
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="sendGenericCommand('find_me')">FIND ME</button>
-                    <button class="btn btn-secondary" onclick="sendGenericCommand('get_status')">GET STATUS</button>
-                </div>
-                {{end}}
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // VSP Control Functions
-        function sendVSPCommand(command) {
-            const rpm = document.getElementById('rpmSlider').value;
-            const primingDuration = document.getElementById('primingSlider').value;
-            
-            let payload = { device_id: '{{.Device.ID}}', command: command };
-            
-            if (command === 'sdem_go') {
-                payload.value = { rpm: parseInt(rpm), priming_duration: parseInt(primingDuration) };
-            }
-            
-            fetch('/api/command', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => console.log('Command sent:', data))
-            .catch(error => console.error('Error:', error));
-        }
-        
-        // Sanitizer Control Functions  
-        function sendSanitizerCommand(command) {
-            const power = document.getElementById('powerSlider').value;
-            const boostDuration = document.getElementById('boostSlider').value;
-            
-            let payload = { device_id: '{{.Device.ID}}', command: command };
-            
-            if (command === 'set_power') {
-                payload.value = { power: parseInt(power), boost_duration: parseInt(boostDuration) };
-            }
-            
-            fetch('/api/command', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => console.log('Command sent:', data))
-            .catch(error => console.error('Error:', error));
-        }
-        
-        // ICL Control Functions
-        function sendICLCommand(command) {
-            const red = document.getElementById('redSlider').value;
-            const green = document.getElementById('greenSlider').value;
-            const blue = document.getElementById('blueSlider').value;
-            const white = document.getElementById('whiteSlider').value;
-            
-            let payload = { device_id: '{{.Device.ID}}', command: command };
-            
-            if (command === 'set_color') {
-                payload.value = { r: parseInt(red), g: parseInt(green), b: parseInt(blue), w: parseInt(white) };
-            } else if (command === 'off') {
-                payload.value = { r: 0, g: 0, b: 0, w: 0 };
-            }
-            
-            fetch('/api/command', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => console.log('Command sent:', data))
-            .catch(error => console.error('Error:', error));
-        }
-        
-        // Generic Control Functions
-        function sendGenericCommand(command) {
-            fetch('/api/command', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ device_id: '{{.Device.ID}}', command: command })
-            })
-            .then(response => response.json())
-            .then(data => console.log('Command sent:', data))
-            .catch(error => console.error('Error:', error));
-        }
-        
-        // Real-time UI Updates
-        document.addEventListener('DOMContentLoaded', function() {
-            // VSP slider updates
-            const rpmSlider = document.getElementById('rpmSlider');
-            const rpmValue = document.getElementById('rpmValue');
-            if (rpmSlider && rpmValue) {
-                rpmSlider.addEventListener('input', function() {
-                    rpmValue.textContent = this.value + ' RPM';
-                });
-            }
-            
-            const primingSlider = document.getElementById('primingSlider');
-            const primingValue = document.getElementById('primingValue');
-            if (primingSlider && primingValue) {
-                primingSlider.addEventListener('input', function() {
-                    primingValue.textContent = this.value + ' sec';
-                });
-            }
-            
-            // Sanitizer slider updates
-            const powerSlider = document.getElementById('powerSlider');
-            const powerValue = document.getElementById('powerValue');
-            if (powerSlider && powerValue) {
-                powerSlider.addEventListener('input', function() {
-                    powerValue.textContent = this.value + '%';
-                });
-            }
-            
-            const boostSlider = document.getElementById('boostSlider');
-            const boostValue = document.getElementById('boostValue');
-            if (boostSlider && boostValue) {
-                boostSlider.addEventListener('input', function() {
-                    boostValue.textContent = this.value + ' hours';
-                });
-            }
-            
-            // ICL color slider updates
-            const colorSliders = ['redSlider', 'greenSlider', 'blueSlider', 'whiteSlider'];
-            const colorValues = ['redValue', 'greenValue', 'blueValue', 'whiteValue'];
-            
-            colorSliders.forEach((sliderId, index) => {
-                const slider = document.getElementById(sliderId);
-                const value = document.getElementById(colorValues[index]);
-                if (slider && value) {
-                    slider.addEventListener('input', function() {
-                        value.textContent = this.value;
-                        updateColorPreview();
-                    });
-                }
-            });
-            
-            function updateColorPreview() {
-                const red = document.getElementById('redSlider').value;
-                const green = document.getElementById('greenSlider').value;
-                const blue = document.getElementById('blueSlider').value;
-                const white = document.getElementById('whiteSlider').value;
-                
-                const preview = document.getElementById('liveColorPreview');
-                if (preview) {
-                    const r = parseInt(red) + parseInt(white) / 4;
-                    const g = parseInt(green) + parseInt(white) / 4;
-                    const b = parseInt(blue) + parseInt(white) / 4;
-                    preview.style.backgroundColor = 'rgb(' + r + ',' + g + ',' + b + ')';
-                }
-            }
-        });
-    </script>
-</body>
-</html>
-`))
-
-// Stop NgaSim
-func (nga *NgaSim) Stop() error {
-	nga.running = false
-
-	if nga.mqttClient != nil && nga.mqttClient.IsConnected() {
-		nga.mqttClient.Disconnect(250)
-	}
-
-	if nga.pollerManager != nil {
-		nga.pollerManager.Stop()
-	}
-
-	if nga.webServer != nil {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		nga.webServer.Shutdown(ctx)
-	}
-
-	return nil
-}
-
-// Create some demo devices for testing
-func (nga *NgaSim) createDemoDevices() {
-	nga.devicesMutex.Lock()
-	defer nga.devicesMutex.Unlock()
-
-	// Add demo VSP
-	nga.devices["VSP001"] = &Device{
-		ID:          "VSP001",
-		Type:        DeviceVSP,
-		Name:        "Main Pool Pump",
-		Serial:      "VSP001",
-		Status:      StatusOnline,
-		LastSeen:    time.Now(),
-		RPM:         1800,
-		Temperature: 25.5,
-		PowerWatts:  850,
-		Properties:  make(map[string]interface{}),
-	}
-
-	// Add demo sanitizer
-	nga.devices["SALT001"] = &Device{
-		ID:           "SALT001",
-		Type:         DeviceSanitizer,
-		Name:         "Pool Sanitizer",
-		Serial:       "SALT001",
-		Status:       StatusOnline,
-		LastSeen:     time.Now(),
-		PowerLevel:   75,
-		PowerOn:      true,
-		Salinity:     3200,
-		CellTemp:     28.2,
-		CellVoltage:  14.5,
-		CellCurrent:  8.2,
-		NextReversal: 45,
-		HeatsinkTemp: 32.1,
-		Properties:   make(map[string]interface{}),
-	}
-
-	// Add demo ICL
-	nga.devices["ICL001"] = &Device{
-		ID:          "ICL001",
-		Type:        DeviceICL,
-		Name:        "Pool Lights",
-		Serial:      "ICL001",
-		Status:      StatusOnline,
-		LastSeen:    time.Now(),
-		Red:         120,
-		Green:       80,
-		Blue:        200,
-		White:       50,
-		Temperature: 22.8,
-		Properties:  make(map[string]interface{}),
-	}
-
-	// Add demo TruSense
-	nga.devices["PH001"] = &Device{
-		ID:          "PH001",
-		Type:        DeviceTruSense,
-		Name:        "Water Chemistry",
-		Serial:      "PH001",
-		Status:      StatusOnline,
-		LastSeen:    time.Now(),
-		PH:          7.4,
-		ORP:         675,
-		Temperature: 26.1,
-		Properties:  make(map[string]interface{}),
-	}
-
-	log.Println("Created demo devices for testing")
-}
-
 func main() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.Println("=== NgaSim Pool Controller Simulator ===")
 
 	nga := NewNgaSim()
 
-	// Create demo devices for testing
-	nga.createDemoDevices()
-
-	// Start NgaSim
 	if err := nga.Start(); err != nil {
-		log.Fatalf("Failed to start NgaSim: %v", err)
+		log.Fatalf("Failed to start: %v", err)
 	}
 
+	log.Println("NgaSim started successfully!")
+	log.Println("Visit http://localhost:8080 to view the web interface")
+
 	// Wait for interrupt
-	select {}
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+	<-sigChan
+
+	log.Println("Shutting down NgaSim...")
+
+	// Stop the poller subprocess
+	nga.stopPoller()
 }
