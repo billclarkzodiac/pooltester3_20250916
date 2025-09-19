@@ -1,0 +1,208 @@
+# Pool Automation Jobs
+# This file defines automated sequences for pool device management
+
+- id: "daily_pool_check"
+  name: "Daily Pool Health Check"
+  description: "Performs a comprehensive health check of all pool devices"
+  enabled: true
+  schedule:
+    type: "cron"
+    cron: "0 8 * * *"  # Every day at 8 AM
+  tags: ["maintenance", "health-check"]
+  actions:
+    - type: "send_message"
+      device_id: "VSP001"
+      message_type: "ned.GetDeviceInformationRequestPayload"
+      parameters: {}
+      tags: ["pump-status"]
+      
+    - type: "condition"
+      condition:
+        type: "device_online"
+        device_id: "VSP001"
+        timeout: "30s"
+      on_failure:
+        - type: "send_message"
+          device_id: "VSP001" 
+          message_type: "ned.FindMeRequestPayload"
+          parameters: {}
+          
+    - type: "send_message"
+      device_id: "SALT001"
+      message_type: "ned.SanitizerTelemetryRequestPayload"
+      parameters: {}
+      tags: ["sanitizer-telemetry"]
+      
+    - type: "condition"
+      condition:
+        type: "field_greater"
+        device_id: "SALT001"
+        field_path: "telemetry.salinity"
+        operator: ">"
+        value: 2500
+        timeout: "10s"
+      on_failure:
+        - type: "send_message"
+          device_id: "SALT001"
+          message_type: "ned.SanitizerConfigurationRequestPayload"
+          parameters:
+            power_level: 75
+
+- id: "evening_sanitizer_boost"
+  name: "Evening Sanitizer Boost"
+  description: "Increases sanitizer output during evening hours for optimal overnight sanitation"
+  enabled: true
+  schedule:
+    type: "cron"
+    cron: "0 20 * * *"  # Every day at 8 PM
+  tags: ["sanitizer", "evening", "boost"]
+  actions:
+    - type: "send_message"
+      device_id: "SALT001"
+      message_type: "ned.SanitizerConfigurationRequestPayload"
+      parameters:
+        power_level: 85
+        boost_mode: true
+      retry:
+        max_attempts: 3
+        interval: "5s"
+        backoff: "exponential"
+        
+    - type: "wait"
+      wait_duration: "4h"
+      
+    - type: "send_message"
+      device_id: "SALT001"
+      message_type: "ned.SanitizerConfigurationRequestPayload"
+      parameters:
+        power_level: 60
+        boost_mode: false
+
+- id: "pump_schedule_optimization"
+  name: "Pump Schedule Optimization"
+  description: "Adjusts pump speed based on time of day and system demands"
+  enabled: true
+  schedule:
+    type: "interval"
+    interval: "2h"
+  tags: ["pump", "optimization", "energy-saving"]
+  actions:
+    - type: "condition"
+      condition:
+        type: "time_range"
+        start_time: "06:00"
+        end_time: "22:00"
+      on_success:
+        - type: "send_message"
+          device_id: "VSP001"
+          message_type: "ned.VSPConfigurationRequestPayload"
+          parameters:
+            rpm: 2400
+            mode: "HIGH_SPEED"
+      on_failure:
+        - type: "send_message"
+          device_id: "VSP001"
+          message_type: "ned.VSPConfigurationRequestPayload"
+          parameters:
+            rpm: 1200
+            mode: "LOW_SPEED"
+
+- id: "emergency_shutdown"
+  name: "Emergency System Shutdown"
+  description: "Safely shuts down all pool equipment in case of emergency"
+  enabled: true
+  tags: ["emergency", "safety", "shutdown"]
+  actions:
+    - type: "send_message"
+      device_id: "VSP001"
+      message_type: "ned.VSPConfigurationRequestPayload"
+      parameters:
+        rpm: 0
+        mode: "OFF"
+      retry:
+        max_attempts: 5
+        interval: "2s"
+        
+    - type: "send_message"
+      device_id: "SALT001"
+      message_type: "ned.SanitizerConfigurationRequestPayload"
+      parameters:
+        power_level: 0
+        enabled: false
+      retry:
+        max_attempts: 5
+        interval: "2s"
+        
+    - type: "send_message"
+      device_id: "HEATER001"
+      message_type: "ned.HeaterConfigurationRequestPayload"
+      parameters:
+        mode: "OFF"
+        target_temperature: 0
+      retry:
+        max_attempts: 5
+        interval: "2s"
+
+- id: "weekly_deep_clean"
+  name: "Weekly Deep Clean Cycle"
+  description: "Performs intensive cleaning cycle with coordinated equipment operation"
+  enabled: false  # Manual trigger only
+  tags: ["cleaning", "weekly", "maintenance"]
+  actions:
+    - type: "send_message"
+      device_id: "VSP001"
+      message_type: "ned.VSPConfigurationRequestPayload"
+      parameters:
+        rpm: 3000
+        mode: "MAX_SPEED"
+        
+    - type: "wait"
+      wait_duration: "30m"
+      
+    - type: "send_message"
+      device_id: "SALT001"
+      message_type: "ned.SanitizerConfigurationRequestPayload"
+      parameters:
+        power_level: 100
+        super_chlorinate: true
+        
+    - type: "wait"
+      wait_duration: "2h"
+      
+    - type: "send_message"
+      device_id: "ICL001"
+      message_type: "ned.ICLConfigurationRequestPayload"
+      parameters:
+        red: 0
+        green: 0
+        blue: 255
+        white: 255
+        mode: "CLEANING_CYCLE"
+        
+    - type: "wait"
+      wait_duration: "1h"
+      
+    # Return to normal operation
+    - type: "send_message"
+      device_id: "VSP001"
+      message_type: "ned.VSPConfigurationRequestPayload"
+      parameters:
+        rpm: 2000
+        mode: "NORMAL"
+        
+    - type: "send_message"
+      device_id: "SALT001"
+      message_type: "ned.SanitizerConfigurationRequestPayload"
+      parameters:
+        power_level: 70
+        super_chlorinate: false
+        
+    - type: "send_message"
+      device_id: "ICL001"
+      message_type: "ned.ICLConfigurationRequestPayload"
+      parameters:
+        red: 50
+        green: 100
+        blue: 200
+        white: 50
+        mode: "NORMAL"
