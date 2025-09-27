@@ -14,10 +14,13 @@ import (
 	"syscall"
 	"time"
 
+	"NgaSim/ned" // Import protobuf definitions
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"google.golang.org/protobuf/proto"
 )
 
-const NgaSimVersion = "2.1.0"
+const NgaSimVersion = "2.1.1"
 
 type Device struct {
 	ID       string    `json:"id"`
@@ -26,6 +29,14 @@ type Device struct {
 	Serial   string    `json:"serial"`
 	Status   string    `json:"status"`
 	LastSeen time.Time `json:"last_seen"`
+
+	// Additional protobuf fields for detailed device info
+	ProductName     string `json:"product_name,omitempty"`
+	Category        string `json:"category,omitempty"`
+	ModelId         string `json:"model_id,omitempty"`
+	ModelVersion    string `json:"model_version,omitempty"`
+	FirmwareVersion string `json:"firmware_version,omitempty"`
+	OtaVersion      string `json:"ota_version,omitempty"`
 
 	// VSP fields
 	RPM   int     `json:"rpm,omitempty"`
@@ -53,6 +64,16 @@ type Device struct {
 	SetTemp     float64 `json:"set_temp,omitempty"`     // Target temperature
 	WaterTemp   float64 `json:"water_temp,omitempty"`   // Current water temp
 	HeatingMode string  `json:"heating_mode,omitempty"` // OFF/HEAT/COOL
+
+	// Sanitizer-specific telemetry fields
+	RSSI               int32 `json:"rssi,omitempty"`                  // Signal strength
+	PPMSalt            int32 `json:"ppm_salt,omitempty"`              // Salt concentration in PPM
+	PercentageOutput   int32 `json:"percentage_output,omitempty"`     // Current output percentage
+	AccelerometerX     int32 `json:"accelerometer_x,omitempty"`       // X-axis tilt
+	AccelerometerY     int32 `json:"accelerometer_y,omitempty"`       // Y-axis tilt
+	AccelerometerZ     int32 `json:"accelerometer_z,omitempty"`       // Z-axis tilt
+	LineInputVoltage   int32 `json:"line_input_voltage,omitempty"`    // Input voltage
+	IsCellFlowReversed bool  `json:"is_cell_flow_reversed,omitempty"` // Flow direction
 }
 
 type NgaSim struct {
@@ -71,9 +92,11 @@ const (
 
 // MQTT Topics for device discovery
 const (
-	TopicAnnounce  = "devices/+/announce"
-	TopicTelemetry = "devices/+/telemetry"
-	TopicStatus    = "devices/+/status"
+	TopicAnnounce  = "async/+/+/anc"
+	TopicInfo      = "async/+/+/info"
+	TopicTelemetry = "async/+/+/dt"
+	TopicError     = "async/+/+/error" // Match Python example
+	TopicStatus    = "async/+/+/sts"
 )
 
 // connectMQTT initializes MQTT client and connects to broker
@@ -141,7 +164,7 @@ func (sim *NgaSim) stopPoller() {
 
 // subscribeToTopics subscribes to device announcement and telemetry topics
 func (sim *NgaSim) subscribeToTopics() {
-	topics := []string{TopicAnnounce, TopicTelemetry, TopicStatus}
+	topics := []string{TopicAnnounce, TopicTelemetry, TopicStatus, TopicError}
 
 	for _, topic := range topics {
 		if token := sim.mqtt.Subscribe(topic, 1, sim.messageHandler); token.Wait() && token.Error() != nil {
@@ -160,41 +183,68 @@ func (sim *NgaSim) messageHandler(client mqtt.Client, msg mqtt.Message) {
 	log.Printf("Received MQTT message on topic: %s", topic)
 	log.Printf("Payload: %s", payload)
 
-	// Parse topic to extract device ID
+	// Parse topic to extract device info
+	// Topic format: async/category/serial/type
 	parts := strings.Split(topic, "/")
-	if len(parts) < 3 {
+	if len(parts) < 4 {
 		log.Printf("Invalid topic format: %s", topic)
 		return
 	}
 
-	deviceID := parts[1]
-	messageType := parts[2]
+	category := parts[1]
+	deviceSerial := parts[2]
+	messageType := parts[3]
 
 	switch messageType {
-	case "announce":
-		sim.handleDeviceAnnounce(deviceID, payload)
-	case "telemetry":
-		sim.handleDeviceTelemetry(deviceID, payload)
-	case "status":
-		sim.handleDeviceStatus(deviceID, payload)
+	case "anc":
+		sim.handleDeviceAnnounce(category, deviceSerial, msg.Payload())
+	case "dt":
+		sim.handleDeviceTelemetry(category, deviceSerial, msg.Payload())
+	case "sts":
+		sim.handleDeviceStatus(category, deviceSerial, msg.Payload())
+	case "error":
+		sim.handleDeviceError(category, deviceSerial, msg.Payload())
 	default:
 		log.Printf("Unknown message type: %s", messageType)
 	}
 }
 
 // handleDeviceAnnounce processes device announcement messages
-func (sim *NgaSim) handleDeviceAnnounce(deviceID, payload string) {
-	log.Printf("Device announce from %s: %s", deviceID, payload)
+func (sim *NgaSim) handleDeviceAnnounce(category, deviceSerial string, payload []byte) {
+	log.Printf("Device announce from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
 
-	// Try to parse as JSON (fallback for non-protobuf devices)
+	// Try to parse as protobuf GetDeviceInformationResponsePayload
+	announce := &ned.GetDeviceInformationResponsePayload{}
+	if err := proto.Unmarshal(payload, announce); err == nil {
+		// Log detailed protobuf message like Python reflect_message function
+		log.Printf("=== Device Announcement (Protobuf) ===")
+		log.Printf("product_name: %s", announce.GetProductName())
+		log.Printf("serial_number: %s", announce.GetSerialNumber())
+		log.Printf("category: %s", announce.GetCategory())
+		log.Printf("model_id: %s", announce.GetModelId())
+		log.Printf("model_version: %s", announce.GetModelVersion())
+		log.Printf("firmware_version: %s", announce.GetFirmwareVersion())
+		log.Printf("ota_version: %s", announce.GetOtaVersion())
+		log.Printf("available_bus_types: %v", announce.GetAvailableBusTypes())
+		if activeBus := announce.GetActiveBus(); activeBus != nil {
+			log.Printf("active_bus: %+v", activeBus)
+		}
+		log.Printf("===========================================")
+
+		sim.updateDeviceFromProtobufAnnounce(category, deviceSerial, announce)
+		return
+	} else {
+		log.Printf("Failed to parse as protobuf GetDeviceInformationResponsePayload: %v", err)
+	}
+
+	// Fallback: try to parse as JSON
 	var announceData map[string]interface{}
-	if err := json.Unmarshal([]byte(payload), &announceData); err == nil {
-		sim.updateDeviceFromAnnounce(deviceID, announceData)
+	if err := json.Unmarshal(payload, &announceData); err == nil {
+		sim.updateDeviceFromJSONAnnounce(deviceSerial, announceData)
 		return
 	}
 
-	// TODO: Add protobuf parsing here
-	log.Printf("Could not parse announce message as JSON, may be protobuf: %s", payload)
+	log.Printf("Could not parse announce message from %s: %x", deviceSerial, payload)
 }
 
 // updateDeviceFromAnnounce updates device from announcement data
@@ -231,19 +281,80 @@ func (sim *NgaSim) updateDeviceFromAnnounce(deviceID string, data map[string]int
 	log.Printf("Updated device %s: type=%s, name=%s", deviceID, device.Type, device.Name)
 }
 
-// handleDeviceTelemetry processes device telemetry messages
-func (sim *NgaSim) handleDeviceTelemetry(deviceID, payload string) {
-	log.Printf("Device telemetry from %s: %s", deviceID, payload)
+// handleDeviceStatus processes device status messages
+func (sim *NgaSim) handleDeviceStatus(category, deviceSerial string, payload []byte) {
+	log.Printf("Device status from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
+	// TODO: Implement status message parsing
+}
 
-	// Try to parse as JSON
-	var telemetryData map[string]interface{}
-	if err := json.Unmarshal([]byte(payload), &telemetryData); err == nil {
-		sim.updateDeviceFromTelemetry(deviceID, telemetryData)
+// handleDeviceError processes device error messages
+func (sim *NgaSim) handleDeviceError(category, deviceSerial string, payload []byte) {
+	log.Printf("Device error from %s (category: %s): %d bytes - %s", deviceSerial, category, len(payload), string(payload))
+	// TODO: Implement error message parsing
+}
+
+// updateDeviceFromSanitizerTelemetry updates device with sanitizer telemetry data
+func (sim *NgaSim) updateDeviceFromSanitizerTelemetry(deviceSerial string, telemetry *ned.TelemetryMessage) {
+	sim.mutex.Lock()
+	defer sim.mutex.Unlock()
+
+	device, exists := sim.devices[deviceSerial]
+	if !exists {
+		log.Printf("Received telemetry for unknown device: %s", deviceSerial)
 		return
 	}
 
-	// TODO: Add protobuf parsing here
-	log.Printf("Could not parse telemetry message as JSON, may be protobuf: %s", payload)
+	// Update sanitizer-specific telemetry fields
+	device.RSSI = telemetry.GetRssi()
+	device.PPMSalt = telemetry.GetPpmSalt()
+	device.PercentageOutput = telemetry.GetPercentageOutput()
+	device.AccelerometerX = telemetry.GetAccelerometerX()
+	device.AccelerometerY = telemetry.GetAccelerometerY()
+	device.AccelerometerZ = telemetry.GetAccelerometerZ()
+	device.LineInputVoltage = telemetry.GetLineInputVoltage()
+	device.IsCellFlowReversed = telemetry.GetIsCellFlowReversed()
+
+	// Update legacy fields for compatibility
+	device.Salinity = int(telemetry.GetPpmSalt())
+	device.PowerLevel = int(telemetry.GetPercentageOutput())
+
+	device.LastSeen = time.Now()
+	log.Printf("Updated sanitizer telemetry for device %s: Salt=%dppm, Output=%d%%, RSSI=%ddBm",
+		deviceSerial, device.PPMSalt, device.PercentageOutput, device.RSSI)
+}
+
+// handleDeviceTelemetry processes device telemetry messages
+func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload []byte) {
+	log.Printf("Device telemetry from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
+
+	// Try sanitizer-specific protobuf parsing for sanitizer devices
+	if strings.Contains(strings.ToLower(category), "sanitizer") {
+		telemetry := &ned.TelemetryMessage{}
+		if err := proto.Unmarshal(payload, telemetry); err == nil {
+			log.Printf("=== Sanitizer Telemetry (Protobuf) ===")
+			log.Printf("rssi: %d dBm", telemetry.GetRssi())
+			log.Printf("ppm_salt: %d ppm", telemetry.GetPpmSalt())
+			log.Printf("percentage_output: %d%%", telemetry.GetPercentageOutput())
+			log.Printf("accelerometer: x=%d, y=%d, z=%d", telemetry.GetAccelerometerX(), telemetry.GetAccelerometerY(), telemetry.GetAccelerometerZ())
+			log.Printf("line_input_voltage: %d V", telemetry.GetLineInputVoltage())
+			log.Printf("is_cell_flow_reversed: %t", telemetry.GetIsCellFlowReversed())
+			log.Printf("========================================")
+
+			sim.updateDeviceFromSanitizerTelemetry(deviceSerial, telemetry)
+			return
+		} else {
+			log.Printf("Failed to parse as sanitizer TelemetryMessage: %v", err)
+		}
+	}
+
+	// Try to parse as JSON (fallback)
+	var telemetryData map[string]interface{}
+	if err := json.Unmarshal(payload, &telemetryData); err == nil {
+		sim.updateDeviceFromTelemetry(deviceSerial, telemetryData)
+		return
+	}
+
+	log.Printf("Could not parse telemetry message: %x", payload)
 }
 
 // updateDeviceFromTelemetry updates device with telemetry data
@@ -304,22 +415,89 @@ func (sim *NgaSim) updateDeviceFromTelemetry(deviceID string, data map[string]in
 	log.Printf("Updated telemetry for device %s", deviceID)
 }
 
-// handleDeviceStatus processes device status messages
-func (sim *NgaSim) handleDeviceStatus(deviceID, payload string) {
-	log.Printf("Device status from %s: %s", deviceID, payload)
-
+// updateDeviceFromProtobufAnnounce updates device from protobuf announcement message
+func (sim *NgaSim) updateDeviceFromProtobufAnnounce(category, deviceSerial string, announce *ned.GetDeviceInformationResponsePayload) {
 	sim.mutex.Lock()
 	defer sim.mutex.Unlock()
 
-	if device, exists := sim.devices[deviceID]; exists {
-		// Simple status parsing - could be enhanced
-		if strings.Contains(strings.ToUpper(payload), "OFFLINE") {
-			device.Status = "OFFLINE"
-		} else if strings.Contains(strings.ToUpper(payload), "READY") {
-			device.Status = "ONLINE"
-		}
-		device.LastSeen = time.Now()
+	// Use the serial number from the protobuf message as the authoritative source
+	serialFromMsg := announce.GetSerialNumber()
+	if serialFromMsg != "" {
+		deviceSerial = serialFromMsg
 	}
+
+	device, exists := sim.devices[deviceSerial]
+	if !exists {
+		device = &Device{
+			ID:       deviceSerial,
+			Serial:   deviceSerial,
+			Name:     fmt.Sprintf("Device-%s", deviceSerial),
+			Status:   "DISCOVERED",
+			LastSeen: time.Now(),
+		}
+		sim.devices[deviceSerial] = device
+		log.Printf("New device discovered via protobuf: %s", deviceSerial)
+	}
+
+	// Extract information from the protobuf message
+	device.ProductName = announce.GetProductName()
+	device.Category = announce.GetCategory()
+	device.ModelId = announce.GetModelId()
+	device.ModelVersion = announce.GetModelVersion()
+	device.FirmwareVersion = announce.GetFirmwareVersion()
+	device.OtaVersion = announce.GetOtaVersion()
+
+	// Set display fields
+	if device.ProductName != "" {
+		device.Name = device.ProductName
+	}
+	if device.Category != "" {
+		device.Type = device.Category
+	} else {
+		device.Type = category // Fallback to MQTT topic category
+	}
+	device.Serial = deviceSerial
+
+	device.Status = "ONLINE"
+	device.LastSeen = time.Now()
+
+	log.Printf("Device %s fully updated: ProductName='%s', Category='%s', Model='%s', FirmwareVer='%s'",
+		deviceSerial, device.ProductName, device.Category, device.ModelId, device.FirmwareVersion)
+}
+
+// updateDeviceFromJSONAnnounce updates device from JSON announcement (fallback)
+func (sim *NgaSim) updateDeviceFromJSONAnnounce(deviceSerial string, data map[string]interface{}) {
+	sim.mutex.Lock()
+	defer sim.mutex.Unlock()
+
+	device, exists := sim.devices[deviceSerial]
+	if !exists {
+		device = &Device{
+			ID:       deviceSerial,
+			Serial:   deviceSerial,
+			Name:     fmt.Sprintf("Device-%s", deviceSerial),
+			Status:   "DISCOVERED",
+			LastSeen: time.Now(),
+		}
+		sim.devices[deviceSerial] = device
+		log.Printf("New device discovered via JSON: %s", deviceSerial)
+	}
+
+	// Update device fields from JSON announce data
+	if deviceType, ok := data["type"].(string); ok {
+		device.Type = deviceType
+	}
+	if name, ok := data["name"].(string); ok {
+		device.Name = name
+	}
+	if serial, ok := data["serial"].(string); ok {
+		device.Serial = serial
+	}
+
+	device.Status = "ONLINE"
+	device.LastSeen = time.Now()
+
+	log.Printf("Updated device %s from JSON: type=%s, name=%s", deviceSerial, device.Type, device.Name)
 }
 
 func NewNgaSim() *NgaSim {
@@ -530,18 +708,18 @@ var tmpl = template.Must(template.New("home").Parse(`
                             <div class="metric-value">{{.Power}}W</div>
                             <div class="metric-label">Power</div>
                         </div>
-                                        {{else if eq .Type "Sanitizer"}}
+                                                                {{else if or (eq .Type "Sanitizer") (eq .Category "sanitizerGen2") (eq .Type "sanitizerGen2")}}
                         <div class="metric">
-                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
-                            <div class="metric-label">Temperature</div>
+                            <div class="metric-value">{{.PPMSalt}}ppm</div>
+                            <div class="metric-label">Salt Level</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value">{{.Salinity}}ppm</div>
-                            <div class="metric-label">Salinity</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{.Output}}%</div>
+                            <div class="metric-value">{{.PercentageOutput}}%</div>
                             <div class="metric-label">Output</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">{{.RSSI}}dBm</div>
+                            <div class="metric-label">Signal</div>
                         </div>
                     {{else if eq .Type "ICL"}}
                         <div class="metric">
@@ -597,6 +775,16 @@ var tmpl = template.Must(template.New("home").Parse(`
                         </div>
                     {{end}}
                 </div>
+                {{if .ProductName}}
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 0.85em;">
+                    <div><strong>Product:</strong> {{.ProductName}}</div>
+                    {{if .ModelId}}<div><strong>Model:</strong> {{.ModelId}} {{.ModelVersion}}</div>{{end}}
+                    {{if .FirmwareVersion}}<div><strong>Firmware:</strong> {{.FirmwareVersion}}</div>{{end}}
+                    {{if .OtaVersion}}<div><strong>OTA:</strong> {{.OtaVersion}}</div>{{end}}
+                    {{if ne .LineInputVoltage 0}}<div><strong>Voltage:</strong> {{.LineInputVoltage}}V</div>{{end}}
+                    {{if .IsCellFlowReversed}}<div><strong>Flow:</strong> <span style="color: orange;">Reversed</span></div>{{end}}
+                </div>
+                {{end}}
                 <p style="text-align: center; margin-top: 15px; font-size: 0.9em; color: #666;">
                     Last seen: {{.LastSeen.Format "15:04:05"}}
                 </p>

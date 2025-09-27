@@ -38,11 +38,9 @@ Now let me create the dynamic UI generation system and integrate everything with
 
 **🔧 Dynamic Protobuf Integration**
 
-- **Reflective Approach:** Automatically handles new, never-before-seen protobufs using Go's reflection API
-
-- **Smart UI Generation:** Creates detailed sub-pages with widgets for building commands and displaying response data
-
-- **Intelligent Labels:** Extracts labels from protobuf .pb.go files and converts them to human-readable format
+- **Reflective Approach:** Automatically handles new, never-before-seen protobufs using Go's reflection API  
+- **Smart UI Generation:** Creates detailed sub-pages with widgets for building commands and displaying response data  
+- **Intelligent Labels:** Extracts labels from protobuf .pb.go files and converts them to human-readable format  
 
 **📊 Comprehensive Device Logging**
 
