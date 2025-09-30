@@ -1,0 +1,59 @@
+2025/09/30 14:09:46 === NgaSim Pool Controller Simulator ===
+2025/09/30 14:09:46 Starting NgaSim v2.1.1
+2025/09/30 14:09:46 Connecting to MQTT broker...
+2025/09/30 14:09:46 MQTT connected successfully - waiting for device announcements...
+2025/09/30 14:09:46 Starting C poller subprocess...
+2025/09/30 14:09:46 Connected to MQTT broker at tcp://169.254.1.1:1883
+2025/09/30 14:09:46 Started C poller with PID: 104289
+2025/09/30 14:09:46 Subscribed to topic: async/+/+/anc
+2025/09/30 14:09:46 NgaSim started successfully!
+2025/09/30 14:09:46 Visit http://localhost:8082 to view the web interface
+2025/09/30 14:09:46 Subscribed to topic: async/+/+/dt
+2025/09/30 14:09:46 Web server starting on :8082
+2025/09/30 14:09:46 Subscribed to topic: async/+/+/sts
+2025/09/30 14:09:46 Subscribed to topic: async/+/+/error
+2025/09/30 14:10:08 Received MQTT message on topic: async/sanitizerGen2/1234567890ABCDEF00/anc
+2025/09/30 14:10:08 Payload: 
+EDGE-SWC-IM1234567890ABCDEF00sanitizerGen2"sanitizer-gen2*1.021.0.1:0.0.1BJ0
+2025/09/30 14:10:08 Device announce from 1234567890ABCDEF00 (category: sanitizerGen2): 93 bytes
+2025/09/30 14:10:08 === Device Announcement (Protobuf) ===
+2025/09/30 14:10:08 product_name: EDGE-SWC-IM
+2025/09/30 14:10:08 serial_number: 1234567890ABCDEF00
+2025/09/30 14:10:08 category: sanitizerGen2
+2025/09/30 14:10:08 model_id: sanitizer-gen2
+2025/09/30 14:10:08 model_version: 1.0
+2025/09/30 14:10:08 firmware_version: 1.0.1
+2025/09/30 14:10:08 ota_version: 0.0.1
+2025/09/30 14:10:08 available_bus_types: [BUS_TYPE_SLIP]
+2025/09/30 14:10:08 active_bus: bus_type:BUS_TYPE_SLIP  ip_address:"0"
+2025/09/30 14:10:08 ===========================================
+2025/09/30 14:10:08 New device discovered via protobuf: 1234567890ABCDEF00
+2025/09/30 14:10:08 Device 1234567890ABCDEF00 fully updated: ProductName='EDGE-SWC-IM', Category='sanitizerGen2', Model='sanitizer-gen2', FirmwareVer='1.0.1'
+2025/09/30 14:10:10 Received MQTT message on topic: async/sanitizerGen2/1234567890ABCDEF00/anc
+2025/09/30 14:10:10 Payload: 
+EDGE-SWC-IM1234567890ABCDEF00sanitizerGen2"sanitizer-gen2*1.021.0.1:0.0.1BJ0
+2025/09/30 14:10:10 Device announce from 1234567890ABCDEF00 (category: sanitizerGen2): 93 bytes
+2025/09/30 14:10:10 === Device Announcement (Protobuf) ===
+2025/09/30 14:10:10 product_name: EDGE-SWC-IM
+2025/09/30 14:10:10 serial_number: 1234567890ABCDEF00
+2025/09/30 14:10:10 category: sanitizerGen2
+2025/09/30 14:10:10 model_id: sanitizer-gen2
+2025/09/30 14:10:10 model_version: 1.0
+2025/09/30 14:10:10 firmware_version: 1.0.1
+2025/09/30 14:10:10 ota_version: 0.0.1
+2025/09/30 14:10:10 available_bus_types: [BUS_TYPE_SLIP]
+2025/09/30 14:10:10 active_bus: bus_type:BUS_TYPE_SLIP  ip_address:"0"
+2025/09/30 14:10:10 ===========================================
+2025/09/30 14:10:10 Device 1234567890ABCDEF00 fully updated: ProductName='EDGE-SWC-IM', Category='sanitizerGen2', Model='sanitizer-gen2', FirmwareVer='1.0.1'
+2025/09/30 14:10:18 Received MQTT message on topic: async/sanitizerGen2/1234567890ABCDEF00/dt
+2025/09/30 14:10:18 Payload:  N(µ0§èˇˇˇˇˇˇˇ8u@
+2025/09/30 14:10:18 Device telemetry from 1234567890ABCDEF00 (category: sanitizerGen2): 20 bytes
+2025/09/30 14:10:18 === Sanitizer Telemetry (Protobuf) ===
+2025/09/30 14:10:18 rssi: 0 dBm
+2025/09/30 14:10:18 ppm_salt: 0 ppm
+2025/09/30 14:10:18 percentage_output: 0%
+2025/09/30 14:10:18 accelerometer: x=78, y=181, z=-14428
+2025/09/30 14:10:18 line_input_voltage: 117 V
+2025/09/30 14:10:18 is_cell_flow_reversed: true
+2025/09/30 14:10:18 ========================================
+2025/09/30 14:10:18 Updated sanitizer telemetry for device 1234567890ABCDEF00: Salt=0ppm, Output=0%, RSSI=0dBm

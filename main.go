@@ -69,12 +69,17 @@ type Device struct {
 	// Sanitizer-specific telemetry fields
 	RSSI               int32 `json:"rssi,omitempty"`                  // Signal strength
 	PPMSalt            int32 `json:"ppm_salt,omitempty"`              // Salt concentration in PPM
-	PercentageOutput   int32 `json:"percentage_output,omitempty"`     // Current output percentage
+	PercentageOutput   int32 `json:"percentage_output,omitempty"`     // Current output percentage (actual device state)
 	AccelerometerX     int32 `json:"accelerometer_x,omitempty"`       // X-axis tilt
 	AccelerometerY     int32 `json:"accelerometer_y,omitempty"`       // Y-axis tilt
 	AccelerometerZ     int32 `json:"accelerometer_z,omitempty"`       // Z-axis tilt
 	LineInputVoltage   int32 `json:"line_input_voltage,omitempty"`    // Input voltage
 	IsCellFlowReversed bool  `json:"is_cell_flow_reversed,omitempty"` // Flow direction
+
+	// Command state tracking fields
+	PendingPercentage int32     `json:"pending_percentage,omitempty"` // What we asked device to do
+	LastCommandTime   time.Time `json:"last_command_time,omitempty"`  // When we sent the last command
+	ActualPercentage  int32     `json:"actual_percentage,omitempty"`  // Alias for PercentageOutput (for clarity)
 }
 
 type NgaSim struct {
@@ -83,6 +88,8 @@ type NgaSim struct {
 	mqtt      mqtt.Client
 	server    *http.Server
 	pollerCmd *exec.Cmd
+	logger    *DeviceLogger
+	registry  *ProtobufRegistry
 }
 
 // MQTT connection parameters
@@ -180,6 +187,14 @@ func (sim *NgaSim) cleanup() {
 	if sim.mqtt != nil && sim.mqtt.IsConnected() {
 		log.Println("Disconnecting from MQTT...")
 		sim.mqtt.Disconnect(1000)
+	}
+
+	// Close device logger
+	if sim.logger != nil {
+		log.Println("Closing device logger...")
+		if err := sim.logger.Close(); err != nil {
+			log.Printf("Error closing device logger: %v", err)
+		}
 	}
 
 	log.Println("Cleanup completed")
@@ -349,11 +364,31 @@ func (sim *NgaSim) updateDeviceFromSanitizerTelemetry(deviceSerial string, telem
 	device.RSSI = telemetry.GetRssi()
 	device.PPMSalt = telemetry.GetPpmSalt()
 	device.PercentageOutput = telemetry.GetPercentageOutput()
+	device.ActualPercentage = telemetry.GetPercentageOutput() // Keep both for clarity
 	device.AccelerometerX = telemetry.GetAccelerometerX()
 	device.AccelerometerY = telemetry.GetAccelerometerY()
 	device.AccelerometerZ = telemetry.GetAccelerometerZ()
 	device.LineInputVoltage = telemetry.GetLineInputVoltage()
 	device.IsCellFlowReversed = telemetry.GetIsCellFlowReversed()
+
+	// Check if pending command has been achieved
+	if device.PendingPercentage != 0 && device.ActualPercentage == device.PendingPercentage {
+		log.Printf("✅ Command achieved! %s: Pending %d%% = Actual %d%% (clearing pending state)",
+			deviceSerial, device.PendingPercentage, device.ActualPercentage)
+		device.PendingPercentage = 0
+		device.LastCommandTime = time.Time{}
+	} else if device.PendingPercentage != 0 {
+		timeSinceCommand := time.Since(device.LastCommandTime)
+		if timeSinceCommand > 30*time.Second {
+			log.Printf("⏰ Command timeout: %s: Pending %d%% != Actual %d%% after %v (clearing pending)",
+				deviceSerial, device.PendingPercentage, device.ActualPercentage, timeSinceCommand)
+			device.PendingPercentage = 0
+			device.LastCommandTime = time.Time{}
+		} else {
+			log.Printf("🔄 Command in progress: %s: Pending %d%% -> Actual %d%% (%.1fs ago)",
+				deviceSerial, device.PendingPercentage, device.ActualPercentage, timeSinceCommand.Seconds())
+		}
+	}
 
 	// Update legacy fields for compatibility
 	device.Salinity = int(telemetry.GetPpmSalt())
@@ -542,8 +577,22 @@ func (sim *NgaSim) updateDeviceFromJSONAnnounce(deviceSerial string, data map[st
 }
 
 func NewNgaSim() *NgaSim {
+	// Create protobuf registry for message parsing
+	registry := NewProtobufRegistry()
+
+	// Create device logger for structured command logging
+	logger, err := NewDeviceLogger(1000, "device_commands.log", registry)
+	if err != nil {
+		log.Printf("Warning: Failed to create device logger: %v", err)
+		logger = nil
+	} else {
+		log.Println("Device logger initialized - commands will be logged to device_commands.log")
+	}
+
 	return &NgaSim{
-		devices: make(map[string]*Device),
+		devices:  make(map[string]*Device),
+		logger:   logger,
+		registry: registry,
 	}
 }
 
@@ -676,8 +725,6 @@ func (n *NgaSim) createDemoDevices() {
 // sendSanitizerCommand sends a power level command to a sanitizer device
 // Matches the Python script send_salt_command() functionality
 func (sim *NgaSim) sendSanitizerCommand(deviceSerial, category string, targetPercentage int) error {
-	log.Printf("Sending sanitizer command: %s -> %d%%", deviceSerial, targetPercentage)
-
 	// Create SetSanitizerTargetPercentageRequestPayload
 	saltCmd := &ned.SetSanitizerTargetPercentageRequestPayload{
 		TargetPercentage: int32(targetPercentage),
@@ -690,29 +737,106 @@ func (sim *NgaSim) sendSanitizerCommand(deviceSerial, category string, targetPer
 		},
 	}
 
-	// Generate command UUID for tracking
-	cmdUUID := uuid.New().String()
-	log.Printf("Command UUID: %s", cmdUUID)
-
-	// Serialize the sanitizer request wrapper directly
-	// (Following Python script pattern - it also serializes wrapper directly)
-	data, err := proto.Marshal(wrapper)
-	if err != nil {
-		return fmt.Errorf("failed to marshal sanitizer command: %v", err)
+	// Update device pending state BEFORE sending command
+	sim.mutex.Lock()
+	device, exists := sim.devices[deviceSerial]
+	if exists {
+		device.PendingPercentage = int32(targetPercentage)
+		device.LastCommandTime = time.Now()
+		log.Printf("📝 Set pending state: %s -> %d%% (was %d%%)", deviceSerial, targetPercentage, device.PercentageOutput)
 	}
+	sim.mutex.Unlock()
+
+	// Create command UUID for tracking
+	cmdUuid := uuid.New().String()
+	log.Printf("🔑 Command UUID: %s for %s -> %d%%", cmdUuid, deviceSerial, targetPercentage)
+
+	// Debug: Verify the oneof field is properly set in sanitizer payload
+	if setCmd, ok := wrapper.RequestType.(*ned.SanitizerRequestPayloads_SetSanitizerOutputPercentage); ok {
+		log.Printf("✅ Sanitizer oneof field properly set - target: %d%%", setCmd.SetSanitizerOutputPercentage.TargetPercentage)
+	} else {
+		log.Printf("❌ ERROR: Sanitizer RequestType not properly set: %T", wrapper.RequestType)
+		return fmt.Errorf("sanitizer RequestType not set properly")
+	}
+
+	// CRITICAL FIX: Create CommandRequestMessage wrapper to match Python structure
+	// Python: msg = sanitizer_pb2.CommandRequestMessage()
+	//         msg.command_uuid = uuid
+	//         msg.sanitizer.CopyFrom(wrapper)
+	// But Go ned.CommandRequestMessage doesn't have sanitizer field!
+
+	// Create a custom message structure that matches what device expects
+	// Since Go protobuf doesn't match Python, we need to create the bytes manually
+
+	// Serialize the sanitizer payload first
+	sanitizerBytes, err := proto.Marshal(wrapper)
+	if err != nil {
+		log.Printf("❌ ERROR: Failed to marshal sanitizer payload: %v", err)
+		return fmt.Errorf("failed to marshal sanitizer payload: %v", err)
+	}
+
+	// Create a manual protobuf message with:
+	// Field 1 (string): command_uuid
+	// Field 3 (bytes): sanitizer payload (field 3 based on Python structure)
+	// This mimics: CommandRequestMessage { command_uuid=..., sanitizer=... }
+
+	var msgBuf []byte
+
+	// Add field 1: command_uuid (string, wire type 2)
+	// Tag = (1 << 3) | 2 = 10 (0x0A)
+	uuidBytes := []byte(cmdUuid)
+	msgBuf = append(msgBuf, 0x0A) // field 1, wire type 2 (length-delimited)
+	msgBuf = append(msgBuf, byte(len(uuidBytes)))
+	msgBuf = append(msgBuf, uuidBytes...)
+
+	// Add field 3: sanitizer (message, wire type 2)
+	// Tag = (3 << 3) | 2 = 26 (0x1A)
+	msgBuf = append(msgBuf, 0x1A) // field 3, wire type 2 (length-delimited)
+	msgBuf = append(msgBuf, byte(len(sanitizerBytes)))
+	msgBuf = append(msgBuf, sanitizerBytes...)
+
+	data := msgBuf
+	log.Printf("🔧 Created manual CommandRequestMessage: UUID=%s, sanitizer_size=%d bytes", cmdUuid, len(sanitizerBytes))
+
+	// Log the outgoing request with structured logging
+	correlationID := ""
+	if sim.logger != nil {
+		correlationID = sim.logger.LogRequest(
+			deviceSerial,
+			"SetSanitizerTargetPercentage",
+			data,
+			"chlorination",
+			fmt.Sprintf("target_%d_percent", targetPercentage),
+			fmt.Sprintf("category_%s", category),
+		)
+	}
+
+	log.Printf("Sending sanitizer command: %s -> %d%% (Correlation: %s)",
+		deviceSerial, targetPercentage, correlationID)
 
 	// Build topic following Python script: cmd/<category>/<serial>/req
 	topic := fmt.Sprintf("cmd/%s/%s/req", category, deviceSerial)
+	log.Printf("Publishing to MQTT topic: %s", topic)
 
 	// Publish to MQTT
 	token := sim.mqtt.Publish(topic, 1, false, data)
 	token.Wait()
 
 	if token.Error() != nil {
+		// Log the MQTT error
+		if sim.logger != nil {
+			sim.logger.LogError(deviceSerial, "SetSanitizerTargetPercentage",
+				fmt.Sprintf("MQTT publish failed: %v", token.Error()), correlationID,
+				"chlorination", "mqtt_error")
+		}
 		return fmt.Errorf("failed to publish sanitizer command: %v", token.Error())
 	}
 
-	log.Printf("✅ Sanitizer command sent successfully: %s -> %d%% (UUID: %s)", deviceSerial, targetPercentage, cmdUUID)
+	log.Printf("✅ Sanitizer command sent successfully: %s -> %d%% (Correlation: %s)",
+		deviceSerial, targetPercentage, correlationID)
+
+	log.Printf("📝 Structured logging: Check device_commands.log for detailed protobuf data")
+
 	return nil
 }
 
@@ -784,6 +908,12 @@ var tmpl = template.Must(template.New("home").Parse(`
         .metric-label { font-size: 0.8em; color: #666; margin-top: 5px; }
         .device-controls { margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
         .hidden { display: none; }
+        .command-pending { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
     </style>
     <script>
         let autoRefresh = true;
@@ -1134,8 +1264,15 @@ var tmpl = template.Must(template.New("home").Parse(`
                             <div class="metric-label">Salt Level</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value current-output" data-serial="{{.Serial}}">{{.PercentageOutput}}%</div>
-                            <div class="metric-label">Current Output</div>
+                            {{if and (ne .PendingPercentage 0) (ne .PendingPercentage .PercentageOutput)}}
+                                <div class="metric-value current-output" data-serial="{{.Serial}}" style="color: #F59E0B;">
+                                    {{.PendingPercentage}}% → {{.PercentageOutput}}%
+                                </div>
+                                <div class="metric-label" style="color: #F59E0B;">Command → Actual</div>
+                            {{else}}
+                                <div class="metric-value current-output" data-serial="{{.Serial}}">{{.PercentageOutput}}%</div>
+                                <div class="metric-label">Current Output</div>
+                            {{end}}
                         </div>
                         <div class="metric">
                             <div class="metric-value">{{.RSSI}}dBm</div>
