@@ -723,10 +723,10 @@ func (n *NgaSim) startWebServer() error {
 	mux.HandleFunc("/api/devices", n.handleAPI)
 	mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand)
 
-	n.server = &http.Server{Addr: ":8081", Handler: mux}
+	n.server = &http.Server{Addr: ":8082", Handler: mux}
 
 	go func() {
-		log.Println("Web server starting on :8081")
+		log.Println("Web server starting on :8082")
 		if err := n.server.ListenAndServe(); err != http.ErrServerClosed {
 			log.Printf("Server error: %v", err)
 		}
@@ -826,6 +826,8 @@ var tmpl = template.Must(template.New("home").Parse(`
                 
                 if (result.success) {
                     showStatus('✅ Command sent: ' + result.message, 'success');
+                    // Refresh page after 3 seconds to show updated state
+                    setTimeout(() => { window.location.reload(); }, 3000);
                 } else {
                     showStatus('❌ Command failed: ' + result.message, 'error');
                 }
@@ -835,14 +837,7 @@ var tmpl = template.Must(template.New("home").Parse(`
         }
         
         function showStatus(message, type) {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.textContent = message;
-            statusDiv.style.background = type === 'success' ? '#10B981' : '#EF4444';
-            statusDiv.style.color = 'white';
-            statusDiv.style.padding = '10px';
-            statusDiv.style.borderRadius = '5px';
-            statusDiv.style.margin = '10px 0';
-            setTimeout(() => { statusDiv.textContent = ''; statusDiv.style.background = 'transparent'; }, 5000);
+            alert(message);
         }
         
         function setSanitizerPower(serial, percentage) {
@@ -859,7 +854,7 @@ var tmpl = template.Must(template.New("home").Parse(`
             
             // Set up auto-refresh
             if (autoRefresh) {
-                setTimeout(() => { if (autoRefresh) window.location.reload(); }, 10000);
+                setTimeout(() => { if (autoRefresh) window.location.reload(); }, 15000);
             }
         }
     </script>
@@ -951,7 +946,7 @@ var tmpl = template.Must(template.New("home").Parse(`
                             <strong>MQTT Broker:</strong> 169.254.1.1:1883
                         </div>
                         <div style="margin: 8px 0;">
-                            <strong>Web Server:</strong> localhost:8081
+                            <strong>Web Server:</strong> localhost:8082
                         </div>
                         <div style="margin: 8px 0;">
                             <strong>Active Devices:</strong> {{len .Devices}}
@@ -998,8 +993,8 @@ var tmpl = template.Must(template.New("home").Parse(`
                             <div class="metric-label">Salt Level</div>
                         </div>
                         <div class="metric">
-                            <div class="metric-value">{{.PercentageOutput}}%</div>
-                            <div class="metric-label">Output</div>
+                            <div class="metric-value current-output" data-serial="{{.Serial}}">{{.PercentageOutput}}%</div>
+                            <div class="metric-label">Current Output</div>
                         </div>
                         <div class="metric">
                             <div class="metric-value">{{.RSSI}}dBm</div>
@@ -1204,7 +1199,7 @@ func main() {
 	}
 
 	log.Println("NgaSim started successfully!")
-	log.Println("Visit http://localhost:8081 to view the web interface")
+	log.Println("Visit http://localhost:8082 to view the web interface")
 
 	// Wait for interrupt
 	sigChan := make(chan os.Signal, 1)
