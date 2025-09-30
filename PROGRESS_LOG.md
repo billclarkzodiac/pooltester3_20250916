@@ -105,10 +105,48 @@
 - **GUI State Management** - Page refresh simpler than complex JS state sync
 
 ## 🏅 **User Feedback Incorporated**
-- "requests being sent always return to default values" - ✅ **Addressed with page refresh after commands**
+- "requests being sent always return to default values" - ✅ **FULLY FIXED with button latching**
 - "Jandy products not Pentair" - ✅ **Corrected throughout documentation**
 - "GUI buttons and dials for setting chlorination power" - ✅ **Fully implemented**
 - "background command repeat rate, topology reporting rate" - ✅ **Added interactive controls**
+- "GUI button goes back to the default value 50% this is confusing" - ✅ **RESOLVED with localStorage persistence**
+
+## 🎯 **September 30 Enhancement: Complete Button Latching System**
+**Problem:** GUI buttons reverted to default values after commands, causing confusion
+**Solution:** Universal localStorage + visual feedback system across ALL controls
+
+### ✅ **Chlorination Power Latching**
+- ✅ Buttons latch and stay at clicked values (25%, 75%, etc.)
+- ✅ Golden border highlights show active button state  
+- ✅ localStorage preserves state across page refreshes
+
+### ✅ **Background Command Rate Latching** 
+- ✅ Fast/Normal/Slow buttons now latch with golden borders
+- ✅ Slider updates and persists across refreshes
+- ✅ Status confirmation messages for rate changes
+
+### ✅ **Topology Reporting Rate Latching**
+- ✅ Frequent/Normal/Infrequent buttons latch properly
+- ✅ Visual highlighting with golden borders
+- ✅ localStorage persistence for all rate settings
+
+### ✅ **Universal Features**
+- ✅ Smart auto-refresh prevents command override conflicts
+- ✅ Enhanced status messages confirm exact values sent
+- ✅ Consistent UX across all control groups
+
+### ✅ **Optimized Timing Values (Sept 30 Update)**
+**Background Command Rate:** Fast=2s, **Normal=4s** (avoids 5s timeout), Slow=15s
+**Topology Reporting Rate:** Frequent=5s, **Normal=10s** (preferred optimal), Infrequent=120s
+- ✅ Eliminated timeout issues with 4s normal command rate
+- ✅ Optimized for 10s preferred topology reporting rate
+- ✅ Balanced performance vs. system stability
+
+## 📚 **Documentation Created**
+- **PROTOBUF_ARCHITECTURE.md** - Complete explanation of Go struct tags, JSON vs protobuf usage, and NgaSim's gateway architecture pattern
+- **NgaSim_API_Documentation.md** - Comprehensive API reference for all endpoints
+- **WORKFLOW.md** - Development workflow and git practices  
+- **PROGRESS_LOG.md** - This comprehensive achievement log
 
 ---
 **This log preserves all our excellent development work and prevents losing progress during issue resolution.**

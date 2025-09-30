@@ -846,7 +846,26 @@ var tmpl = template.Must(template.New("home").Parse(`
         }
         
         function showStatus(message, type) {
-            alert(message);
+            // Create or update status div
+            let statusDiv = document.getElementById('statusMessage');
+            if (!statusDiv) {
+                statusDiv = document.createElement('div');
+                statusDiv.id = 'statusMessage';
+                document.querySelector('.header').appendChild(statusDiv);
+            }
+            
+            statusDiv.textContent = message;
+            statusDiv.style.background = type == 'success' ? '#10B981' : '#EF4444';
+            statusDiv.style.color = 'white';
+            statusDiv.style.padding = '10px';
+            statusDiv.style.borderRadius = '5px';
+            statusDiv.style.margin = '10px 0';
+            statusDiv.style.display = 'block';
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => { 
+                statusDiv.style.display = 'none'; 
+            }, 3000);
         }
         
         function highlightActiveButton(percentage) {
@@ -871,6 +890,54 @@ var tmpl = template.Must(template.New("home").Parse(`
             }
         }
         
+        function highlightActiveButtonGroup(buttonId, groupPrefix) {
+            // Reset all buttons in the group
+            const buttons = document.querySelectorAll('[id^="' + groupPrefix + '"]');
+            buttons.forEach(btn => {
+                btn.style.border = '';
+                btn.style.boxShadow = '';
+            });
+            
+            // Highlight the active button
+            const activeBtn = document.getElementById(buttonId);
+            if (activeBtn) {
+                activeBtn.style.border = '3px solid #FFD700';
+                activeBtn.style.boxShadow = '0 0 10px #FFD700';
+            }
+        }
+        
+        function setCommandRate(value, buttonId) {
+            // Update slider and display
+            document.getElementById('commandRate').value = value;
+            updateSliderValue('commandRate', 'commandRateValue');
+            
+            // Highlight the pressed button
+            highlightActiveButtonGroup(buttonId, 'cmd-');
+            
+            // Store for persistence
+            localStorage.setItem('lastCommandRate', value);
+            localStorage.setItem('lastCommandRateButton', buttonId);
+            
+            // Show confirmation
+            showStatus('✅ Background command rate set to ' + value + 's', 'success');
+        }
+        
+        function setTopologyRate(value, buttonId) {
+            // Update slider and display  
+            document.getElementById('topologyRate').value = value;
+            updateSliderValue('topologyRate', 'topologyRateValue');
+            
+            // Highlight the pressed button
+            highlightActiveButtonGroup(buttonId, 'topo-');
+            
+            // Store for persistence
+            localStorage.setItem('lastTopologyRate', value);
+            localStorage.setItem('lastTopologyRateButton', buttonId);
+            
+            // Show confirmation
+            showStatus('✅ Topology reporting rate set to ' + value + 's', 'success');
+        }
+        
         function setSanitizerPower(serial, percentage) {
             // Update the main slider to reflect the command being sent
             document.getElementById('chlorinationSlider').value = percentage;
@@ -888,11 +955,31 @@ var tmpl = template.Must(template.New("home").Parse(`
         }
         
         window.onload = function() {
-            // Restore last chlorination command value if it exists
+            // Restore chlorination power state
             const lastChlorinationValue = localStorage.getItem('lastChlorinationValue');
             if (lastChlorinationValue) {
                 document.getElementById('chlorinationSlider').value = lastChlorinationValue;
                 highlightActiveButton(parseInt(lastChlorinationValue));
+            }
+            
+            // Restore command rate state
+            const lastCommandRate = localStorage.getItem('lastCommandRate');
+            const lastCommandRateButton = localStorage.getItem('lastCommandRateButton');
+            if (lastCommandRate) {
+                document.getElementById('commandRate').value = lastCommandRate;
+                if (lastCommandRateButton) {
+                    highlightActiveButtonGroup(lastCommandRateButton, 'cmd-');
+                }
+            }
+            
+            // Restore topology rate state
+            const lastTopologyRate = localStorage.getItem('lastTopologyRate');
+            const lastTopologyRateButton = localStorage.getItem('lastTopologyRateButton');
+            if (lastTopologyRate) {
+                document.getElementById('topologyRate').value = lastTopologyRate;
+                if (lastTopologyRateButton) {
+                    highlightActiveButtonGroup(lastTopologyRateButton, 'topo-');
+                }
             }
             
             // Initialize slider display values
@@ -956,18 +1043,18 @@ var tmpl = template.Must(template.New("home").Parse(`
                 <div class="control-group">
                     <h3>⏱️ Background Command Rate</h3>
                     <div class="slider-container">
-                        <input type="range" min="5" max="300" value="30" class="slider" id="commandRate" 
+                        <input type="range" min="2" max="60" value="4" class="slider" id="commandRate" 
                                oninput="updateSliderValue('commandRate', 'commandRateValue')">
                         <div style="text-align: center; margin-top: 10px;">
-                            <span class="slider-value" id="commandRateValue">30s</span>
+                            <span class="slider-value" id="commandRateValue">4s</span>
                         </div>
                         <div class="button-group" style="justify-content: center;">
-                            <button class="btn btn-primary" onclick="document.getElementById('commandRate').value=5; updateSliderValue('commandRate', 'commandRateValue')">Fast</button>
-                            <button class="btn btn-primary" onclick="document.getElementById('commandRate').value=30; updateSliderValue('commandRate', 'commandRateValue')">Normal</button>
-                            <button class="btn btn-primary" onclick="document.getElementById('commandRate').value=120; updateSliderValue('commandRate', 'commandRateValue')">Slow</button>
+                            <button class="btn btn-primary" id="cmd-fast" onclick="setCommandRate(2, 'cmd-fast')">Fast</button>
+                            <button class="btn btn-primary" id="cmd-normal" onclick="setCommandRate(4, 'cmd-normal')">Normal</button>
+                            <button class="btn btn-primary" id="cmd-slow" onclick="setCommandRate(15, 'cmd-slow')">Slow</button>
                         </div>
                         <p style="font-size: 0.85em; color: #666; margin: 10px 0 0 0;">
-                            Controls how often background commands are sent to maintain device state
+                            Controls how often background commands are sent (Normal=4s avoids timeouts)
                         </p>
                     </div>
                 </div>
@@ -976,18 +1063,18 @@ var tmpl = template.Must(template.New("home").Parse(`
                 <div class="control-group">
                     <h3>📡 Topology Reporting Rate</h3>
                     <div class="slider-container">
-                        <input type="range" min="10" max="600" value="60" class="slider" id="topologyRate" 
+                        <input type="range" min="5" max="300" value="10" class="slider" id="topologyRate" 
                                oninput="updateSliderValue('topologyRate', 'topologyRateValue')">
                         <div style="text-align: center; margin-top: 10px;">
-                            <span class="slider-value" id="topologyRateValue">60s</span>
+                            <span class="slider-value" id="topologyRateValue">10s</span>
                         </div>
                         <div class="button-group" style="justify-content: center;">
-                            <button class="btn btn-primary" onclick="document.getElementById('topologyRate').value=10; updateSliderValue('topologyRate', 'topologyRateValue')">Frequent</button>
-                            <button class="btn btn-primary" onclick="document.getElementById('topologyRate').value=60; updateSliderValue('topologyRate', 'topologyRateValue')">Normal</button>
-                            <button class="btn btn-primary" onclick="document.getElementById('topologyRate').value=300; updateSliderValue('topologyRate', 'topologyRateValue')">Infrequent</button>
+                            <button class="btn btn-primary" id="topo-frequent" onclick="setTopologyRate(5, 'topo-frequent')">Frequent</button>
+                            <button class="btn btn-primary" id="topo-normal" onclick="setTopologyRate(10, 'topo-normal')">Normal</button>
+                            <button class="btn btn-primary" id="topo-infrequent" onclick="setTopologyRate(120, 'topo-infrequent')">Infrequent</button>
                         </div>
                         <p style="font-size: 0.85em; color: #666; margin: 10px 0 0 0;">
-                            How often the system reports device topology and discovery information
+                            Device topology reporting rate (Normal=10s is preferred optimal rate)
                         </p>
                     </div>
                 </div>
