@@ -17,6 +17,7 @@ import (
 	"NgaSim/ned" // Import protobuf definitions
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -159,6 +160,46 @@ func (sim *NgaSim) stopPoller() {
 		if err := sim.pollerCmd.Process.Kill(); err != nil {
 			log.Printf("Failed to kill poller process: %v", err)
 		}
+		// Wait for process to actually exit
+		sim.pollerCmd.Wait()
+		sim.pollerCmd = nil
+	}
+}
+
+// cleanup performs comprehensive cleanup of all resources
+func (sim *NgaSim) cleanup() {
+	log.Println("Performing cleanup...")
+
+	// Stop poller first
+	sim.stopPoller()
+
+	// Kill any orphaned poller processes
+	sim.killOrphanedPollers()
+
+	// Disconnect MQTT
+	if sim.mqtt != nil && sim.mqtt.IsConnected() {
+		log.Println("Disconnecting from MQTT...")
+		sim.mqtt.Disconnect(1000)
+	}
+
+	log.Println("Cleanup completed")
+}
+
+// killOrphanedPollers kills any remaining poller processes
+func (sim *NgaSim) killOrphanedPollers() {
+	log.Println("Cleaning up any orphaned poller processes...")
+
+	// Use pkill to kill any remaining poller processes
+	cmd := exec.Command("sudo", "pkill", "-f", "./poller")
+	if err := cmd.Run(); err != nil {
+		// Don't log error if no processes found (expected case)
+		if exitError, ok := err.(*exec.ExitError); ok {
+			if exitError.ExitCode() != 1 { // Exit code 1 means no processes found
+				log.Printf("Warning: Failed to kill orphaned pollers: %v", err)
+			}
+		}
+	} else {
+		log.Println("Cleaned up orphaned poller processes")
 	}
 }
 
@@ -632,16 +673,60 @@ func (n *NgaSim) createDemoDevices() {
 	n.mutex.Unlock()
 }
 
+// sendSanitizerCommand sends a power level command to a sanitizer device
+// Matches the Python script send_salt_command() functionality
+func (sim *NgaSim) sendSanitizerCommand(deviceSerial, category string, targetPercentage int) error {
+	log.Printf("Sending sanitizer command: %s -> %d%%", deviceSerial, targetPercentage)
+
+	// Create SetSanitizerTargetPercentageRequestPayload
+	saltCmd := &ned.SetSanitizerTargetPercentageRequestPayload{
+		TargetPercentage: int32(targetPercentage),
+	}
+
+	// Create SanitizerRequestPayloads wrapper
+	wrapper := &ned.SanitizerRequestPayloads{
+		RequestType: &ned.SanitizerRequestPayloads_SetSanitizerOutputPercentage{
+			SetSanitizerOutputPercentage: saltCmd,
+		},
+	}
+
+	// Generate command UUID for tracking
+	cmdUUID := uuid.New().String()
+	log.Printf("Command UUID: %s", cmdUUID)
+
+	// Serialize the sanitizer request wrapper directly
+	// (Following Python script pattern - it also serializes wrapper directly)
+	data, err := proto.Marshal(wrapper)
+	if err != nil {
+		return fmt.Errorf("failed to marshal sanitizer command: %v", err)
+	}
+
+	// Build topic following Python script: cmd/<category>/<serial>/req
+	topic := fmt.Sprintf("cmd/%s/%s/req", category, deviceSerial)
+
+	// Publish to MQTT
+	token := sim.mqtt.Publish(topic, 1, false, data)
+	token.Wait()
+
+	if token.Error() != nil {
+		return fmt.Errorf("failed to publish sanitizer command: %v", token.Error())
+	}
+
+	log.Printf("✅ Sanitizer command sent successfully: %s -> %d%% (UUID: %s)", deviceSerial, targetPercentage, cmdUUID)
+	return nil
+}
+
 func (n *NgaSim) startWebServer() error {
 	// Start web server
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", n.handleHome)
 	mux.HandleFunc("/api/devices", n.handleAPI)
+	mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand)
 
-	n.server = &http.Server{Addr: ":8080", Handler: mux}
+	n.server = &http.Server{Addr: ":8081", Handler: mux}
 
 	go func() {
-		log.Println("Web server starting on :8080")
+		log.Println("Web server starting on :8081")
 		if err := n.server.ListenAndServe(); err != http.ErrServerClosed {
 			log.Printf("Server error: %v", err)
 		}
@@ -825,25 +910,84 @@ func (n *NgaSim) handleAPI(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(devices)
 }
 
+// handleSanitizerCommand provides a web API to test sanitizer commands
+func (n *NgaSim) handleSanitizerCommand(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "POST required", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse JSON request
+	var req struct {
+		Serial     string `json:"serial"`
+		Percentage int    `json:"percentage"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	// Validate parameters
+	if req.Serial == "" {
+		http.Error(w, "Serial number required", http.StatusBadRequest)
+		return
+	}
+
+	if req.Percentage < 0 || req.Percentage > 101 {
+		http.Error(w, "Percentage must be 0-101", http.StatusBadRequest)
+		return
+	}
+
+	// Find the device to get its category
+	n.mutex.RLock()
+	device := n.devices[req.Serial]
+	n.mutex.RUnlock()
+
+	if device == nil {
+		http.Error(w, "Device not found", http.StatusNotFound)
+		return
+	}
+
+	// Send the command
+	if err := n.sendSanitizerCommand(req.Serial, device.Category, req.Percentage); err != nil {
+		http.Error(w, fmt.Sprintf("Command failed: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Return success response
+	response := map[string]interface{}{
+		"success": true,
+		"message": fmt.Sprintf("Sanitizer command sent: %s -> %d%%", req.Serial, req.Percentage),
+		"device":  device.Name,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
 func main() {
 	log.Println("=== NgaSim Pool Controller Simulator ===")
 
 	nga := NewNgaSim()
+
+	// Ensure cleanup happens on any exit
+	defer func() {
+		log.Println("Shutting down NgaSim...")
+		nga.cleanup()
+	}()
 
 	if err := nga.Start(); err != nil {
 		log.Fatalf("Failed to start: %v", err)
 	}
 
 	log.Println("NgaSim started successfully!")
-	log.Println("Visit http://localhost:8080 to view the web interface")
+	log.Println("Visit http://localhost:8081 to view the web interface")
 
 	// Wait for interrupt
 	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 	<-sigChan
 
-	log.Println("Shutting down NgaSim...")
-
-	// Stop the poller subprocess
-	nga.stopPoller()
+	// The defer function will handle cleanup
 }
