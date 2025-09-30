@@ -825,9 +825,18 @@ var tmpl = template.Must(template.New("home").Parse(`
                 const result = await response.json();
                 
                 if (result.success) {
-                    showStatus('✅ Command sent: ' + result.message, 'success');
-                    // Refresh page after 3 seconds to show updated state
-                    setTimeout(() => { window.location.reload(); }, 3000);
+                    showStatus('✅ Command sent: ' + result.message + ' - GUI will stay at ' + percentage + '%', 'success');
+                    // Store successful command value to keep GUI consistent
+                    localStorage.setItem('lastSuccessfulCommand', percentage);
+                    
+                    // Only refresh if user hasn't made another command recently (prevents override)
+                    setTimeout(() => { 
+                        const lastCommand = localStorage.getItem('lastCommandTime');
+                        const timeDiff = Date.now() - parseInt(lastCommand || '0');
+                        if (timeDiff > 2500) { // Only refresh if no recent commands
+                            window.location.reload(); 
+                        }
+                    }, 3000);
                 } else {
                     showStatus('❌ Command failed: ' + result.message, 'error');
                 }
@@ -840,21 +849,66 @@ var tmpl = template.Must(template.New("home").Parse(`
             alert(message);
         }
         
+        function highlightActiveButton(percentage) {
+            // Reset all button styles
+            const buttons = ['btn-0', 'btn-25', 'btn-50', 'btn-75', 'btn-101'];
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.style.border = '';
+                    btn.style.boxShadow = '';
+                }
+            });
+            
+            // Highlight the active button
+            let activeId = 'btn-' + percentage;
+            if (percentage === 101) activeId = 'btn-101';
+            
+            const activeBtn = document.getElementById(activeId);
+            if (activeBtn) {
+                activeBtn.style.border = '3px solid #FFD700';
+                activeBtn.style.boxShadow = '0 0 10px #FFD700';
+            }
+        }
+        
         function setSanitizerPower(serial, percentage) {
+            // Update the main slider to reflect the command being sent
             document.getElementById('chlorinationSlider').value = percentage;
             updateSliderValue('chlorinationSlider', 'chlorinationValue');
+            
+            // Highlight the pressed button
+            highlightActiveButton(percentage);
+            
+            // Store the last command value so it persists across page refreshes
+            localStorage.setItem('lastChlorinationValue', percentage);
+            localStorage.setItem('lastCommandTime', Date.now());
+            
+            // Send the command
             sendSanitizerCommand(serial, percentage);
         }
         
         window.onload = function() {
-            // Initialize slider values
+            // Restore last chlorination command value if it exists
+            const lastChlorinationValue = localStorage.getItem('lastChlorinationValue');
+            if (lastChlorinationValue) {
+                document.getElementById('chlorinationSlider').value = lastChlorinationValue;
+                highlightActiveButton(parseInt(lastChlorinationValue));
+            }
+            
+            // Initialize slider display values
             updateSliderValue('chlorinationSlider', 'chlorinationValue');
             updateSliderValue('commandRate', 'commandRateValue');
             updateSliderValue('topologyRate', 'topologyRateValue');
             
-            // Set up auto-refresh
+            // Set up auto-refresh (but respect recent commands)
             if (autoRefresh) {
-                setTimeout(() => { if (autoRefresh) window.location.reload(); }, 15000);
+                setTimeout(() => { 
+                    const lastCommand = localStorage.getItem('lastCommandTime');
+                    const timeDiff = Date.now() - parseInt(lastCommand || '0');
+                    if (autoRefresh && timeDiff > 12000) { // Don't auto-refresh if recent commands
+                        window.location.reload(); 
+                    }
+                }, 15000);
             }
         }
     </script>
@@ -884,11 +938,11 @@ var tmpl = template.Must(template.New("home").Parse(`
                             <span class="slider-value" id="chlorinationValue">50%</span>
                         </div>
                         <div class="button-group" style="justify-content: center;">
-                            <button class="btn btn-danger" onclick="setSanitizerPower('1234567890ABCDEF00', 0)">OFF</button>
-                            <button class="btn btn-warning" onclick="setSanitizerPower('1234567890ABCDEF00', 25)">25%</button>
-                            <button class="btn btn-primary" onclick="setSanitizerPower('1234567890ABCDEF00', 50)">50%</button>
-                            <button class="btn btn-success" onclick="setSanitizerPower('1234567890ABCDEF00', 75)">75%</button>
-                            <button class="btn btn-success" onclick="setSanitizerPower('1234567890ABCDEF00', 101)">MAX</button>
+                            <button class="btn btn-danger" id="btn-0" onclick="setSanitizerPower('1234567890ABCDEF00', 0)">OFF</button>
+                            <button class="btn btn-warning" id="btn-25" onclick="setSanitizerPower('1234567890ABCDEF00', 25)">25%</button>
+                            <button class="btn btn-primary" id="btn-50" onclick="setSanitizerPower('1234567890ABCDEF00', 50)">50%</button>
+                            <button class="btn btn-success" id="btn-75" onclick="setSanitizerPower('1234567890ABCDEF00', 75)">75%</button>
+                            <button class="btn btn-success" id="btn-101" onclick="setSanitizerPower('1234567890ABCDEF00', 101)">MAX</button>
                         </div>
                         <div style="text-align: center; margin-top: 10px;">
                             <button class="btn btn-primary" onclick="sendSanitizerCommand('1234567890ABCDEF00', document.getElementById('chlorinationSlider').value)">
