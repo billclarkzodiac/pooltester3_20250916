@@ -4,7 +4,7 @@
 
 ## Overview
 
-NgaSim provides a RESTful API for interacting with Pentair pool equipment discovered via MQTT/SLIP protocols. The system supports both real hardware devices and demo mode simulation.
+NgaSim provides a RESTful API for interacting with Jandy pool equipment discovered via MQTT/SLIP protocols. The system supports both real hardware devices and demo mode simulation.
 
 **Base URL:** `http://localhost:8081`
 
@@ -233,7 +233,7 @@ When MQTT connection fails, NgaSim falls back to demo mode with simulated device
 ### Real Hardware Support
 NgaSim is tested with:
 - **EDGE-SWC-IM** Saltwater Chlorine Generator
-- Pentair SLIP/MQTT infrastructure
+- Jandy SLIP/MQTT infrastructure
 - Real protobuf command/telemetry messaging
 
 ---

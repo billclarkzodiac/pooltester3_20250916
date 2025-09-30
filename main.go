@@ -744,14 +744,34 @@ var tmpl = template.Must(template.New("home").Parse(`
     <meta http-equiv="refresh" content="10">
     <style>
         body { font-family: Arial; background: #667eea; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1400px; margin: 0 auto; }
         .header { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
+        .control-panel { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .control-group { padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; }
+        .control-group h3 { margin-top: 0; color: #333; }
+        .slider-container { margin: 15px 0; }
+        .slider { width: 100%; height: 8px; border-radius: 5px; background: #ddd; outline: none; }
+        .slider::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #3B82F6; cursor: pointer; }
+        .slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #3B82F6; cursor: pointer; border: none; }
+        .slider-value { font-weight: bold; color: #3B82F6; font-size: 1.2em; }
+        .button-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn { padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .btn-primary { background: #3B82F6; color: white; }
+        .btn-success { background: #10B981; color: white; }
+        .btn-warning { background: #F59E0B; color: white; }
+        .btn-danger { background: #EF4444; color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .status-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+        .status-online { background: #10B981; }
+        .status-offline { background: #EF4444; }
         .devices { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .device { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .device-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
         .device-type { color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; }
         .device-type.VSP { background: #3B82F6; }
         .device-type.Sanitizer { background: #10B981; }
+        .device-type.sanitizerGen2 { background: #10B981; }
         .device-type.ICL { background: #8B5CF6; }
         .device-type.TruSense { background: #F59E0B; }
         .device-type.Heater { background: #EF4444; }
@@ -762,14 +782,193 @@ var tmpl = template.Must(template.New("home").Parse(`
         .metric { text-align: center; }
         .metric-value { font-size: 1.3em; font-weight: bold; color: #3B82F6; }
         .metric-label { font-size: 0.8em; color: #666; margin-top: 5px; }
+        .device-controls { margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        .hidden { display: none; }
     </style>
+    <script>
+        let autoRefresh = true;
+        let commandRepeatRate = 30; // seconds
+        let topologyRate = 60; // seconds
+        
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            const btn = document.getElementById('refreshBtn');
+            if (autoRefresh) {
+                btn.textContent = 'Disable Auto-Refresh';
+                btn.className = 'btn btn-warning';
+                setTimeout(() => { if (autoRefresh) window.location.reload(); }, 10000);
+            } else {
+                btn.textContent = 'Enable Auto-Refresh';
+                btn.className = 'btn btn-success';
+            }
+        }
+        
+        function updateSliderValue(sliderId, valueId) {
+            const slider = document.getElementById(sliderId);
+            const valueDisplay = document.getElementById(valueId);
+            valueDisplay.textContent = slider.value + (sliderId.includes('Rate') ? 's' : '%');
+            
+            if (sliderId === 'commandRate') {
+                commandRepeatRate = slider.value;
+            } else if (sliderId === 'topologyRate') {
+                topologyRate = slider.value;
+            }
+        }
+        
+        async function sendSanitizerCommand(serial, percentage) {
+            try {
+                const response = await fetch('/api/sanitizer/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ serial: serial, percentage: parseInt(percentage) })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('✅ Command sent: ' + result.message, 'success');
+                } else {
+                    showStatus('❌ Command failed: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Network error: ' + error.message, 'error');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.style.background = type === 'success' ? '#10B981' : '#EF4444';
+            statusDiv.style.color = 'white';
+            statusDiv.style.padding = '10px';
+            statusDiv.style.borderRadius = '5px';
+            statusDiv.style.margin = '10px 0';
+            setTimeout(() => { statusDiv.textContent = ''; statusDiv.style.background = 'transparent'; }, 5000);
+        }
+        
+        function setSanitizerPower(serial, percentage) {
+            document.getElementById('chlorinationSlider').value = percentage;
+            updateSliderValue('chlorinationSlider', 'chlorinationValue');
+            sendSanitizerCommand(serial, percentage);
+        }
+        
+        window.onload = function() {
+            // Initialize slider values
+            updateSliderValue('chlorinationSlider', 'chlorinationValue');
+            updateSliderValue('commandRate', 'commandRateValue');
+            updateSliderValue('topologyRate', 'topologyRateValue');
+            
+            // Set up auto-refresh
+            if (autoRefresh) {
+                setTimeout(() => { if (autoRefresh) window.location.reload(); }, 10000);
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>NgaSim Pool Controller v{{.Version}}</h1>
-            <p>{{len .Devices}} devices discovered</p>
+            <p>
+                <span class="status-indicator status-online"></span>
+                {{len .Devices}} devices discovered
+                <button id="refreshBtn" class="btn btn-warning" onclick="toggleAutoRefresh()">Disable Auto-Refresh</button>
+            </p>
+            <div id="statusMessage"></div>
         </div>
+        
+        <div class="control-panel">
+            <h2 style="margin-top: 0; color: #333;">System Controls</h2>
+            <div class="controls-grid">
+                <!-- Chlorination Power Control -->
+                <div class="control-group">
+                    <h3>🧪 Chlorination Power</h3>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="101" value="50" class="slider" id="chlorinationSlider" 
+                               oninput="updateSliderValue('chlorinationSlider', 'chlorinationValue')">
+                        <div style="text-align: center; margin-top: 10px;">
+                            <span class="slider-value" id="chlorinationValue">50%</span>
+                        </div>
+                        <div class="button-group" style="justify-content: center;">
+                            <button class="btn btn-danger" onclick="setSanitizerPower('1234567890ABCDEF00', 0)">OFF</button>
+                            <button class="btn btn-warning" onclick="setSanitizerPower('1234567890ABCDEF00', 25)">25%</button>
+                            <button class="btn btn-primary" onclick="setSanitizerPower('1234567890ABCDEF00', 50)">50%</button>
+                            <button class="btn btn-success" onclick="setSanitizerPower('1234567890ABCDEF00', 75)">75%</button>
+                            <button class="btn btn-success" onclick="setSanitizerPower('1234567890ABCDEF00', 101)">MAX</button>
+                        </div>
+                        <div style="text-align: center; margin-top: 10px;">
+                            <button class="btn btn-primary" onclick="sendSanitizerCommand('1234567890ABCDEF00', document.getElementById('chlorinationSlider').value)">
+                                Send Command
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Command Repeat Rate -->
+                <div class="control-group">
+                    <h3>⏱️ Background Command Rate</h3>
+                    <div class="slider-container">
+                        <input type="range" min="5" max="300" value="30" class="slider" id="commandRate" 
+                               oninput="updateSliderValue('commandRate', 'commandRateValue')">
+                        <div style="text-align: center; margin-top: 10px;">
+                            <span class="slider-value" id="commandRateValue">30s</span>
+                        </div>
+                        <div class="button-group" style="justify-content: center;">
+                            <button class="btn btn-primary" onclick="document.getElementById('commandRate').value=5; updateSliderValue('commandRate', 'commandRateValue')">Fast</button>
+                            <button class="btn btn-primary" onclick="document.getElementById('commandRate').value=30; updateSliderValue('commandRate', 'commandRateValue')">Normal</button>
+                            <button class="btn btn-primary" onclick="document.getElementById('commandRate').value=120; updateSliderValue('commandRate', 'commandRateValue')">Slow</button>
+                        </div>
+                        <p style="font-size: 0.85em; color: #666; margin: 10px 0 0 0;">
+                            Controls how often background commands are sent to maintain device state
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Topology Reporting Rate -->
+                <div class="control-group">
+                    <h3>📡 Topology Reporting Rate</h3>
+                    <div class="slider-container">
+                        <input type="range" min="10" max="600" value="60" class="slider" id="topologyRate" 
+                               oninput="updateSliderValue('topologyRate', 'topologyRateValue')">
+                        <div style="text-align: center; margin-top: 10px;">
+                            <span class="slider-value" id="topologyRateValue">60s</span>
+                        </div>
+                        <div class="button-group" style="justify-content: center;">
+                            <button class="btn btn-primary" onclick="document.getElementById('topologyRate').value=10; updateSliderValue('topologyRate', 'topologyRateValue')">Frequent</button>
+                            <button class="btn btn-primary" onclick="document.getElementById('topologyRate').value=60; updateSliderValue('topologyRate', 'topologyRateValue')">Normal</button>
+                            <button class="btn btn-primary" onclick="document.getElementById('topologyRate').value=300; updateSliderValue('topologyRate', 'topologyRateValue')">Infrequent</button>
+                        </div>
+                        <p style="font-size: 0.85em; color: #666; margin: 10px 0 0 0;">
+                            How often the system reports device topology and discovery information
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- System Status -->
+                <div class="control-group">
+                    <h3>🔧 System Status</h3>
+                    <div style="font-size: 0.9em; color: #333;">
+                        <div style="margin: 8px 0;">
+                            <strong>MQTT Broker:</strong> 169.254.1.1:1883
+                        </div>
+                        <div style="margin: 8px 0;">
+                            <strong>Web Server:</strong> localhost:8081
+                        </div>
+                        <div style="margin: 8px 0;">
+                            <strong>Active Devices:</strong> {{len .Devices}}
+                        </div>
+                        <div style="margin: 8px 0;">
+                            <strong>System Mode:</strong> 
+                            {{if gt (len .Devices) 0}}
+                                <span style="color: #10B981;">Live Hardware</span>
+                            {{else}}
+                                <span style="color: #F59E0B;">Demo Mode</span>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="devices">
             {{range .Devices}}
             <div class="device">
@@ -868,6 +1067,29 @@ var tmpl = template.Must(template.New("home").Parse(`
                     {{if .OtaVersion}}<div><strong>OTA:</strong> {{.OtaVersion}}</div>{{end}}
                     {{if ne .LineInputVoltage 0}}<div><strong>Voltage:</strong> {{.LineInputVoltage}}V</div>{{end}}
                     {{if .IsCellFlowReversed}}<div><strong>Flow:</strong> <span style="color: orange;">Reversed</span></div>{{end}}
+                </div>
+                {{end}}
+                
+                {{if or (eq .Type "Sanitizer") (eq .Category "sanitizerGen2") (eq .Type "sanitizerGen2")}}
+                <div class="device-controls">
+                    <h4 style="margin: 0 0 10px 0; color: #333;">Quick Commands</h4>
+                    <div class="button-group">
+                        <button class="btn btn-danger" onclick="sendSanitizerCommand('{{.Serial}}', 0)" title="Turn off sanitizer">
+                            OFF
+                        </button>
+                        <button class="btn btn-warning" onclick="sendSanitizerCommand('{{.Serial}}', 25)" title="Set to 25% power">
+                            25%
+                        </button>
+                        <button class="btn btn-primary" onclick="sendSanitizerCommand('{{.Serial}}', 50)" title="Set to 50% power">
+                            50%
+                        </button>
+                        <button class="btn btn-success" onclick="sendSanitizerCommand('{{.Serial}}', 75)" title="Set to 75% power">
+                            75%
+                        </button>
+                        <button class="btn btn-success" onclick="sendSanitizerCommand('{{.Serial}}', 101)" title="Set to maximum power">
+                            MAX
+                        </button>
+                    </div>
                 </div>
                 {{end}}
                 <p style="text-align: center; margin-top: 15px; font-size: 0.9em; color: #666;">
