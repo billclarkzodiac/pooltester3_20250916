@@ -69,7 +69,7 @@ type Device struct {
 	// Sanitizer-specific telemetry fields
 	RSSI               int32 `json:"rssi,omitempty"`                  // Signal strength
 	PPMSalt            int32 `json:"ppm_salt,omitempty"`              // Salt concentration in PPM
-	PercentageOutput   int32 `json:"percentage_output,omitempty"`     // Current output percentage (actual device state)
+	PercentageOutput   int32 `json:"percentage_output"`               // Current output percentage (actual device state)
 	AccelerometerX     int32 `json:"accelerometer_x,omitempty"`       // X-axis tilt
 	AccelerometerY     int32 `json:"accelerometer_y,omitempty"`       // Y-axis tilt
 	AccelerometerZ     int32 `json:"accelerometer_z,omitempty"`       // Z-axis tilt
@@ -77,19 +77,20 @@ type Device struct {
 	IsCellFlowReversed bool  `json:"is_cell_flow_reversed,omitempty"` // Flow direction
 
 	// Command state tracking fields
-	PendingPercentage int32     `json:"pending_percentage,omitempty"` // What we asked device to do
-	LastCommandTime   time.Time `json:"last_command_time,omitempty"`  // When we sent the last command
-	ActualPercentage  int32     `json:"actual_percentage,omitempty"`  // Alias for PercentageOutput (for clarity)
+	PendingPercentage int32     `json:"pending_percentage"`          // What we asked device to do
+	LastCommandTime   time.Time `json:"last_command_time,omitempty"` // When we sent the last command
+	ActualPercentage  int32     `json:"actual_percentage"`           // Alias for PercentageOutput (for clarity)
 }
 
 type NgaSim struct {
-	devices   map[string]*Device
-	mutex     sync.RWMutex
-	mqtt      mqtt.Client
-	server    *http.Server
-	pollerCmd *exec.Cmd
-	logger    *DeviceLogger
-	registry  *ProtobufRegistry
+	devices             map[string]*Device
+	mutex               sync.RWMutex
+	mqtt                mqtt.Client
+	server              *http.Server
+	pollerCmd           *exec.Cmd
+	logger              *DeviceLogger
+	registry            *ProtobufRegistry
+	sanitizerController *SanitizerController
 }
 
 // MQTT connection parameters
@@ -356,8 +357,18 @@ func (sim *NgaSim) updateDeviceFromSanitizerTelemetry(deviceSerial string, telem
 
 	device, exists := sim.devices[deviceSerial]
 	if !exists {
-		log.Printf("Received telemetry for unknown device: %s", deviceSerial)
-		return
+		// Auto-create device from telemetry if it doesn't exist
+		device = &Device{
+			ID:       deviceSerial,
+			Serial:   deviceSerial,
+			Name:     fmt.Sprintf("Sanitizer-%s", deviceSerial),
+			Type:     "sanitizerGen2",
+			Category: "sanitizerGen2",
+			Status:   "ONLINE",
+			LastSeen: time.Now(),
+		}
+		sim.devices[deviceSerial] = device
+		log.Printf("✅ Auto-created sanitizer device from telemetry: %s", deviceSerial)
 	}
 
 	// Update sanitizer-specific telemetry fields
@@ -397,6 +408,10 @@ func (sim *NgaSim) updateDeviceFromSanitizerTelemetry(deviceSerial string, telem
 	device.LastSeen = time.Now()
 	log.Printf("Updated sanitizer telemetry for device %s: Salt=%dppm, Output=%d%%, RSSI=%ddBm",
 		deviceSerial, device.PPMSalt, device.PercentageOutput, device.RSSI)
+
+	// Update sanitizer controller state
+	sim.sanitizerController.RegisterSanitizer(deviceSerial)
+	sim.sanitizerController.UpdateFromTelemetry(deviceSerial, telemetry.GetPercentageOutput())
 }
 
 // handleDeviceTelemetry processes device telemetry messages
@@ -589,11 +604,16 @@ func NewNgaSim() *NgaSim {
 		log.Println("Device logger initialized - commands will be logged to device_commands.log")
 	}
 
-	return &NgaSim{
+	ngaSim := &NgaSim{
 		devices:  make(map[string]*Device),
 		logger:   logger,
 		registry: registry,
 	}
+
+	// Initialize sanitizer controller
+	ngaSim.sanitizerController = NewSanitizerController(ngaSim)
+
+	return ngaSim
 }
 
 func (n *NgaSim) Start() error {
@@ -846,6 +866,9 @@ func (n *NgaSim) startWebServer() error {
 	mux.HandleFunc("/", n.handleHome)
 	mux.HandleFunc("/api/devices", n.handleAPI)
 	mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand)
+	mux.HandleFunc("/api/sanitizer/states", n.handleSanitizerStates)
+	mux.HandleFunc("/api/power-levels", n.handlePowerLevels)
+	mux.HandleFunc("/api/emergency-stop", n.handleEmergencyStop)
 
 	n.server = &http.Server{Addr: ":8082", Handler: mux}
 
@@ -1000,7 +1023,7 @@ var tmpl = template.Must(template.New("home").Parse(`
         
         function highlightActiveButton(percentage) {
             // Reset all button styles
-            const buttons = ['btn-0', 'btn-25', 'btn-50', 'btn-75', 'btn-101'];
+            const buttons = ['btn-0', 'btn-10', 'btn-50', 'btn-100', 'btn-101'];
             buttons.forEach(btnId => {
                 const btn = document.getElementById(btnId);
                 if (btn) {
@@ -1009,9 +1032,13 @@ var tmpl = template.Must(template.New("home").Parse(`
                 }
             });
             
-            // Highlight the active button
-            let activeId = 'btn-' + percentage;
-            if (percentage === 101) activeId = 'btn-101';
+            // Highlight the closest matching button
+            let activeId = 'btn-50'; // Default
+            if (percentage === 0) activeId = 'btn-0';
+            else if (percentage <= 10) activeId = 'btn-10';
+            else if (percentage <= 50) activeId = 'btn-50';
+            else if (percentage <= 100) activeId = 'btn-100';
+            else activeId = 'btn-101'; // BOOST for 101%+
             
             const activeBtn = document.getElementById(activeId);
             if (activeBtn) {
@@ -1068,28 +1095,93 @@ var tmpl = template.Must(template.New("home").Parse(`
             showStatus('✅ Topology reporting rate set to ' + value + 's', 'success');
         }
         
-        function setSanitizerPower(serial, percentage) {
-            // Update the main slider to reflect the command being sent
-            document.getElementById('chlorinationSlider').value = percentage;
-            updateSliderValue('chlorinationSlider', 'chlorinationValue');
+        function setSanitizerPower(percentage) {
+            // Get the active sanitizer device serial dynamically
+            getActiveSanitizerSerial().then(serial => {
+                // Update the main slider to reflect the command being sent
+                document.getElementById('chlorinationSlider').value = percentage;
+                updateSliderValue('chlorinationSlider', 'chlorinationValue');
+                
+                // Highlight the pressed button
+                highlightActiveButton(percentage);
+                
+                // Store the last command value so it persists across page refreshes
+                localStorage.setItem('lastChlorinationValue', percentage);
+                localStorage.setItem('lastCommandTime', Date.now());
+                
+                // Send the command
+                sendSanitizerCommand(serial, percentage);
+            });
+        }
+        
+        function syncSliderWithDeviceState() {
+            // Use the API to get current device state instead of template rendering
+            fetch('/api/devices')
+                .then(response => response.json())
+                .then(devices => {
+                    let activeSanitizer = null;
+                    
+                    for (let device of devices) {
+                        if (device.type === 'Sanitizer' || device.category === 'sanitizerGen2' || device.type === 'sanitizerGen2') {
+                            activeSanitizer = device;
+                            break;
+                        }
+                    }
+                    
+                    if (activeSanitizer) {
+                        // Use device's actual percentage, or pending if command is in progress
+                        let currentPercentage = activeSanitizer.percentage_output || activeSanitizer.actual_percentage || 0;
+                        
+                        // If there's a pending command, show the pending value instead (gives immediate UI feedback)
+                        if (activeSanitizer.pending_percentage && activeSanitizer.pending_percentage !== 0) {
+                            currentPercentage = activeSanitizer.pending_percentage;
+                        }
+                        
+                        // Update slider and button highlights to match device state
+                        document.getElementById('chlorinationSlider').value = currentPercentage;
+                        updateSliderValue('chlorinationSlider', 'chlorinationValue');
+                        highlightActiveButton(currentPercentage);
+                        
+                        console.log('Synced slider to device state: ' + currentPercentage + '%');
+                        return currentPercentage;
+                    }
+                })
+                .catch(error => {
+                    console.log('Failed to fetch device state for sync: ' + error.message);
+                });
             
-            // Highlight the pressed button
-            highlightActiveButton(percentage);
-            
-            // Store the last command value so it persists across page refreshes
-            localStorage.setItem('lastChlorinationValue', percentage);
-            localStorage.setItem('lastCommandTime', Date.now());
-            
-            // Send the command
-            sendSanitizerCommand(serial, percentage);
+            return null;
+        }
+        
+        function getActiveSanitizerSerial() {
+            // Use the API to get current device serial
+            return fetch('/api/devices')
+                .then(response => response.json())
+                .then(devices => {
+                    for (let device of devices) {
+                        if (device.type === 'Sanitizer' || device.category === 'sanitizerGen2' || device.type === 'sanitizerGen2') {
+                            return device.serial || device.id;
+                        }
+                    }
+                    return '1234567890ABCDEF00'; // Fallback to hardcoded value
+                })
+                .catch(error => {
+                    console.log('Failed to fetch device serial: ' + error.message);
+                    return '1234567890ABCDEF00'; // Fallback on error
+                });
         }
         
         window.onload = function() {
-            // Restore chlorination power state
-            const lastChlorinationValue = localStorage.getItem('lastChlorinationValue');
-            if (lastChlorinationValue) {
-                document.getElementById('chlorinationSlider').value = lastChlorinationValue;
-                highlightActiveButton(parseInt(lastChlorinationValue));
+            // PRIORITY 1: Sync with actual device state (overrides localStorage)
+            const devicePercentage = syncSliderWithDeviceState();
+            
+            // PRIORITY 2: Only use localStorage if no device state available
+            if (devicePercentage === null) {
+                const lastChlorinationValue = localStorage.getItem('lastChlorinationValue');
+                if (lastChlorinationValue) {
+                    document.getElementById('chlorinationSlider').value = lastChlorinationValue;
+                    highlightActiveButton(parseInt(lastChlorinationValue));
+                }
             }
             
             // Restore command rate state
@@ -1155,14 +1247,14 @@ var tmpl = template.Must(template.New("home").Parse(`
                             <span class="slider-value" id="chlorinationValue">50%</span>
                         </div>
                         <div class="button-group" style="justify-content: center;">
-                            <button class="btn btn-danger" id="btn-0" onclick="setSanitizerPower('1234567890ABCDEF00', 0)">OFF</button>
-                            <button class="btn btn-warning" id="btn-25" onclick="setSanitizerPower('1234567890ABCDEF00', 25)">25%</button>
-                            <button class="btn btn-primary" id="btn-50" onclick="setSanitizerPower('1234567890ABCDEF00', 50)">50%</button>
-                            <button class="btn btn-success" id="btn-75" onclick="setSanitizerPower('1234567890ABCDEF00', 75)">75%</button>
-                            <button class="btn btn-success" id="btn-101" onclick="setSanitizerPower('1234567890ABCDEF00', 101)">MAX</button>
+                            <button class="btn btn-danger" id="btn-0" onclick="setSanitizerPower(0)">OFF</button>
+                            <button class="btn btn-warning" id="btn-10" onclick="setSanitizerPower(10)">10%</button>
+                            <button class="btn btn-primary" id="btn-50" onclick="setSanitizerPower(50)">50%</button>
+                            <button class="btn btn-success" id="btn-100" onclick="setSanitizerPower(100)">100%</button>
+                            <button class="btn btn-success" id="btn-101" onclick="setSanitizerPower(101)">BOOST</button>
                         </div>
                         <div style="text-align: center; margin-top: 10px;">
-                            <button class="btn btn-primary" onclick="sendSanitizerCommand('1234567890ABCDEF00', document.getElementById('chlorinationSlider').value)">
+                            <button class="btn btn-primary" onclick="getActiveSanitizerSerial().then(serial => sendSanitizerCommand(serial, document.getElementById('chlorinationSlider').value))">
                                 Send Command
                             </button>
                         </div>
@@ -1350,17 +1442,17 @@ var tmpl = template.Must(template.New("home").Parse(`
                         <button class="btn btn-danger" onclick="sendSanitizerCommand('{{.Serial}}', 0)" title="Turn off sanitizer">
                             OFF
                         </button>
-                        <button class="btn btn-warning" onclick="sendSanitizerCommand('{{.Serial}}', 25)" title="Set to 25% power">
-                            25%
+                        <button class="btn btn-warning" onclick="sendSanitizerCommand('{{.Serial}}', 10)" title="Set to 10% power">
+                            10%
                         </button>
                         <button class="btn btn-primary" onclick="sendSanitizerCommand('{{.Serial}}', 50)" title="Set to 50% power">
                             50%
                         </button>
-                        <button class="btn btn-success" onclick="sendSanitizerCommand('{{.Serial}}', 75)" title="Set to 75% power">
-                            75%
+                        <button class="btn btn-success" onclick="sendSanitizerCommand('{{.Serial}}', 100)" title="Set to 100% power">
+                            100%
                         </button>
-                        <button class="btn btn-success" onclick="sendSanitizerCommand('{{.Serial}}', 101)" title="Set to maximum power">
-                            MAX
+                        <button class="btn btn-success" onclick="sendSanitizerCommand('{{.Serial}}', 101)" title="Set to boost mode (101%)">
+                            BOOST
                         </button>
                     </div>
                 </div>
@@ -1384,6 +1476,15 @@ func (n *NgaSim) handleHome(w http.ResponseWriter, r *http.Request) {
 	}
 	n.mutex.RUnlock()
 
+	// Sort devices by serial number for consistent display order
+	for i := 0; i < len(devices)-1; i++ {
+		for j := i + 1; j < len(devices); j++ {
+			if devices[i].Serial > devices[j].Serial {
+				devices[i], devices[j] = devices[j], devices[i]
+			}
+		}
+	}
+
 	data := struct {
 		Devices []*Device
 		Version string
@@ -1400,6 +1501,15 @@ func (n *NgaSim) handleAPI(w http.ResponseWriter, r *http.Request) {
 		devices = append(devices, device)
 	}
 	n.mutex.RUnlock()
+
+	// Sort devices by serial number for consistent API order
+	for i := 0; i < len(devices)-1; i++ {
+		for j := i + 1; j < len(devices); j++ {
+			if devices[i].Serial > devices[j].Serial {
+				devices[i], devices[j] = devices[j], devices[i]
+			}
+		}
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(devices)
@@ -1457,6 +1567,49 @@ func (n *NgaSim) handleSanitizerCommand(w http.ResponseWriter, r *http.Request) 
 		"device":  device.Name,
 	}
 
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// handleSanitizerStates returns all sanitizer states from the controller
+func (n *NgaSim) handleSanitizerStates(w http.ResponseWriter, r *http.Request) {
+	states := n.sanitizerController.GetAllStates()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(states)
+}
+
+// handlePowerLevels returns valid power level definitions
+func (n *NgaSim) handlePowerLevels(w http.ResponseWriter, r *http.Request) {
+	levels := GetValidPowerLevels()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(levels)
+}
+
+// handleEmergencyStop stops all sanitizers immediately
+func (n *NgaSim) handleEmergencyStop(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "POST required", http.StatusMethodNotAllowed)
+		return
+	}
+
+	states := n.sanitizerController.GetAllStates()
+	count := 0
+	for serial := range states {
+		cmd := SanitizerCommand{
+			Serial:    serial,
+			Action:    "emergency_stop",
+			ClientID:  "emergency",
+			Timestamp: time.Now(),
+		}
+		if err := n.sanitizerController.QueueCommand(cmd); err == nil {
+			count++
+		}
+	}
+
+	response := map[string]interface{}{
+		"success": true,
+		"message": fmt.Sprintf("Emergency stop sent to %d sanitizers", count),
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }

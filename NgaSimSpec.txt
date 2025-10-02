@@ -21,26 +21,31 @@ MQTT and SLIP uses TCP to encapsulate the protobuf packets.
 
 Devices: 
     Sanitizer   - locally called "Salty" or "The Salt" that creates chlorine,
-    VSP         - a Jandy brand Variable Speed Pump called "VSP",
+    VSP         - a Jandy brand Variable Speed Booster Pump called "VSP",
     Heater      - based on a Jandy JXI that uses gas for heat,
     TruSense    - a pH and ORP sensor pair, was called JOP in prototype phase,
+    ORION       - Water quality sensor, pH, ORP, contaminants etc.
     Heatpump    - a heater/chiller combo based on Jandy JE
     ICL         - an Infinite Color Light controller.
 
-Of the devices listed only the Sanitizer and ICL have their protobuf structures defined.
+Of the devices listed only the Sanitizer, Booster VSP, and ICL have their 
+protobuf structures defined. More to come.
 
 < IMPORTANT STEP >
 For reference only I'm attaching a python script that actually sends and 
 receives protobuf packets over MQTT. This script also knows how to display announce messages 
 and others like telemetry etc. Use this script to see how to send commands and display responses.
 
-I will also "add context" by attaching all the protobuf pb.go programs.
+I will also "add context" by attaching a sub directory with all the protobuf 
+pb.go programs, including the  .proto source file.
 < / IMPORTANT STEP >
 
 <IMPORTANT>
-The NgaSim when running on the Raspberry Pi launches a program call "poller", to run type:-
+The NgaSim when running on the Raspberry Pi launches a program call "poller", 
+example: to run type:-
 sudo ./poller
-or use a Go routine to run poller.
+or preferably use a Go routine to run poller. In future when the poller code  
+functionality is fully understood it would make sense to re-write poller in Go.
 </IMPORTANT>
 
 <ignore>
@@ -55,21 +60,36 @@ I'm attaching an analysis of the poller utility. "poller_howto.md"
 Topology messages are intended only for devices on SLIP over the RS485 shared
 serial bus.
 
-A topology message helps devices determine when they are allowed to talk.
+A topology message triggers a method to request the IP numbers of connected devices,
+it also helps devices determine when they are allowed to talk on the shared RS485 bus. 
+It also provides a way to get network time into the devices.
 
 The NgaSim must accept all messages including Announce, Telemetry, Responses including status.
 
 Display:
 NgaSim commands and responses are made visible using "web UI" at localhost:8080
 
+The NgaSim display should be built up of an overall 'dashboard' that displays 
+the main events and serial number from all the devices, including a large RED STOP
+button that stops all devices eg. pumps set to 0 RPM, Sanitizer set to 0%, 
+to make devices safe before ending commands and exiting the NgaSim program.
+
+This dash board should always be present, it may covered by a new window from 
+clicking on a device shown on the dashboard. This floating daughter window must
+display the device's full details eg. Serial number, IP number, Announce 
+messages, Topology messages, and control buttons and/or dials/sliders. 
+These new detailed windows should be allowed to float freely.
+
 NgaSim will scan for devices Announce messages to determine their serial numbers.
 
-NgaSim can have a demo mode that fakes devices to show, here is a device list:
+NgaSim should display a button to add demo fake devices to help fill the 
+dashboard display for demo purpose. Here is a device list:
 VSP, Heater, HeatPump, ICL, TruSense, Sanitizer("Salt"), ORION.
+
 
 Normal NgaSim mode is to only display devices recognized by topology and
 Announce messages.  A device seen by topology message without a serial number or
-device type should be listed as UNKNOWN at IP #.#.#.#
+device type should be listed as UNKNOWN at IP #.#.#.#,  time #.
 
 The top level display is good for the overall status, 
 ie. the home page, ie. the html index page.
@@ -90,12 +110,17 @@ Command 'buttons' (widgets) should send a request packet via protobuf or just ch
 a mode locally.
 
 A device found by Announce message of a type we don't have code to interpret it's
-capabilities BUT we do have protobuf definition for it, then we can use reflection 
-to extract from the protobuf structure members how to display possible commands
-from the protobuf requests and status from protobuf responses. The requests 
-should have editable boxes along with the protobuf member name.
+capabilities BUT we do have protobuf definition for it, then we can use software
+reflection to extract from the protobuf structure members how to display possible 
+commands from the protobuf requests and status from protobuf responses. 
+The requests should have editable boxes along with the protobuf member name.
 Some responses will just need a single bit displayed as check box with True or 
 False,  Some responses will be integers displayed as decimal in boxes.
+
+<TODO> 
+check the gpt_example_tknb_cmd_and_status.py code for how to use reflection, and 
+put the new device in a new window.
+</TODO>
 
 Device Specific Displays when selected from the index:
 VSP - Serial number (from announce message)
@@ -162,6 +187,16 @@ integrated into NgaSim.
 
 This version of NgaSim should send protobuf requests to MQTT via SLIP, and 
 expect responses also via MQTT over SLIP.
+
+<wish list>
+- add to the log file timing of the command and status to the millisecond. min. avg. max.
+- the current display should be modified to be a dash board plus daughter windows.
+- reflection should help the user to add GUI controls for a new device based on 
+  the Announce message device type to determine which protobuf to use, it should 
+  offer labels based on the protobuf structures labels.
+- describe how to use a command script to run canned tests. What file format?
+
+</wish list>
 
 thank you.
 
