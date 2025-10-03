@@ -1,0 +1,125 @@
+Device_Window_spec.txt - 20251002 bc.
+
+For the NgaSim controller GUI.
+The GUI uses html to make it available to display on nearly any browser, either
+local or remote, 
+eg. a headless display can be used remotely to monitor only.
+    a service person can use a tablet as long as it can access the NgaSim IP#.
+
+1st lets talk about ...
+The Dashboard.  
+-------------
+
+This has just basic information and control over  all devices that are online
+and those that were found online and are now offline. The system should keep a 
+record of each device's Announce message to remember the device's serial number
+and device type.
+All devices should have their serial number showing.
+
+Dashboard Basic Information and Control, per device type. (simple display only)
+------------------------------------------------------------------------------
+
+next, the components of the Dashboard :-
+Sanitizer (SWC)
+---------
+A Salt Water Chlorinator uses a high current to convert dissolved salt (NaCl) 
+into chlorine temporarily. The chlorine disinfects water.
+We need to monitor :-
+  (1) the current (power level 0..100%), 
+  (2) the amount of dissolved salt (PPM) to keep it at a safe level. 
+Safe for people, and safe for the sanitizer's operations.
+  (3) power on/off.
+
+We need 3 widgets, 
+(1) a dial gauge, for power level / current.
+(2) a digital number display of 4 digits (0..9999) labeled PPM. When SWC is 1st 
+powered the PPM values are unreliable, display "WAIT" until values arrive, 
+when SWC is OFF display " OFF".
+(3) a button to control ON/OFF, and to indicate power is ON/OFF. 
+
+The dial gauge is to monitor the Amps driven into the water, 
+the Dashboard can display a widget like a car gauge that shows battery Amps, 
+both -ve and +ve Amps, the -ve Amps shows the current is reversed, the same 
+gauge should have a second scale showing 0..100% with a 10% resolution for 
+the immediate power level, from 0..100%, 100% ~= 6.2Amps. 
+The dashboard should also display an illuminated ON/OFF button, bright green 
+indicating ON, and dull grey to indicate OFF, this button is clickable to turn
+ON/OFF the current to the water. The power button can also display an error
+state by flash RED.
+=============================
+
+
+Pump (VSP)
+----------
+Variable Speed Pump, gets commanded to spin at a programmable RPM (600..3450).
+The VSP has a status indicating it's spinning up or ramping up to the set speed
+To indicate ramping up, the RPM display can flash the requested RPM. 
+Anything other that an at speed status should cause the RPM to flash.
+If RPM or VSP status in general  stops coming into the NgaSim, display "----".
+
+Widget:-
+(1) 4 digit display
+====================
+
+Heater  (JXI)
+-----------
+If not mentioned assume the heater is gas powered.
+The heater is either on (firing)  or off, some heaters can report an internal 
+temperature.
+
+Widget:-
+A label showing "HEATING"  or "OFF" for OFF. In case of error show "ERROR".
+========================
+
+Heat Pump  (JE)
+---------------
+A Heater/Chiller combination using air conditioning technology to heat/Chiller
+water in it's pipes.
+
+Widget:-
+A label showing either "OFF" "HEATING" CHILLING" "ERROR".
+=======================
+
+Infinite Color Lights (ICL)
+--------------------------
+4 Color (RGBW) LEDs each programmable from 0..255.
+
+Widget:-
+4 labels showing hex or decimal numbers  (R xx G xx B xx W xx)
+1 button to enable,and show power on/off (bright green/grey off)
+1 lamp indicator showing equivalent RGBW color.
+=========================
+
+Find me
+-------
+A trigger to flash an LED on the device to help locate it.
+
+Widget:-
+1 button, click to trigger
+1 indicator to show 'Find Me' indicator doing it's thing.
+============================
+
+
+Telemetry Configuration - per device
+-----------------------
+A value in seconds between sending Telemetry messages.
+
+Widget:-
+A number entry box labeled "SECONDS"
+A button to send Telemetry Configuration message to the individual device.
+================================
+
+Device Information - display per device
+-----------------------------------
+Widgets:-
+display    string product_name
+display    string serial_number
+display    string category
+display    string model_id // Model id used to map the device to the correct model type
+display    string model_version
+display    string firmware_version
+display    string ota_version
+display    repeated BusType available_bus_types // List of buses the device can use
+display    BusDescription active_bus // Active bus
+===================================
+
