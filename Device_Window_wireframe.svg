@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f3f4f6"/>
+
+  <!-- Header -->
+  <rect x="20" y="20" width="1160" height="60" rx="6" fill="#1f2937" />
+  <text x="40" y="60" font-family="Arial" font-size="20" fill="#fff">NgaSim Dashboard</text>
+
+  <!-- Device Grid -->
+  <g id="grid" transform="translate(20,100)">
+    <!-- 3 columns, 2 rows of cards -->
+    <rect x="0" y="0" width="360" height="140" rx="8" fill="#fff" stroke="#d1d5db"/>
+    <text x="16" y="28" font-family="Arial" font-size="14" fill="#111">Sanitizer</text>
+    <text x="16" y="52" font-family="Arial" font-size="12" fill="#6b7280">Serial: 1234567890ABCDEF01</text>
+    <text x="16" y="72" font-family="Arial" font-size="12" fill="#6b7280">Status: ONLINE</text>
+    <text x="280" y="36" font-family="Arial" font-size="20" fill="#10b981">ON</text>
+
+    <rect x="380" y="0" width="360" height="140" rx="8" fill="#fff" stroke="#d1d5db"/>
+    <text x="396" y="28" font-family="Arial" font-size="14" fill="#111">Pump (VSP)</text>
+    <text x="396" y="52" font-family="Arial" font-size="12" fill="#6b7280">Serial: 1234567890ABCDEF02</text>
+    <text x="396" y="72" font-family="Arial" font-size="12" fill="#6b7280">RPM: 1800</text>
+
+    <rect x="760" y="0" width="360" height="140" rx="8" fill="#fff" stroke="#d1d5db"/>
+    <text x="776" y="28" font-family="Arial" font-size="14" fill="#111">Heater (JXI)</text>
+    <text x="776" y="52" font-family="Arial" font-size="12" fill="#6b7280">Serial: 1234567890ABCDEF03</text>
+    <text x="776" y="72" font-family="Arial" font-size="12" fill="#6b7280">State: HEATING</text>
+
+    <!-- second row -->
+    <rect x="0" y="160" width="360" height="140" rx="8" fill="#fff" stroke="#d1d5db"/>
+    <text x="16" y="188" font-family="Arial" font-size="14" fill="#111">Heat Pump (JE)</text>
+    <text x="16" y="212" font-family="Arial" font-size="12" fill="#6b7280">Serial: 1234567890ABCDEF04</text>
+
+    <rect x="380" y="160" width="360" height="140" rx="8" fill="#fff" stroke="#d1d5db"/>
+    <text x="396" y="188" font-family="Arial" font-size="14" fill="#111">Infinite Color Lights (ICL)</text>
+    <text x="396" y="212" font-family="Arial" font-size="12" fill="#6b7280">R:255 G:120 B:40 W:0</text>
+
+    <rect x="760" y="160" width="360" height="140" rx="8" fill="#fff" stroke="#d1d5db"/>
+    <text x="776" y="188" font-family="Arial" font-size="14" fill="#111">Find Me</text>
+    <text x="776" y="212" font-family="Arial" font-size="12" fill="#6b7280">Last: 30s ago</text>
+  </g>
+
+  <!-- Example Sanitizer Popup (overlaid) -->
+  <g id="popup" transform="translate(220,280)">
+    <rect x="0" y="0" width="760" height="380" rx="10" fill="#fff" stroke="#111827"/>
+    <text x="16" y="28" font-family="Arial" font-size="18" fill="#111">Sanitizer — 1234567890ABCDEF01</text>
+
+    <!-- Left column: gauge and ppm -->
+    <rect x="16" y="48" width="360" height="320" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="36" y="78" font-family="Arial" font-size="14" fill="#111">Power Gauge</text>
+    <circle cx="196" cy="180" r="80" fill="#fff" stroke="#d1d5db"/>
+    <text x="156" y="188" font-family="Arial" font-size="20" fill="#111">50%</text>
+
+    <rect x="36" y="260" width="300" height="80" rx="6" fill="#fff" stroke="#d1d5db"/>
+    <text x="56" y="290" font-family="Arial" font-size="14" fill="#111">PPM</text>
+    <text x="240" y="320" font-family="Arial" font-size="22" fill="#111">0250</text>
+
+    <!-- Right column: controls and device info -->
+    <rect x="392" y="48" width="352" height="140" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>
+    <text x="412" y="78" font-family="Arial" font-size="14" fill="#111">Power Controls</text>
+    <rect x="412" y="98" width="72" height="40" rx="6" fill="#10b981"/>
+    <text x="426" y="125" font-family="Arial" font-size="12" fill="#fff">OFF</text>
+    <rect x="496" y="98" width="72" height="40" rx="6" fill="#f59e0b"/>
+    <text x="512" y="125" font-family="Arial" font-size="12" fill="#fff">10%</text>
+    <rect x="580" y="98" width="72" height="40" rx="6" fill="#3b82f6"/>
+    <text x="596" y="125" font-family="Arial" font-size="12" fill="#fff">50%</text>
+    <rect x="664" y="98" width="72" height="40" rx="6" fill="#16a34a"/>
+    <text x="678" y="125" font-family="Arial" font-size="12" fill="#fff">100%</text>
+    <rect x="412" y="152" width="324" height="40" rx="6" fill="#ef4444"/>
+    <text x="532" y="179" font-family="Arial" font-size="12" fill="#fff">BOOST</text>
+
+    <rect x="392" y="200" width="352" height="148" rx="6" fill="#fff" stroke="#e5e7eb"/>
+    <text x="412" y="228" font-family="Arial" font-size="13" fill="#111">Device Info</text>
+    <text x="412" y="250" font-family="Arial" font-size="12" fill="#6b7280">Model: sanitizer-gen2</text>
+    <text x="412" y="270" font-family="Arial" font-size="12" fill="#6b7280">FW: 1.0.1</text>
+    <text x="412" y="290" font-family="Arial" font-size="12" fill="#6b7280">Last Seen: 5s</text>
+
+    <!-- Close button -->
+    <rect x="720" y="8" width="24" height="24" rx="4" fill="#ef4444"/>
+    <text x="726" y="26" font-family="Arial" font-size="12" fill="#fff">X</text>
+  </g>
+
+</svg>

@@ -1,0 +1,171 @@
+# Device_Window_spec-20251002bc.toml
+# Converted from Device_Window_spec-20251002bc.txt
+# Structured specification for NgaSim GUI (dashboard + per-device windows)
+
+[meta]
+title = "NgaSim Device Window Specification"
+version = "2025-10-02-bc"
+author = "converted"
+
+# Dashboard configuration
+[dashboard]
+name = "Dashboard"
+# Show devices that are online and those previously seen but offline
+show_online = true
+show_offline = true
+
+# At-a-glance fields to show per device in dashboard list/grid
+dashboard_fields = [
+  "serial_number",
+  "status",       # e.g. ONLINE / OFFLINE / ERROR
+  "power_on_off", # boolean or ON/OFF indicator
+  "type_specific" # placeholder for a short summary depending on device type (e.g. Chlorination power, RPM, pH)
+]
+
+# Visual style hints
+[dashboard.visual]
+view = "grid" # options: grid | list (default grid)
+online_color = "#00cc66"
+offline_color = "#999999"
+error_flash_color = "#ff0000"
+
+# Device-type specific widget configurations
+[[device_type]]
+name = "Sanitizer"
+short = "SWC"
+category = "sanitizerGen2"
+
+  [[device_type.widget]]
+  id = "power_gauge"
+  type = "dial"
+  label = "Power Level / Current"
+  description = "Dial gauge with dual scale: amps (-ve..+ve) and percentage (0..100)"
+  properties = { amps_at_100_percent = 6.2, percent_step = 10 }
+
+  [[device_type.widget]]
+  id = "ppm_display"
+  type = "digital_display"
+  label = "PPM"
+  digits = 4
+  fallback_when_waiting = "WAIT"
+  fallback_when_off = "OFF"
+
+  [[device_type.widget]]
+  id = "power_button"
+  type = "toggle_button"
+  label = "Power ON/OFF"
+  states = ["ON","OFF","ERROR"]
+  visual = { on_color = "#00cc66", off_color = "#aaaaaa", error_flash = true }
+
+[[device_type]]
+name = "Pump"
+short = "VSP"
+category = "vsp"
+  [[device_type.widget]]
+  id = "rpm_display"
+  type = "digital_display"
+  label = "RPM"
+  digits = 4
+  flashing_when_ramping = true
+  fallback_when_missing = "----"
+
+[[device_type]]
+name = "Heater"
+short = "JXI"
+category = "heater"
+  [[device_type.widget]]
+  id = "heater_state"
+  type = "label"
+  label = "HEATING / OFF"
+  possible_values = ["HEATING","OFF","ERROR"]
+
+[[device_type]]
+name = "HeatPump"
+short = "JE"
+category = "heatpump"
+  [[device_type.widget]]
+  id = "hp_state"
+  type = "label"
+  label = "Mode"
+  possible_values = ["OFF","HEATING","CHILLING","ERROR"]
+
+[[device_type]]
+name = "InfiniteColorLights"
+short = "ICL"
+category = "icl"
+  [[device_type.widget]]
+  id = "rgbw_values"
+  type = "quad_display"
+  label = "RGBW"
+  channels = ["R","G","B","W"]
+  range = [0,255]
+
+  [[device_type.widget]]
+  id = "power_button"
+  type = "toggle_button"
+  label = "Power"
+
+  [[device_type.widget]]
+  id = "color_preview"
+  type = "color_lamp"
+  label = "Preview"
+
+[[device_type]]
+name = "FindMe"
+short = "findme"
+category = "utility"
+  [[device_type.widget]]
+  id = "findme_button"
+  type = "button"
+  label = "Find Me"
+
+  [[device_type.widget]]
+  id = "findme_indicator"
+  type = "indicator"
+  label = "Finding"
+
+# Per-device telemetry configuration UI
+[telemetry_config]
+label = "Telemetry Configuration"
+widget = "seconds_input"
+notes = "Value in seconds between sending Telemetry messages"
+
+# Device information fields (from announce message)
+[[device_info_fields]]
+name = "product_name"
+type = "string"
+
+[[device_info_fields]]
+name = "serial_number"
+type = "string"
+
+[[device_info_fields]]
+name = "category"
+type = "string"
+
+[[device_info_fields]]
+name = "model_id"
+type = "string"
+
+[[device_info_fields]]
+name = "model_version"
+type = "string"
+
+[[device_info_fields]]
+name = "firmware_version"
+type = "string"
+
+[[device_info_fields]]
+name = "ota_version"
+type = "string"
+
+[[device_info_fields]]
+name = "available_bus_types"
+type = "array"
+item_type = "BusType"
+
+[[device_info_fields]]
+name = "active_bus"
+type = "BusDescription"
+
+# End of TOML spec

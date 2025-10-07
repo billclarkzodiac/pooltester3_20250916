@@ -36,6 +36,11 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": "explicit"
     },
+    // Disable format on save and default formatter for TOML files to preserve comments
+    "[toml]": {
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": null
+    },
     "editor.rulers": [
         80,
         120

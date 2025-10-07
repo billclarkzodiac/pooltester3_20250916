@@ -864,6 +864,7 @@ func (n *NgaSim) startWebServer() error {
 	// Start web server
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", n.handleHome)
+	mux.HandleFunc("/api/exit", n.handleExit)
 	mux.HandleFunc("/api/devices", n.handleAPI)
 	mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand)
 	mux.HandleFunc("/api/sanitizer/states", n.handleSanitizerStates)
@@ -886,584 +887,158 @@ var tmpl = template.Must(template.New("home").Parse(`
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>NgaSim Pool Controller</title>
-    <meta http-equiv="refresh" content="10">
-    <style>
-        body { font-family: Arial; background: #667eea; margin: 0; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
-        .control-panel { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .control-group { padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; }
-        .control-group h3 { margin-top: 0; color: #333; }
-        .slider-container { margin: 15px 0; }
-        .slider { width: 100%; height: 8px; border-radius: 5px; background: #ddd; outline: none; }
-        .slider::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #3B82F6; cursor: pointer; }
-        .slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #3B82F6; cursor: pointer; border: none; }
-        .slider-value { font-weight: bold; color: #3B82F6; font-size: 1.2em; }
-        .button-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn { padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-        .btn-primary { background: #3B82F6; color: white; }
-        .btn-success { background: #10B981; color: white; }
-        .btn-warning { background: #F59E0B; color: white; }
-        .btn-danger { background: #EF4444; color: white; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .status-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
-        .status-online { background: #10B981; }
-        .status-offline { background: #EF4444; }
-        .devices { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .device { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .device-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .device-type { color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; }
-        .device-type.VSP { background: #3B82F6; }
-        .device-type.Sanitizer { background: #10B981; }
-        .device-type.sanitizerGen2 { background: #10B981; }
-        .device-type.ICL { background: #8B5CF6; }
-        .device-type.TruSense { background: #F59E0B; }
-        .device-type.Heater { background: #EF4444; }
-        .device-type.HeatPump { background: #06B6D4; }
-        .device-type.ORION { background: #6B7280; }
-        .device-status { background: #10B981; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.8em; }
-        .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
-        .metric { text-align: center; }
-        .metric-value { font-size: 1.3em; font-weight: bold; color: #3B82F6; }
-        .metric-label { font-size: 0.8em; color: #666; margin-top: 5px; }
-        .device-controls { margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
-        .hidden { display: none; }
-        .command-pending { animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-    </style>
-    <script>
-        let autoRefresh = true;
-        let commandRepeatRate = 30; // seconds
-        let topologyRate = 60; // seconds
-        
-        function toggleAutoRefresh() {
-            autoRefresh = !autoRefresh;
-            const btn = document.getElementById('refreshBtn');
-            if (autoRefresh) {
-                btn.textContent = 'Disable Auto-Refresh';
-                btn.className = 'btn btn-warning';
-                setTimeout(() => { if (autoRefresh) window.location.reload(); }, 10000);
-            } else {
-                btn.textContent = 'Enable Auto-Refresh';
-                btn.className = 'btn btn-success';
-            }
-        }
-        
-        function updateSliderValue(sliderId, valueId) {
-            const slider = document.getElementById(sliderId);
-            const valueDisplay = document.getElementById(valueId);
-            valueDisplay.textContent = slider.value + (sliderId.includes('Rate') ? 's' : '%');
-            
-            if (sliderId === 'commandRate') {
-                commandRepeatRate = slider.value;
-            } else if (sliderId === 'topologyRate') {
-                topologyRate = slider.value;
-            }
-        }
-        
-        async function sendSanitizerCommand(serial, percentage) {
-            try {
-                const response = await fetch('/api/sanitizer/command', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ serial: serial, percentage: parseInt(percentage) })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showStatus('✅ Command sent: ' + result.message + ' - GUI will stay at ' + percentage + '%', 'success');
-                    // Store successful command value to keep GUI consistent
-                    localStorage.setItem('lastSuccessfulCommand', percentage);
-                    
-                    // Only refresh if user hasn't made another command recently (prevents override)
-                    setTimeout(() => { 
-                        const lastCommand = localStorage.getItem('lastCommandTime');
-                        const timeDiff = Date.now() - parseInt(lastCommand || '0');
-                        if (timeDiff > 2500) { // Only refresh if no recent commands
-                            window.location.reload(); 
-                        }
-                    }, 3000);
-                } else {
-                    showStatus('❌ Command failed: ' + result.message, 'error');
-                }
-            } catch (error) {
-                showStatus('❌ Network error: ' + error.message, 'error');
-            }
-        }
-        
-        function showStatus(message, type) {
-            // Create or update status div
-            let statusDiv = document.getElementById('statusMessage');
-            if (!statusDiv) {
-                statusDiv = document.createElement('div');
-                statusDiv.id = 'statusMessage';
-                document.querySelector('.header').appendChild(statusDiv);
-            }
-            
-            statusDiv.textContent = message;
-            statusDiv.style.background = type == 'success' ? '#10B981' : '#EF4444';
-            statusDiv.style.color = 'white';
-            statusDiv.style.padding = '10px';
-            statusDiv.style.borderRadius = '5px';
-            statusDiv.style.margin = '10px 0';
-            statusDiv.style.display = 'block';
-            
-            // Auto-hide after 3 seconds
-            setTimeout(() => { 
-                statusDiv.style.display = 'none'; 
-            }, 3000);
-        }
-        
-        function highlightActiveButton(percentage) {
-            // Reset all button styles
-            const buttons = ['btn-0', 'btn-10', 'btn-50', 'btn-100', 'btn-101'];
-            buttons.forEach(btnId => {
-                const btn = document.getElementById(btnId);
-                if (btn) {
-                    btn.style.border = '';
-                    btn.style.boxShadow = '';
-                }
-            });
-            
-            // Highlight the closest matching button
-            let activeId = 'btn-50'; // Default
-            if (percentage === 0) activeId = 'btn-0';
-            else if (percentage <= 10) activeId = 'btn-10';
-            else if (percentage <= 50) activeId = 'btn-50';
-            else if (percentage <= 100) activeId = 'btn-100';
-            else activeId = 'btn-101'; // BOOST for 101%+
-            
-            const activeBtn = document.getElementById(activeId);
-            if (activeBtn) {
-                activeBtn.style.border = '3px solid #FFD700';
-                activeBtn.style.boxShadow = '0 0 10px #FFD700';
-            }
-        }
-        
-        function highlightActiveButtonGroup(buttonId, groupPrefix) {
-            // Reset all buttons in the group
-            const buttons = document.querySelectorAll('[id^="' + groupPrefix + '"]');
-            buttons.forEach(btn => {
-                btn.style.border = '';
-                btn.style.boxShadow = '';
-            });
-            
-            // Highlight the active button
-            const activeBtn = document.getElementById(buttonId);
-            if (activeBtn) {
-                activeBtn.style.border = '3px solid #FFD700';
-                activeBtn.style.boxShadow = '0 0 10px #FFD700';
-            }
-        }
-        
-        function setCommandRate(value, buttonId) {
-            // Update slider and display
-            document.getElementById('commandRate').value = value;
-            updateSliderValue('commandRate', 'commandRateValue');
-            
-            // Highlight the pressed button
-            highlightActiveButtonGroup(buttonId, 'cmd-');
-            
-            // Store for persistence
-            localStorage.setItem('lastCommandRate', value);
-            localStorage.setItem('lastCommandRateButton', buttonId);
-            
-            // Show confirmation
-            showStatus('✅ Background command rate set to ' + value + 's', 'success');
-        }
-        
-        function setTopologyRate(value, buttonId) {
-            // Update slider and display  
-            document.getElementById('topologyRate').value = value;
-            updateSliderValue('topologyRate', 'topologyRateValue');
-            
-            // Highlight the pressed button
-            highlightActiveButtonGroup(buttonId, 'topo-');
-            
-            // Store for persistence
-            localStorage.setItem('lastTopologyRate', value);
-            localStorage.setItem('lastTopologyRateButton', buttonId);
-            
-            // Show confirmation
-            showStatus('✅ Topology reporting rate set to ' + value + 's', 'success');
-        }
-        
-        function setSanitizerPower(percentage) {
-            // Get the active sanitizer device serial dynamically
-            getActiveSanitizerSerial().then(serial => {
-                // Update the main slider to reflect the command being sent
-                document.getElementById('chlorinationSlider').value = percentage;
-                updateSliderValue('chlorinationSlider', 'chlorinationValue');
-                
-                // Highlight the pressed button
-                highlightActiveButton(percentage);
-                
-                // Store the last command value so it persists across page refreshes
-                localStorage.setItem('lastChlorinationValue', percentage);
-                localStorage.setItem('lastCommandTime', Date.now());
-                
-                // Send the command
-                sendSanitizerCommand(serial, percentage);
-            });
-        }
-        
-        function syncSliderWithDeviceState() {
-            // Use the API to get current device state instead of template rendering
-            fetch('/api/devices')
-                .then(response => response.json())
-                .then(devices => {
-                    let activeSanitizer = null;
-                    
-                    for (let device of devices) {
-                        if (device.type === 'Sanitizer' || device.category === 'sanitizerGen2' || device.type === 'sanitizerGen2') {
-                            activeSanitizer = device;
-                            break;
-                        }
-                    }
-                    
-                    if (activeSanitizer) {
-                        // Use device's actual percentage, or pending if command is in progress
-                        let currentPercentage = activeSanitizer.percentage_output || activeSanitizer.actual_percentage || 0;
-                        
-                        // If there's a pending command, show the pending value instead (gives immediate UI feedback)
-                        if (activeSanitizer.pending_percentage && activeSanitizer.pending_percentage !== 0) {
-                            currentPercentage = activeSanitizer.pending_percentage;
-                        }
-                        
-                        // Update slider and button highlights to match device state
-                        document.getElementById('chlorinationSlider').value = currentPercentage;
-                        updateSliderValue('chlorinationSlider', 'chlorinationValue');
-                        highlightActiveButton(currentPercentage);
-                        
-                        console.log('Synced slider to device state: ' + currentPercentage + '%');
-                        return currentPercentage;
-                    }
-                })
-                .catch(error => {
-                    console.log('Failed to fetch device state for sync: ' + error.message);
-                });
-            
-            return null;
-        }
-        
-        function getActiveSanitizerSerial() {
-            // Use the API to get current device serial
-            return fetch('/api/devices')
-                .then(response => response.json())
-                .then(devices => {
-                    for (let device of devices) {
-                        if (device.type === 'Sanitizer' || device.category === 'sanitizerGen2' || device.type === 'sanitizerGen2') {
-                            return device.serial || device.id;
-                        }
-                    }
-                    return '1234567890ABCDEF00'; // Fallback to hardcoded value
-                })
-                .catch(error => {
-                    console.log('Failed to fetch device serial: ' + error.message);
-                    return '1234567890ABCDEF00'; // Fallback on error
-                });
-        }
-        
-        window.onload = function() {
-            // PRIORITY 1: Sync with actual device state (overrides localStorage)
-            const devicePercentage = syncSliderWithDeviceState();
-            
-            // PRIORITY 2: Only use localStorage if no device state available
-            if (devicePercentage === null) {
-                const lastChlorinationValue = localStorage.getItem('lastChlorinationValue');
-                if (lastChlorinationValue) {
-                    document.getElementById('chlorinationSlider').value = lastChlorinationValue;
-                    highlightActiveButton(parseInt(lastChlorinationValue));
-                }
-            }
-            
-            // Restore command rate state
-            const lastCommandRate = localStorage.getItem('lastCommandRate');
-            const lastCommandRateButton = localStorage.getItem('lastCommandRateButton');
-            if (lastCommandRate) {
-                document.getElementById('commandRate').value = lastCommandRate;
-                if (lastCommandRateButton) {
-                    highlightActiveButtonGroup(lastCommandRateButton, 'cmd-');
-                }
-            }
-            
-            // Restore topology rate state
-            const lastTopologyRate = localStorage.getItem('lastTopologyRate');
-            const lastTopologyRateButton = localStorage.getItem('lastTopologyRateButton');
-            if (lastTopologyRate) {
-                document.getElementById('topologyRate').value = lastTopologyRate;
-                if (lastTopologyRateButton) {
-                    highlightActiveButtonGroup(lastTopologyRateButton, 'topo-');
-                }
-            }
-            
-            // Initialize slider display values
-            updateSliderValue('chlorinationSlider', 'chlorinationValue');
-            updateSliderValue('commandRate', 'commandRateValue');
-            updateSliderValue('topologyRate', 'topologyRateValue');
-            
-            // Set up auto-refresh (but respect recent commands)
-            if (autoRefresh) {
-                setTimeout(() => { 
-                    const lastCommand = localStorage.getItem('lastCommandTime');
-                    const timeDiff = Date.now() - parseInt(lastCommand || '0');
-                    if (autoRefresh && timeDiff > 12000) { // Don't auto-refresh if recent commands
-                        window.location.reload(); 
-                    }
-                }, 15000);
-            }
-        }
-    </script>
+  <meta charset="utf-8" />
+  <title>NgaSim Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+	:root{--bg:#f3f4f6;--card:#ffffff;--muted:#6b7280;--accent:#10b981;--accent-2:#3b82f6}
+	body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#111}
+	.page{max-width:1200px;margin:18px auto;padding:0 20px}
+	.header{background:#111827;color:#fff;padding:14px 20px;border-radius:6px;display:flex;align-items:center;justify-content:space-between}
+	.hdr-title{font-size:18px;font-weight:600}
+	.hdr-right{font-size:14px;color:#d1d5db}
+
+	/* Grid */
+	.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:18px}
+	.card{background:var(--card);border:1px solid #e5e7eb;border-radius:8px;padding:14px;height:140px;box-shadow:0 1px 2px rgba(0,0,0,0.04);cursor:pointer}
+	.card h4{margin:0 0 6px 0;font-size:14px}
+	.card .meta{font-size:12px;color:var(--muted);margin-bottom:6px}
+	.card .state{position:absolute;right:20px;top:22px;font-weight:700;color:var(--accent)}
+	.card-wrapper{position:relative}
+
+	/* Popup overlay */
+	.overlay{position:fixed;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;background:rgba(17,24,39,0.45);z-index:30}
+	.popup{width:760px;background:#fff;border-radius:10px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.25);}
+	.popup-head{display:flex;justify-content:space-between;align-items:center}
+	.popup-head h3{margin:0;font-size:16px}
+	.popup-body{display:flex;margin-top:12px;gap:16px}
+	.left-panel{width:360px;background:#f9fafb;border-radius:6px;padding:12px}
+	.gauge{width:100%;height:220px;display:flex;align-items:center;justify-content:center}
+	.gauge .value{font-size:32px;font-weight:700;color:#111}
+	.ppm-box{margin-top:12px;background:#fff;border-radius:6px;padding:8px;border:1px solid #e5e7eb;text-align:center}
+	.right-panel{flex:1;display:flex;flex-direction:column;gap:10px}
+	.controls{background:#f9fafb;border-radius:6px;padding:10px;border:1px solid #e5e7eb}
+	.controls .btn-row{display:flex;gap:10px;margin-top:8px}
+	.btn{padding:10px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:600;color:#fff}
+	.btn.off{background:#10b981}
+	.btn.p10{background:#f59e0b}
+	.btn.p50{background:#3b82f6}
+	.btn.p100{background:#16a34a}
+	.btn.boost{background:#ef4444}
+	.btn.close{background:#ef4444;padding:6px 10px}
+	.device-info{background:#fff;border-radius:6px;padding:10px;border:1px solid #e5e7eb}
+	.small{font-size:13px;color:var(--muted)}
+
+	@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.popup{width:92%}}
+	@media(max-width:640px){.grid{grid-template-columns:1fr}.popup{width:95%}}
+  </style>
+  <script>
+	// Minimal client: open popup for a device card and send commands
+	let devices = [];
+	function fetchDevices(){
+	  fetch('/api/devices').then(r=>r.json()).then(d=>{devices=d;renderGrid(d)})
+	}
+	function renderGrid(devs){
+	  const grid = document.getElementById('grid');
+	  grid.innerHTML = '';
+	  for(const dev of devs){
+		const wrap = document.createElement('div'); wrap.className='card-wrapper';
+		const card = document.createElement('div'); card.className='card';
+		const title = document.createElement('h4'); title.textContent = dev.name || dev.id || dev.serial || 'Device';
+		const meta = document.createElement('div'); meta.className='meta'; meta.textContent = (dev.type||dev.category||'').toUpperCase() + ' • Serial: ' + (dev.serial||dev.id||'')
+		const state = document.createElement('div'); state.className='state'; state.textContent = dev.status||''
+		card.appendChild(title); card.appendChild(meta); wrap.appendChild(card); wrap.appendChild(state);
+		wrap.onclick = ()=>openPopup(dev);
+		grid.appendChild(wrap);
+	  }
+	  document.getElementById('hdr-count').textContent = devs.length + ' devices';
+	}
+
+	function openPopup(dev){
+	  const overlay = document.getElementById('overlay'); overlay.style.display='flex';
+	  document.getElementById('popup-title').textContent = (dev.name||dev.serial||dev.id);
+	  document.getElementById('gauge-value').textContent = (dev.percentage_output||dev.actual_percentage||0) + '%';
+	  document.getElementById('ppm-value').textContent = (dev.ppm_salt||dev.ppmsalt||dev.salinity||'---');
+	  document.getElementById('device-model').textContent = dev.model_id || dev.product_name || '';
+	  document.getElementById('device-fw').textContent = dev.firmware_version || '';
+	  document.getElementById('device-last').textContent = dev.last_seen?dev.last_seen:'-';
+	  // store active serial on overlay for command buttons
+	  overlay.dataset.serial = dev.serial||dev.id||'';
+	}
+	function closePopup(){document.getElementById('overlay').style.display='none'}
+
+	function sendCmd(percent){
+	  const overlay = document.getElementById('overlay'); const serial = overlay.dataset.serial || '';
+	  if(!serial){alert('No device serial');return}
+	  fetch('/api/sanitizer/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({serial:serial,percentage:percent})})
+		.then(r=>r.json()).then(j=>{ if(j.success){ document.getElementById('gauge-value').textContent = percent + '%'; fetchDevices(); } else alert('Command failed:'+JSON.stringify(j)) })
+		.catch(e=>alert('Network error:'+e.message))
+	}
+
+	window.addEventListener('load', ()=>{ fetchDevices(); setInterval(fetchDevices,10000) })
+
+			function confirmExit(){
+				if(!confirm('Really exit pool-controller and poller?')) return;
+				fetch('/api/exit',{method:'POST'}).then(r=>r.json()).then(j=>{alert(j.message);}).catch(e=>alert('Exit request failed: '+e.message));
+			}
+  </script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>NgaSim Pool Controller v{{.Version}}</h1>
-            <p>
-                <span class="status-indicator status-online"></span>
-                {{len .Devices}} devices discovered
-                <button id="refreshBtn" class="btn btn-warning" onclick="toggleAutoRefresh()">Disable Auto-Refresh</button>
-            </p>
-            <div id="statusMessage"></div>
-        </div>
-        
-        <div class="control-panel">
-            <h2 style="margin-top: 0; color: #333;">System Controls</h2>
-            <div class="controls-grid">
-                <!-- Chlorination Power Control -->
-                <div class="control-group">
-                    <h3>🧪 Chlorination Power</h3>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="101" value="50" class="slider" id="chlorinationSlider" 
-                               oninput="updateSliderValue('chlorinationSlider', 'chlorinationValue')">
-                        <div style="text-align: center; margin-top: 10px;">
-                            <span class="slider-value" id="chlorinationValue">50%</span>
-                        </div>
-                        <div class="button-group" style="justify-content: center;">
-                            <button class="btn btn-danger" id="btn-0" onclick="setSanitizerPower(0)">OFF</button>
-                            <button class="btn btn-warning" id="btn-10" onclick="setSanitizerPower(10)">10%</button>
-                            <button class="btn btn-primary" id="btn-50" onclick="setSanitizerPower(50)">50%</button>
-                            <button class="btn btn-success" id="btn-100" onclick="setSanitizerPower(100)">100%</button>
-                            <button class="btn btn-success" id="btn-101" onclick="setSanitizerPower(101)">BOOST</button>
-                        </div>
-                        <div style="text-align: center; margin-top: 10px;">
-                            <button class="btn btn-primary" onclick="getActiveSanitizerSerial().then(serial => sendSanitizerCommand(serial, document.getElementById('chlorinationSlider').value))">
-                                Send Command
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Command Repeat Rate -->
-                <div class="control-group">
-                    <h3>⏱️ Background Command Rate</h3>
-                    <div class="slider-container">
-                        <input type="range" min="2" max="60" value="4" class="slider" id="commandRate" 
-                               oninput="updateSliderValue('commandRate', 'commandRateValue')">
-                        <div style="text-align: center; margin-top: 10px;">
-                            <span class="slider-value" id="commandRateValue">4s</span>
-                        </div>
-                        <div class="button-group" style="justify-content: center;">
-                            <button class="btn btn-primary" id="cmd-fast" onclick="setCommandRate(2, 'cmd-fast')">Fast</button>
-                            <button class="btn btn-primary" id="cmd-normal" onclick="setCommandRate(4, 'cmd-normal')">Normal</button>
-                            <button class="btn btn-primary" id="cmd-slow" onclick="setCommandRate(15, 'cmd-slow')">Slow</button>
-                        </div>
-                        <p style="font-size: 0.85em; color: #666; margin: 10px 0 0 0;">
-                            Controls how often background commands are sent (Normal=4s avoids timeouts)
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Topology Reporting Rate -->
-                <div class="control-group">
-                    <h3>📡 Topology Reporting Rate</h3>
-                    <div class="slider-container">
-                        <input type="range" min="5" max="300" value="10" class="slider" id="topologyRate" 
-                               oninput="updateSliderValue('topologyRate', 'topologyRateValue')">
-                        <div style="text-align: center; margin-top: 10px;">
-                            <span class="slider-value" id="topologyRateValue">10s</span>
-                        </div>
-                        <div class="button-group" style="justify-content: center;">
-                            <button class="btn btn-primary" id="topo-frequent" onclick="setTopologyRate(5, 'topo-frequent')">Frequent</button>
-                            <button class="btn btn-primary" id="topo-normal" onclick="setTopologyRate(10, 'topo-normal')">Normal</button>
-                            <button class="btn btn-primary" id="topo-infrequent" onclick="setTopologyRate(120, 'topo-infrequent')">Infrequent</button>
-                        </div>
-                        <p style="font-size: 0.85em; color: #666; margin: 10px 0 0 0;">
-                            Device topology reporting rate (Normal=10s is preferred optimal rate)
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- System Status -->
-                <div class="control-group">
-                    <h3>🔧 System Status</h3>
-                    <div style="font-size: 0.9em; color: #333;">
-                        <div style="margin: 8px 0;">
-                            <strong>MQTT Broker:</strong> 169.254.1.1:1883
-                        </div>
-                        <div style="margin: 8px 0;">
-                            <strong>Web Server:</strong> localhost:8082
-                        </div>
-                        <div style="margin: 8px 0;">
-                            <strong>Active Devices:</strong> {{len .Devices}}
-                        </div>
-                        <div style="margin: 8px 0;">
-                            <strong>System Mode:</strong> 
-                            {{if gt (len .Devices) 0}}
-                                <span style="color: #10B981;">Live Hardware</span>
-                            {{else}}
-                                <span style="color: #F59E0B;">Demo Mode</span>
-                            {{end}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="devices">
-            {{range .Devices}}
-            <div class="device">
-                <div class="device-header">
-                    <div class="device-type {{.Type}}">{{.Type}}</div>
-                    <div class="device-status">{{.Status}}</div>
-                </div>
-                <h3>{{.Name}}</h3>
-                <p>Serial: {{.Serial}}</p>
-                <div class="metrics">
-                    {{if eq .Type "VSP"}}
-                        <div class="metric">
-                            <div class="metric-value">{{.RPM}}</div>
-                            <div class="metric-label">RPM</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
-                            <div class="metric-label">Temperature</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{.Power}}W</div>
-                            <div class="metric-label">Power</div>
-                        </div>
-                                                                {{else if or (eq .Type "Sanitizer") (eq .Category "sanitizerGen2") (eq .Type "sanitizerGen2")}}
-                        <div class="metric">
-                            <div class="metric-value">{{.PPMSalt}}ppm</div>
-                            <div class="metric-label">Salt Level</div>
-                        </div>
-                        <div class="metric">
-                            {{if and (ne .PendingPercentage 0) (ne .PendingPercentage .PercentageOutput)}}
-                                <div class="metric-value current-output" data-serial="{{.Serial}}" style="color: #F59E0B;">
-                                    {{.PendingPercentage}}% → {{.PercentageOutput}}%
-                                </div>
-                                <div class="metric-label" style="color: #F59E0B;">Command → Actual</div>
-                            {{else}}
-                                <div class="metric-value current-output" data-serial="{{.Serial}}">{{.PercentageOutput}}%</div>
-                                <div class="metric-label">Current Output</div>
-                            {{end}}
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{.RSSI}}dBm</div>
-                            <div class="metric-label">Signal</div>
-                        </div>
-                    {{else if eq .Type "ICL"}}
-                        <div class="metric">
-                            <div class="metric-value" style="background: rgb({{.Red}},{{.Green}},{{.Blue}}); color: white; padding: 5px; border-radius: 3px;">RGB</div>
-                            <div class="metric-label">Color</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{.White}}</div>
-                            <div class="metric-label">White Level</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
-                            <div class="metric-label">Controller Temp</div>
-                        </div>
-                    {{else if eq .Type "TruSense"}}
-                        <div class="metric">
-                            <div class="metric-value">{{printf "%.1f" .PH}}</div>
-                            <div class="metric-label">pH</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{.ORP}}</div>
-                            <div class="metric-label">ORP (mV)</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
-                            <div class="metric-label">Water Temp</div>
-                        </div>
-                    {{else if or (eq .Type "Heater") (eq .Type "HeatPump")}}
-                        <div class="metric">
-                            <div class="metric-value">{{printf "%.1fC" .SetTemp}}</div>
-                            <div class="metric-label">Set Temp</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{printf "%.1fC" .WaterTemp}}</div>
-                            <div class="metric-label">Water Temp</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{.HeatingMode}}</div>
-                            <div class="metric-label">Mode</div>
-                        </div>
-                    {{else}}
-                        <div class="metric">
-                            <div class="metric-value">{{printf "%.1fC" .Temp}}</div>
-                            <div class="metric-label">Temperature</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{.Serial}}</div>
-                            <div class="metric-label">Serial</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value">{{.Status}}</div>
-                            <div class="metric-label">Status</div>
-                        </div>
-                    {{end}}
-                </div>
-                {{if .ProductName}}
-                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 0.85em;">
-                    <div><strong>Product:</strong> {{.ProductName}}</div>
-                    {{if .ModelId}}<div><strong>Model:</strong> {{.ModelId}} {{.ModelVersion}}</div>{{end}}
-                    {{if .FirmwareVersion}}<div><strong>Firmware:</strong> {{.FirmwareVersion}}</div>{{end}}
-                    {{if .OtaVersion}}<div><strong>OTA:</strong> {{.OtaVersion}}</div>{{end}}
-                    {{if ne .LineInputVoltage 0}}<div><strong>Voltage:</strong> {{.LineInputVoltage}}V</div>{{end}}
-                    {{if .IsCellFlowReversed}}<div><strong>Flow:</strong> <span style="color: orange;">Reversed</span></div>{{end}}
-                </div>
-                {{end}}
-                
-                {{if or (eq .Type "Sanitizer") (eq .Category "sanitizerGen2") (eq .Type "sanitizerGen2")}}
-                <div class="device-controls">
-                    <h4 style="margin: 0 0 10px 0; color: #333;">Quick Commands</h4>
-                    <div class="button-group">
-                        <button class="btn btn-danger" onclick="sendSanitizerCommand('{{.Serial}}', 0)" title="Turn off sanitizer">
-                            OFF
-                        </button>
-                        <button class="btn btn-warning" onclick="sendSanitizerCommand('{{.Serial}}', 10)" title="Set to 10% power">
-                            10%
-                        </button>
-                        <button class="btn btn-primary" onclick="sendSanitizerCommand('{{.Serial}}', 50)" title="Set to 50% power">
-                            50%
-                        </button>
-                        <button class="btn btn-success" onclick="sendSanitizerCommand('{{.Serial}}', 100)" title="Set to 100% power">
-                            100%
-                        </button>
-                        <button class="btn btn-success" onclick="sendSanitizerCommand('{{.Serial}}', 101)" title="Set to boost mode (101%)">
-                            BOOST
-                        </button>
-                    </div>
-                </div>
-                {{end}}
-                <p style="text-align: center; margin-top: 15px; font-size: 0.9em; color: #666;">
-                    Last seen: {{.LastSeen.Format "15:04:05"}}
-                </p>
-            </div>
-            {{end}}
-        </div>
-    </div>
+  <div class="page">
+	<div class="header">
+				<div class="hdr-title">NgaSim Dashboard v{{.Version}}</div>
+				<div style="display:flex;align-items:center;gap:12px">
+					<div class="hdr-right" id="hdr-count">{{len .Devices}} devices</div>
+					<button id="exitBtn" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:6px;font-weight:700;cursor:pointer" onclick="confirmExit()">EXIT</button>
+				</div>
+	</div>
+
+	<div id="grid" class="grid">
+	  {{range .Devices}}
+	  <div class="card-wrapper">
+		<div class="card" onclick="openPopup({{printf "%#v" .}})">
+		  <h4>{{.Name}}</h4>
+		  <div class="meta">{{.Type}} • Serial: {{.Serial}}</div>
+		</div>
+		<div class="state">{{.Status}}</div>
+	  </div>
+	  {{end}}
+	</div>
+  </div>
+
+  <!-- Overlay popup matching the SVG wireframe -->
+  <div id="overlay" class="overlay">
+	<div class="popup">
+	  <div class="popup-head">
+		<h3 id="popup-title">Sanitizer</h3>
+		<button class="btn close" onclick="closePopup()">X</button>
+	  </div>
+	  <div class="popup-body">
+		<div class="left-panel">
+		  <div class="gauge"><div class="value" id="gauge-value">0%</div></div>
+		  <div class="ppm-box"><div class="small">PPM</div><div style="font-size:22px;font-weight:700" id="ppm-value">---</div></div>
+		</div>
+		<div class="right-panel">
+		  <div class="controls">
+			<div class="small">Power Controls</div>
+			<div class="btn-row">
+			  <button class="btn off" onclick="sendCmd(0)">OFF</button>
+			  <button class="btn p10" onclick="sendCmd(10)">10%</button>
+			  <button class="btn p50" onclick="sendCmd(50)">50%</button>
+			  <button class="btn p100" onclick="sendCmd(100)">100%</button>
+			</div>
+			<div style="margin-top:8px"><button class="btn boost" style="width:100%" onclick="sendCmd(101)">BOOST</button></div>
+		  </div>
+		  <div class="device-info">
+			<div class="small">Device Info</div>
+			<div>Model: <span id="device-model"></span></div>
+			<div>FW: <span id="device-fw"></span></div>
+			<div>Last Seen: <span id="device-last"></span></div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+  </div>
 </body>
 </html>
 `))
@@ -1569,6 +1144,28 @@ func (n *NgaSim) handleSanitizerCommand(w http.ResponseWriter, r *http.Request) 
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+// handleExit performs a graceful cleanup and then exits the process.
+func (n *NgaSim) handleExit(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "POST required", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Respond quickly to the client
+	resp := map[string]interface{}{"success": true, "message": "Shutting down - cleaning up processes"}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+
+	// Run cleanup in a goroutine then exit after a short delay so response can complete
+	go func() {
+		log.Println("Exit requested via /api/exit - starting cleanup")
+		n.cleanup()
+		time.Sleep(500 * time.Millisecond)
+		log.Println("Exiting process now")
+		os.Exit(0)
+	}()
 }
 
 // handleSanitizerStates returns all sanitizer states from the controller
