@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -864,6 +865,7 @@ func (n *NgaSim) startWebServer() error {
 	// Start web server
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", n.handleHome)
+	mux.HandleFunc("/goodbye", n.handleGoodbye)
 	mux.HandleFunc("/api/exit", n.handleExit)
 	mux.HandleFunc("/api/devices", n.handleAPI)
 	mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand)
@@ -1152,20 +1154,54 @@ func (n *NgaSim) handleExit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "POST required", http.StatusMethodNotAllowed)
 		return
 	}
+	// Redirect client to a goodbye page which will attempt to close the tab
+	http.Redirect(w, r, "/goodbye", http.StatusSeeOther)
 
-	// Respond quickly to the client
-	resp := map[string]interface{}{"success": true, "message": "Shutting down - cleaning up processes"}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
-
-	// Run cleanup in a goroutine then exit after a short delay so response can complete
+	// Perform graceful shutdown in background so the redirect can complete
 	go func() {
-		log.Println("Exit requested via /api/exit - starting cleanup")
+		log.Println("Exit requested via /api/exit - initiating graceful shutdown")
+
+		// First perform application cleanup
 		n.cleanup()
-		time.Sleep(500 * time.Millisecond)
+
+		// Then attempt to gracefully shutdown the HTTP server
+		if n.server != nil {
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			if err := n.server.Shutdown(ctx); err != nil {
+				log.Printf("Server shutdown error: %v", err)
+			} else {
+				log.Println("HTTP server shut down cleanly")
+			}
+		}
+
+		// Small pause then exit to ensure process terminates if needed
+		time.Sleep(300 * time.Millisecond)
 		log.Println("Exiting process now")
 		os.Exit(0)
 	}()
+}
+
+// handleGoodbye serves a small page that attempts to auto-close the browser tab
+func (n *NgaSim) handleGoodbye(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprint(w, `<!doctype html>
+<html><head><meta charset="utf-8"><title>Goodbye</title></head>
+<body style="font-family:Arial;background:#f8fafc;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
+  <div style="text-align:center;padding:20px;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08)">
+	<h2 style="margin:0 0 8px 0">Shutting down...</h2>
+	<p style="color:#6b7280;margin:0 0 12px 0">The controller is stopping. This page will try to close automatically.</p>
+	<button onclick="tryClose()" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer">Close tab</button>
+  </div>
+  <script>
+	function tryClose(){
+	  try{window.open('','_self'); window.close();}catch(e){}
+	  document.body.innerHTML = '<div style="text-align:center;margin-top:40px">If the tab did not close, please close it manually.</div>'
+	}
+	// Try automatically after a short delay
+	setTimeout(tryClose, 800);
+  </script>
+</body></html>`)
 }
 
 // handleSanitizerStates returns all sanitizer states from the controller

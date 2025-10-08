@@ -1,0 +1,39 @@
+%% Device_Window_diagram.mmd
+%% Mermaid diagram showing Dashboard -> Device windows
+flowchart TD
+  A[Dashboard\n(Index Page)]
+  A -->|click| B[Sanitizer Window\n(SWC)]
+  A -->|click| C[Pump Window\n(VSP)]
+  A -->|click| D[Heater Window\n(JXI)]
+  A -->|click| E[Heat Pump Window\n(JE)]
+  A -->|click| F[Infinite Color Lights\n(ICL)]
+  A -->|click| G[Find Me Window]
+
+  subgraph DashboardDetails[Dashboard Components]
+    DA[Device Grid/List] --> DB[Status & Key Metrics]
+    DB --> DC[Serial Number]
+    DB --> DD[On/Off Indicator]
+    DB --> DE[Type-specific summary (Power, RPM, pH)]
+  end
+
+  subgraph Sanitizer[Sanitizer Window]
+    S1[Dial Gauge\n(-ve..+ve Amps and 0..100%)]
+    S2[PPM Display\n(4-digit, WAIT/OFF states)]
+    S3[Power Button\n(ON/OFF/ERROR, Flash RED)]
+    S4[Telemetry Config\n(seconds input + send button)]
+    S5[Device Info Fields]
+  end
+
+  subgraph Pump[Pump Window]
+    P1[RPM Display\n(4-digit, flashing when ramping)]
+    P2[Telemetry Config]
+    P3[Device Info]
+  end
+
+  subgraph Heater[Heater Window]
+    H1[State Label\n(HEATING / OFF / ERROR)]
+    H2[Device Info]
+  end
+
+  classDef deviceStyle fill:#f9f,stroke:#333,stroke-width:1px;
+  class Sanitizer,Pump,Heater deviceStyle
