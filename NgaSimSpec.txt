@@ -145,7 +145,6 @@ Note2: If an SDEM+GO command is sent after a STOP command, or unknown/idle statu
 
 Sanitizer (Salty / The Salt)
  - Serial number (from announce message)
- - number ? of max number found
  - Status:(from it's telemetry message)
    : power level set to (0..101 %) Interpret 101% as "BOOST", level<=10% = "LOW"
    : power on ?

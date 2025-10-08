@@ -34,7 +34,7 @@ We need 3 widgets,
 (1) a dial gauge, for power level / current.
 (2) a digital number display of 4 digits (0..9999) labeled PPM. When SWC is 1st 
 powered the PPM values are unreliable, display "WAIT" until values arrive, 
-when SWC is OFF display " OFF".
+when SWC is 0% display last known PPM but flashing.
 (3) a button to control ON/OFF, and to indicate power is ON/OFF. 
 
 The dial gauge is to monitor the Amps driven into the water, 
@@ -55,7 +55,7 @@ Variable Speed Pump, gets commanded to spin at a programmable RPM (600..3450).
 The VSP has a status indicating it's spinning up or ramping up to the set speed
 To indicate ramping up, the RPM display can flash the requested RPM. 
 Anything other that an at speed status should cause the RPM to flash.
-If RPM or VSP status in general  stops coming into the NgaSim, display "----".
+If RPM or VSP status in general  stops coming into the NgaSim, display "????".
 
 Widget:-
 (1) 4 digit display

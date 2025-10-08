@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -17,12 +18,81 @@ import (
 
 	"NgaSim/ned" // Import protobuf definitions
 
+	"github.com/BurntSushi/toml"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 )
 
-const NgaSimVersion = "2.1.1"
+const NgaSimVersion = "2.1.2"
+
+// TOML UI Specification structs
+type UISpec struct {
+	Meta             MetaInfo          `toml:"meta"`
+	Dashboard        Dashboard         `toml:"dashboard"`
+	DeviceTypes      []DeviceType      `toml:"device_type"`
+	TelemetryConfig  TelemetryConfig   `toml:"telemetry_config"`
+	DeviceInfoFields []DeviceInfoField `toml:"device_info_fields"`
+}
+
+type MetaInfo struct {
+	Title   string `toml:"title"`
+	Version string `toml:"version"`
+	Author  string `toml:"author"`
+}
+
+type Dashboard struct {
+	Name            string          `toml:"name"`
+	ShowOnline      bool            `toml:"show_online"`
+	ShowOffline     bool            `toml:"show_offline"`
+	DashboardFields []string        `toml:"dashboard_fields"`
+	Visual          DashboardVisual `toml:"visual"`
+}
+
+type DashboardVisual struct {
+	View            string `toml:"view"`
+	OnlineColor     string `toml:"online_color"`
+	OfflineColor    string `toml:"offline_color"`
+	ErrorFlashColor string `toml:"error_flash_color"`
+}
+
+type DeviceType struct {
+	Name     string   `toml:"name"`
+	Short    string   `toml:"short"`
+	Category string   `toml:"category"`
+	Widgets  []Widget `toml:"widget"`
+}
+
+type Widget struct {
+	ID          string                 `toml:"id"`
+	Type        string                 `toml:"type"`
+	Label       string                 `toml:"label"`
+	Description string                 `toml:"description,omitempty"`
+	Properties  map[string]interface{} `toml:"properties,omitempty"`
+	Digits      int                    `toml:"digits,omitempty"`
+	States      []string               `toml:"states,omitempty"`
+	Visual      map[string]interface{} `toml:"visual,omitempty"`
+	Channels    []string               `toml:"channels,omitempty"`
+	Range       []int                  `toml:"range,omitempty"`
+	// Additional fields for various widget types
+	FallbackWhenWaiting string   `toml:"fallback_when_waiting,omitempty"`
+	FallbackWhenOff     string   `toml:"fallback_when_off,omitempty"`
+	FallbackWhenMissing string   `toml:"fallback_when_missing,omitempty"`
+	FlashingWhenRamping bool     `toml:"flashing_when_ramping,omitempty"`
+	PossibleValues      []string `toml:"possible_values,omitempty"`
+}
+
+type TelemetryConfig struct {
+	Label  string `toml:"label"`
+	Widget string `toml:"widget"`
+	Notes  string `toml:"notes"`
+}
+
+type DeviceInfoField struct {
+	Name     string `toml:"name"`
+	Type     string `toml:"type"`
+	ItemType string `toml:"item_type,omitempty"`
+}
 
 type Device struct {
 	ID       string    `json:"id"`
@@ -873,6 +943,18 @@ func (n *NgaSim) startWebServer() error {
 	mux.HandleFunc("/api/power-levels", n.handlePowerLevels)
 	mux.HandleFunc("/api/emergency-stop", n.handleEmergencyStop)
 
+	// UI Specification API - parsed TOML as JSON
+	mux.HandleFunc("/api/ui/spec", n.handleUISpecAPI)
+
+	// Frontend demo
+	mux.HandleFunc("/demo", n.handleDemo)
+
+	// Serve design assets for web developers
+	mux.HandleFunc("/static/wireframe.svg", n.handleWireframeSVG)
+	mux.HandleFunc("/static/wireframe.mmd", n.handleWireframeMMD)
+	mux.HandleFunc("/static/ui-spec.toml", n.handleUISpecTOML)
+	mux.HandleFunc("/static/ui-spec.txt", n.handleUISpecTXT)
+
 	n.server = &http.Server{Addr: ":8082", Handler: mux}
 
 	go func() {
@@ -1245,6 +1327,61 @@ func (n *NgaSim) handleEmergencyStop(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+// handleWireframeSVG serves the SVG wireframe for web developers
+func (n *NgaSim) handleWireframeSVG(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/svg+xml")
+	http.ServeFile(w, r, "Device_Window_wireframe.svg")
+}
+
+// handleWireframeMMD serves the Mermaid diagram for web developers
+func (n *NgaSim) handleWireframeMMD(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	http.ServeFile(w, r, "Device_Window_diagram.mmd")
+}
+
+// handleUISpecTOML serves the TOML UI specification for web developers
+func (n *NgaSim) handleUISpecTOML(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	http.ServeFile(w, r, "Device_Window_spec-20251002bc.toml")
+}
+
+// handleUISpecTXT serves the text UI specification for web developers
+func (n *NgaSim) handleUISpecTXT(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	http.ServeFile(w, r, "Device_Window_spec-20251002bc.txt")
+}
+
+// handleUISpecAPI parses TOML UI spec and serves as JSON for dynamic frontends
+func (n *NgaSim) handleUISpecAPI(w http.ResponseWriter, r *http.Request) {
+	// Read the TOML file
+	data, err := ioutil.ReadFile("Device_Window_spec-20251002bc.toml")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error reading TOML file: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Parse TOML into our struct
+	var spec UISpec
+	if err := toml.Unmarshal(data, &spec); err != nil {
+		http.Error(w, fmt.Sprintf("Error parsing TOML: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Return as JSON
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*") // Allow CORS for frontend development
+	if err := json.NewEncoder(w).Encode(spec); err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
+}
+
+// handleDemo serves the frontend demo HTML page
+func (n *NgaSim) handleDemo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	http.ServeFile(w, r, "demo.html")
 }
 
 func main() {
