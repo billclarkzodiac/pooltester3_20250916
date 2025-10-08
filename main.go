@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -1356,7 +1355,7 @@ func (n *NgaSim) handleUISpecTXT(w http.ResponseWriter, r *http.Request) {
 // handleUISpecAPI parses TOML UI spec and serves as JSON for dynamic frontends
 func (n *NgaSim) handleUISpecAPI(w http.ResponseWriter, r *http.Request) {
 	// Read the TOML file
-	data, err := ioutil.ReadFile("Device_Window_spec-20251002bc.toml")
+	data, err := os.ReadFile("Device_Window_spec-20251002bc.toml")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error reading TOML file: %v", err), http.StatusInternalServerError)
 		return
