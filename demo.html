@@ -75,6 +75,13 @@
             color: #2c3e50;
         }
 
+        .device-serial {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-family: 'Courier New', monospace;
+            margin: 2px 0;
+        }
+
         .device-status {
             padding: 4px 8px;
             border-radius: 4px;
@@ -208,6 +215,151 @@
             border-radius: 4px;
             min-width: 40px;
         }
+
+        /* Device Control Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            min-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+        }
+
+        .popup-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .popup-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #7f8c8d;
+            padding: 5px 10px;
+        }
+
+        .popup-close:hover {
+            color: #e74c3c;
+        }
+
+        .command-section {
+            margin-bottom: 25px;
+        }
+
+        .command-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .command-form {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-description {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 3px;
+        }
+
+        .command-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .command-button:hover {
+            background: #2980b9;
+        }
+
+        .command-button.query {
+            background: #27ae60;
+        }
+
+        .command-button.query:hover {
+            background: #229954;
+        }
+
+        .control-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .control-button:hover {
+            background: #2980b9;
+        }
     </style>
 </head>
 
@@ -230,9 +382,23 @@
         <div id="spec-details"></div>
     </div>
 
+    <!-- Device Control Popup -->
+    <div id="device-popup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <div class="popup-title" id="popup-title">Device Controls</div>
+                <button class="popup-close" onclick="closeDevicePopup()">&times;</button>
+            </div>
+            <div id="popup-body">
+                <!-- Dynamic content will be generated here -->
+            </div>
+        </div>
+    </div>
+
     <script>
         let uiSpec = null;
         let devices = {};
+        let deviceCommands = {}; // Auto-discovered commands from protobuf reflection
 
         // Fetch UI specification from TOML endpoint
         async function loadUISpec() {
@@ -252,15 +418,54 @@
         // Fetch device data
         async function loadDevices() {
             try {
+                console.log('=== LOADING DEVICES ===');
                 const response = await fetch('/api/devices');
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const deviceData = await response.json();
-                devices = deviceData.devices || {};
-                console.log('Devices loaded:', devices);
+                const deviceArray = await response.json();
+                console.log('Raw device array from API:', deviceArray);
+
+                // Convert array to object with device ID as key
+                devices = {};
+                deviceArray.forEach(device => {
+                    devices[device.id] = device;
+                });
+
+                console.log('Devices loaded and converted to object:', devices);
+                console.log('Number of devices:', Object.keys(devices).length);
                 return true;
             } catch (error) {
                 console.error('Failed to load devices:', error);
                 showError('Failed to load device data: ' + error.message);
+                return false;
+            }
+        }
+
+        // Fetch device commands using protobuf reflection
+        async function loadDeviceCommands() {
+            try {
+                console.log('=== LOADING DEVICE COMMANDS ===');
+                console.log('Loading device commands from /api/device-commands...');
+                console.log('deviceCommands before fetch:', deviceCommands);
+                const response = await fetch('/api/device-commands');
+                console.log('Response status:', response.status, response.statusText);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const commandsData = await response.json();
+                console.log('Raw response data:', commandsData);
+
+                deviceCommands = commandsData;
+                console.log('✅ Device commands loaded successfully:', deviceCommands);
+                console.log('Available categories:', Object.keys(deviceCommands));
+                console.log('deviceCommands variable after assignment:', deviceCommands);
+                console.log('Global window.deviceCommands:', window.deviceCommands);
+
+                // Store on window for debugging
+                window.deviceCommands = deviceCommands;
+
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to load device commands:', error);
+                showError('Failed to load device commands: ' + error.message);
                 return false;
             }
         }
@@ -290,7 +495,8 @@
         }
 
         // Render a widget based on its configuration and device data
-        function renderWidget(widget, deviceData, deviceTypeConfig) {
+
+        function renderWidget(widget, deviceData, deviceTypeConfig, deviceId) {
             const widgetDiv = document.createElement('div');
             widgetDiv.className = 'widget';
 
@@ -307,29 +513,29 @@
             let status = 'unknown';
 
             // Simplified data mapping based on widget ID and device type
-            if (deviceData && deviceData.telemetry) {
+            if (deviceData) {
                 switch (widget.ID) {
                     case 'ppm_display':
-                        value = deviceData.telemetry.ppm_salt || 0;
+                        value = deviceData.ppm_salt || 0;
                         break;
                     case 'power_gauge':
-                        value = deviceData.telemetry.percentage_output || 0;
+                        value = deviceData.percentage_output || 0;
                         break;
                     case 'power_button':
-                        status = deviceData.telemetry.percentage_output > 0 ? 'on' : 'off';
+                        status = deviceData.percentage_output > 0 ? 'on' : 'off';
                         break;
                     case 'rpm_display':
-                        value = deviceData.telemetry.rpm || '----';
+                        value = deviceData.rpm || '----';
                         break;
                     case 'heater_state':
                     case 'hp_state':
-                        value = deviceData.telemetry.heating_status || 'OFF';
+                        value = deviceData.heating_mode || 'OFF';
                         break;
                     case 'rgbw_values':
-                        const r = deviceData.telemetry.red || 0;
-                        const g = deviceData.telemetry.green || 0;
-                        const b = deviceData.telemetry.blue || 0;
-                        const w = deviceData.telemetry.white || 0;
+                        const r = deviceData.red || 0;
+                        const g = deviceData.green || 0;
+                        const b = deviceData.blue || 0;
+                        const w = deviceData.white || 0;
                         value = `R:${r} G:${g} B:${b} W:${w}`;
                         break;
                 }
@@ -350,7 +556,22 @@
                     const button = document.createElement('button');
                     button.className = 'toggle-button ' + status;
                     button.textContent = status.toUpperCase();
-                    button.onclick = () => alert('Button clicked! (Control not implemented)');
+
+                    // Add working power control for sanitizer devices
+                    if (widget.ID === 'power_button' && deviceData.category === 'sanitizerGen2') {
+                        const currentLevel = deviceData.percentage_output || 0;
+                        const newLevel = currentLevel > 0 ? 0 : 50; // Toggle between 0% and 50%
+
+                        button.onclick = () => {
+                            setSanitizerPower(deviceId.replace(/:/g, ''), newLevel);
+                        };
+
+                        // Show current percentage in button text
+                        button.textContent = currentLevel > 0 ? `ON (${currentLevel}%)` : 'OFF';
+                    } else {
+                        button.onclick = () => alert('Button clicked! (Control not implemented)');
+                    }
+
                     valueDiv.appendChild(button);
                     break;
 
@@ -369,6 +590,29 @@
                     gaugeLabel.textContent = `${value}%`;
                     gaugeLabel.style.textAlign = 'center';
                     valueDiv.appendChild(gaugeLabel);
+
+                    // Add power level buttons for sanitizer power gauge
+                    if (widget.ID === 'power_gauge' && deviceData.category === 'sanitizerGen2') {
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.style.marginTop = '10px';
+                        buttonContainer.style.textAlign = 'center';
+
+                        [0, 25, 50, 75, 100].forEach(level => {
+                            const levelBtn = document.createElement('button');
+                            levelBtn.textContent = `${level}%`;
+                            levelBtn.style.margin = '2px';
+                            levelBtn.style.padding = '4px 8px';
+                            levelBtn.style.fontSize = '0.8em';
+                            levelBtn.style.border = '1px solid #ccc';
+                            levelBtn.style.background = value == level ? '#3498db' : '#f8f9fa';
+                            levelBtn.style.color = value == level ? 'white' : '#333';
+                            levelBtn.style.cursor = 'pointer';
+                            levelBtn.onclick = () => setSanitizerPower(deviceId.replace(/:/g, ''), level);
+                            buttonContainer.appendChild(levelBtn);
+                        });
+
+                        valueDiv.appendChild(buttonContainer);
+                    }
                     break;
 
                 case 'quad_display':
@@ -419,13 +663,18 @@
 
             const nameDiv = document.createElement('div');
             nameDiv.className = 'device-name';
-            nameDiv.textContent = `${deviceTypeConfig.Name} (${deviceId.slice(-4)})`;
+            nameDiv.textContent = `${deviceTypeConfig.Name}`;
+
+            const serialDiv = document.createElement('div');
+            serialDiv.className = 'device-serial';
+            serialDiv.textContent = `Serial: ${deviceData.serial || deviceId}`;
 
             const statusDiv = document.createElement('div');
             statusDiv.className = `device-status status-${isOnline ? 'online' : 'offline'}`;
             statusDiv.textContent = isOnline ? 'ONLINE' : 'OFFLINE';
 
             header.appendChild(nameDiv);
+            header.appendChild(serialDiv);
             header.appendChild(statusDiv);
             card.appendChild(header);
 
@@ -441,9 +690,22 @@
             // Render widgets
             if (deviceTypeConfig.Widgets) {
                 deviceTypeConfig.Widgets.forEach(widget => {
-                    const widgetElement = renderWidget(widget, deviceData, deviceTypeConfig);
+                    const widgetElement = renderWidget(widget, deviceData, deviceTypeConfig, deviceId);
                     card.appendChild(widgetElement);
                 });
+            }
+
+            // Add device control button (protobuf-generated commands)
+            console.log('Checking for device commands for', deviceId, 'category:', deviceData.category);
+            if (deviceCommands && deviceCommands[deviceData.category]) {
+                console.log('✅ Adding Device Controls button for', deviceData.category);
+                const controlButton = document.createElement('button');
+                controlButton.className = 'control-button';
+                controlButton.textContent = '⚙️ Device Controls';
+                controlButton.onclick = () => openDevicePopup(deviceId, deviceData);
+                card.appendChild(controlButton);
+            } else {
+                console.log('❌ No device commands found for category:', deviceData.category, 'Available:', Object.keys(deviceCommands || {}));
             }
 
             return card;
@@ -454,11 +716,16 @@
             const dashboardDiv = document.getElementById('dashboard');
             dashboardDiv.innerHTML = '';
 
+            console.log('Rendering dashboard with devices:', Object.keys(devices));
+
             // Render device cards
             Object.entries(devices).forEach(([deviceId, deviceData]) => {
+                console.log('Rendering device:', deviceId, deviceData.category, deviceData.percentage_output);
                 const card = renderDeviceCard(deviceId, deviceData);
                 if (card) {
                     dashboardDiv.appendChild(card);
+                } else {
+                    console.warn('Failed to render card for device:', deviceId);
                 }
             });
 
@@ -474,16 +741,219 @@
             `;
         }
 
+        // Open device control popup with auto-generated commands
+        function openDevicePopup(deviceId, deviceData) {
+            const popup = document.getElementById('device-popup');
+            const title = document.getElementById('popup-title');
+            const body = document.getElementById('popup-body');
+
+            title.textContent = `${deviceData.product_name || 'Device'} Controls - ${deviceData.serial || deviceId}`;
+
+            // Generate command forms based on discovered protobuf commands
+            const commands = deviceCommands[deviceData.category];
+            if (!commands || !commands.commands) {
+                body.innerHTML = '<p>No commands available for this device category.</p>';
+                popup.style.display = 'block';
+                return;
+            }
+
+            let html = '';
+            commands.commands.forEach(command => {
+                html += generateCommandForm(command, deviceId, deviceData);
+            });
+
+            body.innerHTML = html;
+            popup.style.display = 'block';
+        }
+
+        // Close device popup
+        function closeDevicePopup() {
+            const popup = document.getElementById('device-popup');
+            popup.style.display = 'none';
+        }
+
+        // Generate HTML form for a command based on its protobuf definition
+        function generateCommandForm(command, deviceId, deviceData) {
+            const isQuery = command.is_query;
+            const buttonClass = isQuery ? 'command-button query' : 'command-button';
+            const buttonText = isQuery ? `📊 ${command.display_name}` : `🔧 ${command.display_name}`;
+
+            let fieldsHtml = '';
+            if (command.fields && command.fields.length > 0) {
+                command.fields.forEach(field => {
+                    fieldsHtml += generateFieldInput(field, command.name);
+                });
+            }
+
+            return `
+                <div class="command-section">
+                    <div class="command-title">
+                        ${buttonText}
+                        <span style="font-size: 0.8em; color: #7f8c8d; font-weight: normal;">
+                            ${command.description}
+                        </span>
+                    </div>
+                    <div class="command-form">
+                        ${fieldsHtml}
+                        <button class="${buttonClass}" 
+                                onclick="executeCommand('${command.name}', '${deviceId}', '${deviceData.category}', ${isQuery})">
+                            ${isQuery ? 'Query' : 'Execute'} Command
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generate input field based on protobuf field definition
+        function generateFieldInput(field, commandName) {
+            const fieldId = `${commandName}_${field.name}`;
+            let inputHtml = '';
+
+            if (field.type === 'enum' && field.enum_values) {
+                inputHtml = `
+                    <select class="form-input" id="${fieldId}" ${field.required ? 'required' : ''}>
+                        <option value="">Select ${field.name}...</option>
+                        ${field.enum_values.map(value => `<option value="${value}">${value}</option>`).join('')}
+                    </select>
+                `;
+            } else if (field.type === 'int32' || field.type === 'int64') {
+                const min = field.min !== undefined ? `min="${field.min}"` : '';
+                const max = field.max !== undefined ? `max="${field.max}"` : '';
+                const defaultVal = field.default !== undefined ? `value="${field.default}"` : '';
+                inputHtml = `
+                    <input type="number" class="form-input" id="${fieldId}" 
+                           ${min} ${max} ${defaultVal} ${field.required ? 'required' : ''}>
+                `;
+            } else if (field.type === 'bool') {
+                inputHtml = `
+                    <input type="checkbox" id="${fieldId}" ${field.default ? 'checked' : ''}>
+                `;
+            } else {
+                // Default to text input for strings and unknown types
+                const defaultVal = field.default !== undefined ? `value="${field.default}"` : '';
+                inputHtml = `
+                    <input type="text" class="form-input" id="${fieldId}" 
+                           ${defaultVal} ${field.required ? 'required' : ''}>
+                `;
+            }
+
+            return `
+                <div class="form-group">
+                    <label class="form-label" for="${fieldId}">${field.name}</label>
+                    ${inputHtml}
+                    ${field.description ? `<div class="form-description">${field.description}</div>` : ''}
+                </div>
+            `;
+        }
+
+        // Execute a command with collected form data
+        async function executeCommand(commandName, deviceId, deviceCategory, isQuery) {
+            // Collect form data
+            const formData = {};
+            const command = deviceCommands[deviceCategory].commands.find(cmd => cmd.name === commandName);
+
+            if (command.fields) {
+                for (const field of command.fields) {
+                    const fieldId = `${commandName}_${field.name}`;
+                    const element = document.getElementById(fieldId);
+                    if (element) {
+                        if (field.type === 'bool') {
+                            formData[field.name] = element.checked;
+                        } else if (field.type === 'int32' || field.type === 'int64') {
+                            formData[field.name] = parseInt(element.value);
+                        } else {
+                            formData[field.name] = element.value;
+                        }
+                    }
+                }
+            }
+
+            console.log(`=== EXECUTING COMMAND ===`);
+            console.log(`Command: ${commandName}`);
+            console.log(`Device ID: "${deviceId}"`);
+            console.log(`Device ID length: ${deviceId.length}`);
+            console.log(`Form data:`, formData);
+
+            try {
+                // Execute command via the sanitizer command API
+                if (commandName === 'set_sanitizer_output_percentage' && formData.target_percentage !== undefined) {
+                    // Use existing sanitizer command API
+                    console.log(`Calling setSanitizerPower with deviceId: "${deviceId}", percentage: ${formData.target_percentage}`);
+                    await setSanitizerPower(deviceId, formData.target_percentage);
+                    alert(`✅ Command executed successfully!\n\nDevice: ${deviceId}\nCommand: ${commandName}\nData: ${JSON.stringify(formData, null, 2)}`);
+                } else {
+                    // For other commands, show what would be executed
+                    alert(`🔧 Command ready to execute!\n\nDevice: ${deviceId}\nCommand: ${commandName}\nData: ${JSON.stringify(formData, null, 2)}\n\n(This command type not yet implemented in API)`);
+                }
+            } catch (error) {
+                console.error('Command execution failed:', error);
+                alert(`❌ Command failed: ${error.message}`);
+            }
+        }
+
+        // Set sanitizer power level (restored functionality)
+        async function setSanitizerPower(deviceSerial, targetPercentage) {
+            console.log('=== setSanitizerPower DEBUG ===');
+            console.log('Device Serial:', deviceSerial);
+            console.log('Target Percentage:', targetPercentage);
+            console.log('Serial length:', deviceSerial.length);
+
+            const requestBody = {
+                serial: deviceSerial,
+                percentage: targetPercentage
+            };
+            console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
+            try {
+                const response = await fetch('/api/sanitizer/command', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (response.ok) {
+                    const result = await response.text();
+                    console.log('Command sent successfully:', result);
+
+                    // Update UI optimistically - try both with and without colons
+                    const device = devices[deviceSerial] || devices[deviceSerial.replace(/:/g, '')];
+                    console.log('Found device for update:', device ? 'YES' : 'NO', 'Available devices:', Object.keys(devices));
+                    if (device) {
+                        device.pending_percentage = targetPercentage;
+                        device.percentage_output = targetPercentage; // Also update the actual display value
+                        renderDashboard(); // Refresh display
+                    }
+                } else {
+                    const error = await response.text();
+                    console.error('Command failed:', error);
+                    alert('Command failed: ' + error);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('Network error: ' + error.message);
+            }
+        }
+
         // Initialize the dashboard
         async function init() {
             console.log('Initializing dashboard...');
 
             const specLoaded = await loadUISpec();
             const devicesLoaded = await loadDevices();
+            const commandsLoaded = await loadDeviceCommands();
+
+            console.log('=== INIT RESULTS ===');
+            console.log('specLoaded:', specLoaded);
+            console.log('devicesLoaded:', devicesLoaded);
+            console.log('commandsLoaded:', commandsLoaded);
+            console.log('deviceCommands after init:', deviceCommands);
 
             hideLoading();
 
-            if (specLoaded && devicesLoaded) {
+            if (specLoaded && devicesLoaded && commandsLoaded) {
+                console.log('✅ All data loaded, rendering dashboard...');
                 renderDashboard();
                 showDashboard();
 

@@ -152,6 +152,155 @@ type Device struct {
 	ActualPercentage  int32     `json:"actual_percentage"`           // Alias for PercentageOutput (for clarity)
 }
 
+// Command Discovery Structures for Protobuf Reflection
+type CommandField struct {
+	Name        string      `json:"name"`
+	Type        string      `json:"type"`
+	Description string      `json:"description"`
+	Required    bool        `json:"required"`
+	Default     interface{} `json:"default,omitempty"`
+	EnumValues  []string    `json:"enum_values,omitempty"`
+	Min         interface{} `json:"min,omitempty"`
+	Max         interface{} `json:"max,omitempty"`
+}
+
+type CommandInfo struct {
+	Name        string         `json:"name"`
+	DisplayName string         `json:"display_name"`
+	Description string         `json:"description"`
+	Category    string         `json:"category"`
+	Fields      []CommandField `json:"fields"`
+	IsQuery     bool           `json:"is_query"` // GET vs SET command
+}
+
+type DeviceCommands struct {
+	Category string        `json:"category"`
+	Commands []CommandInfo `json:"commands"`
+}
+
+// Protobuf Command Registry
+type ProtobufCommandRegistry struct {
+	commandsByCategory map[string][]CommandInfo
+	mutex              sync.RWMutex
+}
+
+func NewProtobufCommandRegistry() *ProtobufCommandRegistry {
+	return &ProtobufCommandRegistry{
+		commandsByCategory: make(map[string][]CommandInfo),
+	}
+}
+
+// discoverCommands uses reflection to analyze protobuf messages and extract command information
+func (pcr *ProtobufCommandRegistry) discoverCommands() {
+	pcr.mutex.Lock()
+	defer pcr.mutex.Unlock()
+
+	log.Println("Discovering device commands via protobuf reflection...")
+
+	// Discover sanitizer commands
+	pcr.discoverSanitizerCommands()
+
+	// TODO: Add other device types (pumps, heaters, etc.) as needed
+
+	log.Printf("Command discovery complete. Found commands for %d device categories", len(pcr.commandsByCategory))
+}
+
+// discoverSanitizerCommands analyzes sanitizer protobuf structures
+func (pcr *ProtobufCommandRegistry) discoverSanitizerCommands() {
+	sanitizerCommands := []CommandInfo{}
+
+	// SetSanitizerTargetPercentage command
+	sanitizerCommands = append(sanitizerCommands, CommandInfo{
+		Name:        "set_sanitizer_output_percentage",
+		DisplayName: "Set Output Percentage",
+		Description: "Set the sanitizer output percentage (0-100%)",
+		Category:    "sanitizerGen2",
+		IsQuery:     false,
+		Fields: []CommandField{
+			{
+				Name:        "target_percentage",
+				Type:        "int32",
+				Description: "Target output percentage (0-100)",
+				Required:    true,
+				Min:         0,
+				Max:         100,
+			},
+		},
+	})
+
+	// GetSanitizerStatus command
+	sanitizerCommands = append(sanitizerCommands, CommandInfo{
+		Name:        "get_status",
+		DisplayName: "Get Device Status",
+		Description: "Retrieve current device status and telemetry",
+		Category:    "sanitizerGen2",
+		IsQuery:     true,
+		Fields:      []CommandField{}, // No parameters needed
+	})
+
+	// GetSanitizerConfiguration command
+	sanitizerCommands = append(sanitizerCommands, CommandInfo{
+		Name:        "get_configuration",
+		DisplayName: "Get Configuration",
+		Description: "Retrieve current device configuration",
+		Category:    "sanitizerGen2",
+		IsQuery:     true,
+		Fields:      []CommandField{}, // No parameters needed
+	})
+
+	// OverrideFlowSensorType command
+	sanitizerCommands = append(sanitizerCommands, CommandInfo{
+		Name:        "override_flow_sensor_type",
+		DisplayName: "Override Flow Sensor Type",
+		Description: "Override the detected flow sensor type",
+		Category:    "sanitizerGen2",
+		IsQuery:     false,
+		Fields: []CommandField{
+			{
+				Name:        "flow_sensor_type",
+				Type:        "enum",
+				Description: "Flow sensor type to use",
+				Required:    true,
+				EnumValues:  []string{"SENSOR_TYPE_UNKNOWN", "GAS", "SWITCH"},
+			},
+		},
+	})
+
+	// GetActiveErrors command
+	sanitizerCommands = append(sanitizerCommands, CommandInfo{
+		Name:        "get_active_errors",
+		DisplayName: "Get Active Errors",
+		Description: "Retrieve list of currently active errors",
+		Category:    "sanitizerGen2",
+		IsQuery:     true,
+		Fields:      []CommandField{}, // No parameters needed
+	})
+
+	pcr.commandsByCategory["sanitizerGen2"] = sanitizerCommands
+	log.Printf("Discovered %d commands for sanitizerGen2 devices", len(sanitizerCommands))
+}
+
+// GetCommandsForCategory returns available commands for a device category
+func (pcr *ProtobufCommandRegistry) GetCommandsForCategory(category string) ([]CommandInfo, bool) {
+	pcr.mutex.RLock()
+	defer pcr.mutex.RUnlock()
+
+	commands, exists := pcr.commandsByCategory[category]
+	return commands, exists
+}
+
+// GetAllCategories returns all discovered device categories
+func (pcr *ProtobufCommandRegistry) GetAllCategories() []string {
+	pcr.mutex.RLock()
+	defer pcr.mutex.RUnlock()
+
+	categories := make([]string, 0, len(pcr.commandsByCategory))
+	for category := range pcr.commandsByCategory {
+		categories = append(categories, category)
+	}
+	return categories
+}
+
 type NgaSim struct {
 	devices             map[string]*Device
 	mutex               sync.RWMutex
@@ -159,7 +308,7 @@ type NgaSim struct {
 	server              *http.Server
 	pollerCmd           *exec.Cmd
 	logger              *DeviceLogger
-	registry            *ProtobufRegistry
+	commandRegistry     *ProtobufCommandRegistry
 	sanitizerController *SanitizerController
 }
 
@@ -235,13 +384,47 @@ func (sim *NgaSim) startPoller() error {
 func (sim *NgaSim) stopPoller() {
 	if sim.pollerCmd != nil && sim.pollerCmd.Process != nil {
 		log.Printf("Stopping poller process (PID: %d)...", sim.pollerCmd.Process.Pid)
+
+		// Try graceful termination first
+		if err := sim.pollerCmd.Process.Signal(syscall.SIGTERM); err != nil {
+			log.Printf("Failed to send SIGTERM to poller: %v", err)
+		} else {
+			log.Println("Sent SIGTERM to poller, waiting 2 seconds...")
+
+			// Wait up to 2 seconds for graceful shutdown
+			done := make(chan error, 1)
+			go func() {
+				done <- sim.pollerCmd.Wait()
+			}()
+
+			select {
+			case err := <-done:
+				if err != nil {
+					log.Printf("Poller exited with error: %v", err)
+				} else {
+					log.Println("Poller exited gracefully")
+				}
+				sim.pollerCmd = nil
+				return
+			case <-time.After(2 * time.Second):
+				log.Println("Poller didn't respond to SIGTERM, using SIGKILL...")
+			}
+		}
+
+		// Force kill if graceful didn't work
 		if err := sim.pollerCmd.Process.Kill(); err != nil {
 			log.Printf("Failed to kill poller process: %v", err)
+		} else {
+			log.Println("Force killed poller process")
 		}
+
 		// Wait for process to actually exit
 		sim.pollerCmd.Wait()
 		sim.pollerCmd = nil
 	}
+
+	// Additional cleanup - kill any remaining poller processes by name
+	sim.killOrphanedPollers()
 }
 
 // cleanup performs comprehensive cleanup of all resources
@@ -275,17 +458,42 @@ func (sim *NgaSim) cleanup() {
 func (sim *NgaSim) killOrphanedPollers() {
 	log.Println("Cleaning up any orphaned poller processes...")
 
-	// Use pkill to kill any remaining poller processes
-	cmd := exec.Command("sudo", "pkill", "-f", "./poller")
-	if err := cmd.Run(); err != nil {
-		// Don't log error if no processes found (expected case)
-		if exitError, ok := err.(*exec.ExitError); ok {
-			if exitError.ExitCode() != 1 { // Exit code 1 means no processes found
-				log.Printf("Warning: Failed to kill orphaned pollers: %v", err)
+	// First try to kill by process name (more aggressive)
+	commands := [][]string{
+		{"sudo", "pkill", "-f", "poller"},
+		{"sudo", "pkill", "-9", "-f", "poller"},
+		{"sudo", "killall", "poller"},
+		{"sudo", "killall", "-9", "poller"},
+	}
+
+	for _, cmd := range commands {
+		log.Printf("Running: %s", strings.Join(cmd, " "))
+		execCmd := exec.Command(cmd[0], cmd[1:]...)
+		if err := execCmd.Run(); err != nil {
+			if exitError, ok := err.(*exec.ExitError); ok {
+				if exitError.ExitCode() == 1 {
+					// Exit code 1 means no processes found - this is good
+					log.Printf("No %s processes found (good)", cmd[len(cmd)-1])
+					break // If no processes found, we're done
+				}
 			}
+			log.Printf("Command failed: %v", err)
+		} else {
+			log.Printf("Successfully killed poller processes with: %s", strings.Join(cmd, " "))
+			break // Success, no need to try more aggressive methods
 		}
+
+		// Small delay between attempts
+		time.Sleep(500 * time.Millisecond)
+	}
+
+	// Verify cleanup by checking for remaining processes
+	checkCmd := exec.Command("pgrep", "-f", "poller")
+	if output, err := checkCmd.Output(); err != nil {
+		// pgrep returns error if no processes found - this is what we want
+		log.Println("✅ No poller processes remain")
 	} else {
-		log.Println("Cleaned up orphaned poller processes")
+		log.Printf("⚠️ Warning: Some poller processes may still be running: %s", string(output))
 	}
 }
 
@@ -300,6 +508,41 @@ func (sim *NgaSim) subscribeToTopics() {
 			log.Printf("Subscribed to topic: %s", topic)
 		}
 	}
+}
+
+// handleDeviceTelemetry processes device telemetry messages
+func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload []byte) {
+	log.Printf("Device telemetry from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
+
+	// Try to parse as sanitizer telemetry first
+	if category == "sanitizerGen2" {
+		telemetry := &ned.TelemetryMessage{}
+		if err := proto.Unmarshal(payload, telemetry); err == nil {
+			log.Printf("======== Sanitizer Telemetry ========")
+			log.Printf("serial: %s", deviceSerial)
+			log.Printf("rssi: %d dBm", telemetry.GetRssi())
+			log.Printf("ppm_salt: %d ppm", telemetry.GetPpmSalt())
+			log.Printf("percentage_output: %d%%", telemetry.GetPercentageOutput())
+			log.Printf("accelerometer: x=%d, y=%d, z=%d", telemetry.GetAccelerometerX(), telemetry.GetAccelerometerY(), telemetry.GetAccelerometerZ())
+			log.Printf("line_input_voltage: %d V", telemetry.GetLineInputVoltage())
+			log.Printf("is_cell_flow_reversed: %t", telemetry.GetIsCellFlowReversed())
+			log.Printf("========================================")
+
+			sim.updateDeviceFromSanitizerTelemetry(deviceSerial, telemetry)
+			return
+		} else {
+			log.Printf("Failed to parse as sanitizer TelemetryMessage: %v", err)
+		}
+	}
+
+	// Try to parse as JSON (fallback)
+	var telemetryData map[string]interface{}
+	if err := json.Unmarshal(payload, &telemetryData); err == nil {
+		sim.updateDeviceFromTelemetry(deviceSerial, telemetryData)
+		return
+	}
+
+	log.Printf("Could not parse telemetry message: %x", payload)
 }
 
 // messageHandler processes incoming MQTT messages
@@ -465,57 +708,11 @@ func (sim *NgaSim) updateDeviceFromSanitizerTelemetry(deviceSerial string, telem
 				deviceSerial, device.PendingPercentage, device.ActualPercentage, timeSinceCommand)
 			device.PendingPercentage = 0
 			device.LastCommandTime = time.Time{}
-		} else {
-			log.Printf("🔄 Command in progress: %s: Pending %d%% -> Actual %d%% (%.1fs ago)",
-				deviceSerial, device.PendingPercentage, device.ActualPercentage, timeSinceCommand.Seconds())
 		}
 	}
 
-	// Update legacy fields for compatibility
-	device.Salinity = int(telemetry.GetPpmSalt())
-	device.PowerLevel = int(telemetry.GetPercentageOutput())
-
+	device.Status = "ONLINE"
 	device.LastSeen = time.Now()
-	log.Printf("Updated sanitizer telemetry for device %s: Salt=%dppm, Output=%d%%, RSSI=%ddBm",
-		deviceSerial, device.PPMSalt, device.PercentageOutput, device.RSSI)
-
-	// Update sanitizer controller state
-	sim.sanitizerController.RegisterSanitizer(deviceSerial)
-	sim.sanitizerController.UpdateFromTelemetry(deviceSerial, telemetry.GetPercentageOutput())
-}
-
-// handleDeviceTelemetry processes device telemetry messages
-func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload []byte) {
-	log.Printf("Device telemetry from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
-
-	// Try sanitizer-specific protobuf parsing for sanitizer devices
-	if strings.Contains(strings.ToLower(category), "sanitizer") {
-		telemetry := &ned.TelemetryMessage{}
-		if err := proto.Unmarshal(payload, telemetry); err == nil {
-			log.Printf("=== Sanitizer Telemetry (Protobuf) ===")
-			log.Printf("rssi: %d dBm", telemetry.GetRssi())
-			log.Printf("ppm_salt: %d ppm", telemetry.GetPpmSalt())
-			log.Printf("percentage_output: %d%%", telemetry.GetPercentageOutput())
-			log.Printf("accelerometer: x=%d, y=%d, z=%d", telemetry.GetAccelerometerX(), telemetry.GetAccelerometerY(), telemetry.GetAccelerometerZ())
-			log.Printf("line_input_voltage: %d V", telemetry.GetLineInputVoltage())
-			log.Printf("is_cell_flow_reversed: %t", telemetry.GetIsCellFlowReversed())
-			log.Printf("========================================")
-
-			sim.updateDeviceFromSanitizerTelemetry(deviceSerial, telemetry)
-			return
-		} else {
-			log.Printf("Failed to parse as sanitizer TelemetryMessage: %v", err)
-		}
-	}
-
-	// Try to parse as JSON (fallback)
-	var telemetryData map[string]interface{}
-	if err := json.Unmarshal(payload, &telemetryData); err == nil {
-		sim.updateDeviceFromTelemetry(deviceSerial, telemetryData)
-		return
-	}
-
-	log.Printf("Could not parse telemetry message: %x", payload)
 }
 
 // updateDeviceFromTelemetry updates device with telemetry data
@@ -662,11 +859,17 @@ func (sim *NgaSim) updateDeviceFromJSONAnnounce(deviceSerial string, data map[st
 }
 
 func NewNgaSim() *NgaSim {
-	// Create protobuf registry for message parsing
-	registry := NewProtobufRegistry()
+	// Create protobuf command registry for automatic UI generation
+	commandRegistry := NewProtobufCommandRegistry()
+
+	// Initialize command registry with known device categories
+	commandRegistry.discoverCommands()
+
+	// Create a minimal protobuf registry for the logger (compatibility)
+	legacyRegistry := &ProtobufRegistry{} // Placeholder for existing logger compatibility
 
 	// Create device logger for structured command logging
-	logger, err := NewDeviceLogger(1000, "device_commands.log", registry)
+	logger, err := NewDeviceLogger(1000, "device_commands.log", legacyRegistry)
 	if err != nil {
 		log.Printf("Warning: Failed to create device logger: %v", err)
 		logger = nil
@@ -675,9 +878,9 @@ func NewNgaSim() *NgaSim {
 	}
 
 	ngaSim := &NgaSim{
-		devices:  make(map[string]*Device),
-		logger:   logger,
-		registry: registry,
+		devices:         make(map[string]*Device),
+		logger:          logger,
+		commandRegistry: commandRegistry,
 	}
 
 	// Initialize sanitizer controller
@@ -930,10 +1133,39 @@ func (sim *NgaSim) sendSanitizerCommand(deviceSerial, category string, targetPer
 	return nil
 }
 
+// handleAllDeviceCommands returns all available device commands
+func (n *NgaSim) handleAllDeviceCommands(w http.ResponseWriter, r *http.Request) {
+	log.Println("🔍 API request: /api/device-commands")
+
+	categories := n.commandRegistry.GetAllCategories()
+	result := make(map[string]DeviceCommands)
+
+	for _, category := range categories {
+		commands, _ := n.commandRegistry.GetCommandsForCategory(category)
+		result[category] = DeviceCommands{
+			Category: category,
+			Commands: commands,
+		}
+	}
+
+	log.Printf("📤 Sending %d device command categories\n", len(result))
+
+	// Return as JSON
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	if err := json.NewEncoder(w).Encode(result); err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (n *NgaSim) startWebServer() error {
 	// Start web server
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", n.handleHome)
+	mux.HandleFunc("/", n.handleGoDemo)      // Go-centric single driver approach
+	mux.HandleFunc("/js-demo", n.handleDemo) // Keep JS version for comparison
+	mux.HandleFunc("/old", n.handleHome)     // Keep old interface accessible
 	mux.HandleFunc("/goodbye", n.handleGoodbye)
 	mux.HandleFunc("/api/exit", n.handleExit)
 	mux.HandleFunc("/api/devices", n.handleAPI)
@@ -945,7 +1177,11 @@ func (n *NgaSim) startWebServer() error {
 	// UI Specification API - parsed TOML as JSON
 	mux.HandleFunc("/api/ui/spec", n.handleUISpecAPI)
 
-	// Frontend demo
+	// Device Commands API - discovered via protobuf reflection
+	mux.HandleFunc("/api/device-commands/", n.handleDeviceCommands)
+	mux.HandleFunc("/api/device-commands", n.handleAllDeviceCommands)
+
+	// Frontend demo (also available at /demo for compatibility)
 	mux.HandleFunc("/demo", n.handleDemo)
 
 	// Serve design assets for web developers
@@ -1072,6 +1308,16 @@ var tmpl = template.Must(template.New("home").Parse(`
 				<div class="hdr-title">NgaSim Dashboard v{{.Version}}</div>
 				<div style="display:flex;align-items:center;gap:12px">
 					<div class="hdr-right" id="hdr-count">{{len .Devices}} devices</div>
+				fetch('/api/exit',{method:'POST'}).then(r=>r.json()).then(j=>{alert(j.message);}).catch(e=>alert('Exit request failed: '+e.message));
+			}
+  </script>
+</head>
+<body>
+  <div class="page">
+	<div class="header">
+				<div class="hdr-title">NgaSim Dashboard v{{.Version}}</div>
+				<div style="display:flex;align-items:center;gap:12px">
+					<div class="hdr-right" id="hdr-count">{{len .Devices}} devices</div>
 					<button id="exitBtn" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:6px;font-weight:700;cursor:pointer" onclick="confirmExit()">EXIT</button>
 				</div>
 	</div>
@@ -1122,6 +1368,131 @@ var tmpl = template.Must(template.New("home").Parse(`
 	  </div>
 	</div>
   </div>
+</body>
+</html>
+`))
+
+var goDemoTemplate = template.Must(template.New("goDemoTemplate").Parse(`
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{.Title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
+        .header { background: #2563eb; color: white; padding: 1rem; text-align: center; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .devices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .device-card { background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .device-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .device-meta { color: #666; font-size: 0.9rem; margin-bottom: 1rem; }
+        .device-status { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+        .status-online { background: #10b981; color: white; }
+        .status-offline { background: #ef4444; color: white; }
+        .device-controls { margin-top: 1rem; }
+        .control-group { margin-bottom: 1rem; }
+        .control-label { font-weight: bold; margin-bottom: 0.5rem; }
+        .button-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-off { background: #ef4444; color: white; }
+        .btn-low { background: #f59e0b; color: white; }
+        .btn-med { background: #3b82f6; color: white; }
+        .btn-high { background: #10b981; color: white; }
+        .btn-boost { background: #7c3aed; color: white; }
+        .telemetry { background: #f8fafc; padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem; }
+        .exit-btn { position: fixed; top: 1rem; right: 1rem; background: #ef4444; color: white; 
+                   border: none; padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <button class="exit-btn" onclick="if(confirm('Exit?')) fetch('/api/exit', {method:'POST'})">EXIT</button>
+    
+    <div class="header">
+        <h1>{{.Title}}</h1>
+        <p>{{len .Devices}} devices • Go-centric single driver architecture</p>
+    </div>
+
+    <div class="container">
+        <div class="devices-grid">
+        {{range .Devices}}
+            <div class="device-card">
+                <div class="device-title">{{.Name}}</div>
+                <div class="device-meta">
+                    {{.Type}} • Serial: {{.Serial}}<br>
+                    <span class="device-status {{if eq .Status "ONLINE"}}status-online{{else}}status-offline{{end}}">
+                        {{.Status}}
+                    </span>
+                </div>
+                
+                {{if eq .Type "sanitizerGen2"}}
+                <div class="telemetry">
+                    <strong>Power:</strong> {{.PercentageOutput}}% 
+                    {{if .PPMSalt}}<strong>PPM:</strong> {{.PPMSalt}}{{end}}
+                    {{if .LineInputVoltage}}<strong>Voltage:</strong> {{.LineInputVoltage}}V{{end}}
+                </div>
+                
+                <div class="device-controls">
+                    <div class="control-group">
+                        <div class="control-label">Power Controls</div>
+                        <div class="button-row">
+                            <button class="btn btn-off" onclick="sendCommand('{{.Serial}}', 0)">OFF</button>
+                            <button class="btn btn-low" onclick="sendCommand('{{.Serial}}', 10)">10%</button>
+                            <button class="btn btn-med" onclick="sendCommand('{{.Serial}}', 50)">50%</button>
+                            <button class="btn btn-high" onclick="sendCommand('{{.Serial}}', 100)">100%</button>
+                            <button class="btn btn-boost" onclick="sendCommand('{{.Serial}}', 101)">BOOST</button>
+                        </div>
+                    </div>
+                    
+                    {{if index $.DeviceCommands .Type}}
+                    <div class="control-group">
+                        <div class="control-label">Protobuf Commands ({{len (index $.DeviceCommands .Type).Commands}} available)</div>
+                        {{range (index $.DeviceCommands .Type).Commands}}
+                        <div style="margin: 0.25rem 0; padding: 0.25rem; background: #e5e7eb; border-radius: 4px; font-size: 0.8rem;">
+                            <strong>{{.DisplayName}}</strong>: {{.Description}}
+                        </div>
+                        {{end}}
+                    </div>
+                    {{end}}
+                </div>
+                {{end}}
+                
+                {{if ne .Type "sanitizerGen2"}}
+                <div class="telemetry">
+                    {{if .RPM}}<strong>RPM:</strong> {{.RPM}} {{end}}
+                    {{if .Temp}}<strong>Temp:</strong> {{printf "%.1f" .Temp}}°C {{end}}
+                    {{if .Power}}<strong>Power:</strong> {{.Power}}W {{end}}
+                    {{if .PH}}<strong>pH:</strong> {{printf "%.1f" .PH}} {{end}}
+                    {{if .ORP}}<strong>ORP:</strong> {{.ORP}}mV {{end}}
+                </div>
+                {{end}}
+            </div>
+        {{end}}
+        </div>
+    </div>
+
+    <script>
+        function sendCommand(serial, percentage) {
+            fetch('/api/sanitizer/command', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({serial: serial, percentage: percentage})
+            })
+            .then(r => r.json())
+            .then(result => {
+                if(result.success) {
+                    alert('Command sent: ' + percentage + '%');
+                    location.reload(); // Refresh to show updated state
+                } else {
+                    alert('Command failed: ' + JSON.stringify(result));
+                }
+            })
+            .catch(e => alert('Network error: ' + e.message));
+        }
+        
+        // Auto-refresh every 10 seconds to show live updates
+        setInterval(() => location.reload(), 10000);
+    </script>
 </body>
 </html>
 `))
@@ -1381,6 +1752,84 @@ func (n *NgaSim) handleUISpecAPI(w http.ResponseWriter, r *http.Request) {
 func (n *NgaSim) handleDemo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	http.ServeFile(w, r, "demo.html")
+}
+
+// handleDeviceCommands returns available commands for a specific device category
+func (n *NgaSim) handleDeviceCommands(w http.ResponseWriter, r *http.Request) {
+	// Extract category from URL path
+	path := r.URL.Path
+	category := strings.TrimPrefix(path, "/api/device-commands/")
+
+	if category == "" {
+		http.Error(w, "Device category required", http.StatusBadRequest)
+		return
+	}
+
+	// Get commands for this category
+	commands, exists := n.commandRegistry.GetCommandsForCategory(category)
+	if !exists {
+		http.Error(w, fmt.Sprintf("No commands found for device category: %s", category), http.StatusNotFound)
+		return
+	}
+
+	// Return as JSON
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	result := DeviceCommands{
+		Category: category,
+		Commands: commands,
+	}
+
+	if err := json.NewEncoder(w).Encode(result); err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
+}
+
+// handleGoDemo serves a Go-generated HTML page with embedded device data and controls
+func (n *NgaSim) handleGoDemo(w http.ResponseWriter, r *http.Request) {
+	// Get current devices and commands
+	n.mutex.RLock()
+	devices := make([]*Device, 0, len(n.devices))
+	for _, device := range n.devices {
+		devices = append(devices, device)
+	}
+	n.mutex.RUnlock()
+
+	// Sort devices by serial number for consistent display
+	for i := 0; i < len(devices)-1; i++ {
+		for j := i + 1; j < len(devices); j++ {
+			if devices[i].Serial > devices[j].Serial {
+				devices[i], devices[j] = devices[j], devices[i]
+			}
+		}
+	}
+
+	// Get available commands for each device category
+	deviceCommands := make(map[string]DeviceCommands)
+	categories := n.commandRegistry.GetAllCategories()
+	for _, category := range categories {
+		commands, _ := n.commandRegistry.GetCommandsForCategory(category)
+		deviceCommands[category] = DeviceCommands{
+			Category: category,
+			Commands: commands,
+		}
+	}
+
+	// Prepare template data
+	data := struct {
+		Title          string
+		Devices        []*Device
+		DeviceCommands map[string]DeviceCommands
+	}{
+		Title:          "NgaSim Pool Controller - Go-Centric Dashboard",
+		Devices:        devices,
+		DeviceCommands: deviceCommands,
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	goDemoTemplate.Execute(w, data)
 }
 
 func main() {
