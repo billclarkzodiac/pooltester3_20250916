@@ -1,0 +1,124 @@
+test@cm4:~/projects/pooltester3_20250916 $ git log --oneline -20
+8afbe96 (HEAD -> master, origin/master) v2.1.2 Go-centric GUI less JS, Device Controls sub-menu
+5a76132 go deprecation fixes
+3061037 session summary
+6a3119b (tag: v2.1.2-toml-frontend-demo) BACKUP: TOML loader + frontend demo completed - Wed 08 Oct 2025 02:52:47 PM PDT
+fa23a07 added exit , not shutting down..
+59f8bc2 New GUI layout preferred.
+6c7af57 1st attempt window spec
+f467ea4 go-centric design
+3bd9433 salt chlorinating, cmd from go  pool-controller.
+85ece01 protobuf expllained
+3880147 ✨ Enhanced GUI: Button latching, localStorage persistence, visual feedback
+2a302fa Enhanced NgaSim GUI: Interactive controls, sliders, real-time feedback
+58d0f4b WIP
+9ff7b6e GUI added controls for Salt
+7a5c04c REST API added, works.
+d8cc0b3 v2.1.1 fixed announce
+18daccc Claudes sophisticated version, not running
+771d725 convince Claude to use C poller, work.
+f36fcf5 poller src
+:...skipping...
+8afbe96 (HEAD -> master, origin/master) v2.1.2 Go-centric GUI less JS, Device Controls sub-menu
+5a76132 go deprecation fixes
+3061037 session summary
+6a3119b (tag: v2.1.2-toml-frontend-demo) BACKUP: TOML loader + frontend demo completed - Wed 08 Oct 2025 02:52:47 PM PDT
+fa23a07 added exit , not shutting down..
+59f8bc2 New GUI layout preferred.
+6c7af57 1st attempt window spec
+f467ea4 go-centric design
+3bd9433 salt chlorinating, cmd from go  pool-controller.
+85ece01 protobuf expllained
+3880147 ✨ Enhanced GUI: Button latching, localStorage persistence, visual feedback
+2a302fa Enhanced NgaSim GUI: Interactive controls, sliders, real-time feedback
+58d0f4b WIP
+9ff7b6e GUI added controls for Salt
+7a5c04c REST API added, works.
+d8cc0b3 v2.1.1 fixed announce
+18daccc Claudes sophisticated version, not running
+771d725 convince Claude to use C poller, work.
+f36fcf5 poller src
+0a2c8f8 moved back to Pi4
+:...skipping...
+8afbe96 (HEAD -> master, origin/master) v2.1.2 Go-centric GUI less JS, Device Controls sub-menu
+5a76132 go deprecation fixes
+3061037 session summary
+6a3119b (tag: v2.1.2-toml-frontend-demo) BACKUP: TOML loader + frontend demo completed - Wed 08 Oct 2025 02:52:47 PM PDT
+fa23a07 added exit , not shutting down..
+59f8bc2 New GUI layout preferred.
+6c7af57 1st attempt window spec
+f467ea4 go-centric design
+3bd9433 salt chlorinating, cmd from go  pool-controller.
+85ece01 protobuf expllained
+3880147 ✨ Enhanced GUI: Button latching, localStorage persistence, visual feedback
+2a302fa Enhanced NgaSim GUI: Interactive controls, sliders, real-time feedback
+58d0f4b WIP
+9ff7b6e GUI added controls for Salt
+7a5c04c REST API added, works.
+d8cc0b3 v2.1.1 fixed announce
+18daccc Claudes sophisticated version, not running
+771d725 convince Claude to use C poller, work.
+f36fcf5 poller src
+0a2c8f8 moved back to Pi4
+~
+~
+~
+~
+~
+~
+test@cm4:~/projects/pooltester3_20250916 $ git log --grep="protobuf\|command\|discovery" --oneline -10
+85ece01 protobuf expllained
+3880147 ✨ Enhanced GUI: Button latching, localStorage persistence, visual feedback
+2a302fa Enhanced NgaSim GUI: Interactive controls, sliders, real-time feedback
+test@cm4:~/projects/pooltester3_20250916 $ git show HEAD~2:main.go | tail -50
+                return
+        }
+
+        // Parse TOML into our struct
+        var spec UISpec
+        if err := toml.Unmarshal(data, &spec); err != nil {
+                http.Error(w, fmt.Sprintf("Error parsing TOML: %v", err), http.StatusInternalServerError)
+                return
+        }
+
+        // Return as JSON
+        w.Header().Set("Content-Type", "application/json")
+        w.Header().Set("Access-Control-Allow-Origin", "*") // Allow CORS for frontend development
+        if err := json.NewEncoder(w).Encode(spec); err != nil {
+                http.Error(w, fmt.Sprintf("Error encoding JSON: %v", err), http.StatusInternalServerError)
+                return
+        }
+}
+
+// handleDemo serves the frontend demo HTML page
+func (n *NgaSim) handleDemo(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/html")
+        http.ServeFile(w, r, "demo.html")
+}
+
+func main() {
+        log.Println("=== NgaSim Pool Controller Simulator ===")
+
+        nga := NewNgaSim()
+
+        // Ensure cleanup happens on any exit
+        defer func() {
+                log.Println("Shutting down NgaSim...")
+                nga.cleanup()
+        }()
+
+        if err := nga.Start(); err != nil {
+                log.Fatalf("Failed to start: %v", err)
+        }
+
+        log.Println("NgaSim started successfully!")
+        log.Println("Visit http://localhost:8082 to view the web interface")
+
+        // Wait for interrupt
+        sigChan := make(chan os.Signal, 1)
+        signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
+        <-sigChan
+
+        // The defer function will handle cleanup
+}
+test@cm4:~/projects/pooltester3_20250916 $ 

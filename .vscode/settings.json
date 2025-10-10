@@ -22,7 +22,10 @@
         "**/.git/objects/**": true,
         "**/.git/subtree-cache/**": true,
         "**/node_modules/*/**": true,
-        "**/.hg/store/**": true
+        "**/.hg/store/**": true,
+        "**/tmp/**": true,
+        "**/build/**": true,
+        "**/dist/**": true
     },
     // GIT SAFETY SETTINGS
     "git.autofetch": true,
@@ -49,5 +52,93 @@
     // PREVENT ACCIDENTAL OVERWRITES
     "explorer.confirmDelete": true,
     "explorer.confirmDragAndDrop": true,
-    "diffEditor.ignoreTrimWhitespace": false
+    "diffEditor.ignoreTrimWhitespace": false,
+    
+    // Go language server settings
+    "go.useLanguageServer": true,
+    "go.languageServerFlags": [
+        "-rpc.trace",
+        "serve",
+        "--debug=localhost:6060"
+    ],
+    "go.languageServerExperimentalFeatures": {
+        "diagnosticsDelay": "1s",
+        "watchFileChanges": true
+    },
+    
+    // Reduce search indexing
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "**/tmp": true,
+        "**/build": true
+    },
+    
+    // Disable unnecessary features
+    "editor.codeLens": false,
+    "editor.minimap.enabled": false,
+    "editor.hover.delay": 1000,
+    "editor.quickSuggestions": {
+        "other": false,
+        "comments": false,
+        "strings": false
+    },
+    
+    // Git optimizations
+    "git.enabled": true,
+    "git.autorefresh": false,
+    "git.decorations.enabled": false,
+    
+    // Terminal optimizations
+    "terminal.integrated.rendererType": "dom",
+    "terminal.integrated.gpuAcceleration": "off",
+    
+    // Reduce IntelliSense overhead
+    "editor.parameterHints.enabled": false,
+    "editor.suggestOnTriggerCharacters": false,
+    "editor.acceptSuggestionOnEnter": "off",
+    
+    // File handling
+    "files.autoSave": "onFocusChange",
+    "editor.formatOnSave": false,
+    "editor.formatOnType": false,
+    
+    // Reduce gopls memory usage
+    "go.toolsManagement.autoUpdate": false,
+    "go.lintOnSave": "off",
+    "go.vetOnSave": "off",
+    "go.buildOnSave": "off",
+    "go.testOnSave": false,
+    
+    // Limit gopls features
+    "gopls": {
+        "ui.completion.usePlaceholders": false,
+        "ui.diagnostic.analyses": {
+            "fieldalignment": false,
+            "shadow": false,
+            "unusedparams": false
+        },
+        "ui.semantic.tokens": false,
+        "formatting.gofumpt": false
+    },
+    
+    "files.exclude": {
+        "**/.git": true,
+        "**/tmp": true,
+        "**/*.log": true,
+        "**/node_modules": true
+    },
+    
+    "go.buildTags": "",
+    "go.testFlags": ["-v"],
+    "go.testTimeout": "30s",
+    
+    // Only analyze current file
+    "go.lintTool": "staticcheck",
+    "go.lintFlags": ["--checks=all,-ST1000"],
+    
+    // Reduce background processing
+    "editor.semanticHighlighting.enabled": false,
+    "editor.bracketPairColorization.enabled": false
 }

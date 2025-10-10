@@ -21,6 +21,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 const NgaSimVersion = "2.1.2"
@@ -299,6 +300,70 @@ func (pcr *ProtobufCommandRegistry) GetAllCategories() []string {
 		categories = append(categories, category)
 	}
 	return categories
+}
+
+// LogLevel represents the severity of a log entry
+type LogLevel int
+
+const (
+	LogLevelDebug LogLevel = iota
+	LogLevelInfo
+	LogLevelWarn
+	LogLevelError
+)
+
+func (l LogLevel) String() string {
+	switch l {
+	case LogLevelDebug:
+		return "DEBUG"
+	case LogLevelInfo:
+		return "INFO"
+	case LogLevelWarn:
+		return "WARN"
+	case LogLevelError:
+		return "ERROR"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+// DeviceLogEntry represents a single device communication log entry
+type DeviceLogEntry struct {
+	ID            string                 `json:"id"`
+	Timestamp     time.Time              `json:"timestamp"`
+	DeviceID      string                 `json:"device_id"`
+	Direction     string                 `json:"direction"` // "REQUEST" or "RESPONSE"
+	MessageType   string                 `json:"message_type"`
+	RawData       []byte                 `json:"raw_data"`
+	ParsedData    map[string]interface{} `json:"parsed_data"`
+	Success       bool                   `json:"success"`
+	Error         string                 `json:"error,omitempty"`
+	Duration      time.Duration          `json:"duration,omitempty"`
+	Level         LogLevel               `json:"level"`
+	Tags          []string               `json:"tags,omitempty"`
+	CorrelationID string                 `json:"correlation_id,omitempty"`
+}
+
+// DeviceLogger handles comprehensive logging of device communications
+type DeviceLogger struct {
+	entries    []*DeviceLogEntry
+	mutex      sync.RWMutex
+	maxEntries int
+	logFile    *os.File
+	registry   *ProtobufRegistry
+}
+
+// LogFilter represents criteria for filtering log entries
+type LogFilter struct {
+	DeviceID      string    `json:"device_id,omitempty"`
+	MessageType   string    `json:"message_type,omitempty"`
+	Direction     string    `json:"direction,omitempty"`
+	Level         LogLevel  `json:"level,omitempty"`
+	StartTime     time.Time `json:"start_time,omitempty"`
+	EndTime       time.Time `json:"end_time,omitempty"`
+	Success       *bool     `json:"success,omitempty"`
+	CorrelationID string    `json:"correlation_id,omitempty"`
+	Tags          []string  `json:"tags,omitempty"`
 }
 
 type NgaSim struct {
@@ -909,12 +974,82 @@ func (n *NgaSim) Start() error {
 	}
 
 	// Start web server
-	return n.startWebServer()
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", n.handleGoDemo)      // Go-centric single driver approach
+	mux.HandleFunc("/js-demo", n.handleDemo) // Keep JS version for comparison
+	mux.HandleFunc("/old", n.handleHome)     // Keep old interface accessible
+	mux.HandleFunc("/goodbye", n.handleGoodbye)
+	mux.HandleFunc("/api/exit", n.handleExit)
+	mux.HandleFunc("/api/devices", n.handleAPI)
+	mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand)
+	mux.HandleFunc("/api/sanitizer/states", n.handleSanitizerStates)
+	mux.HandleFunc("/api/power-levels", n.handlePowerLevels)
+	mux.HandleFunc("/api/emergency-stop", n.handleEmergencyStop)
+
+	// UI Specification API - parsed TOML as JSON
+	mux.HandleFunc("/api/ui/spec", n.handleUISpecAPI)
+
+	// Frontend demo (also available at /demo for compatibility)
+	mux.HandleFunc("/demo", n.handleDemo)
+
+	// Serve design assets for web developers
+	mux.HandleFunc("/static/wireframe.svg", n.handleWireframeSVG)
+	mux.HandleFunc("/static/wireframe.mmd", n.handleWireframeMMD)
+	mux.HandleFunc("/static/ui-spec.toml", n.handleUISpecTOML)
+	mux.HandleFunc("/static/ui-spec.txt", n.handleUISpecTXT)
+
+	n.server = &http.Server{Addr: ":8082", Handler: mux}
+
+	go func() {
+		log.Println("Web server starting on :8082")
+		if err := n.server.ListenAndServe(); err != http.ErrServerClosed {
+			log.Printf("Server error: %v", err)
+		}
+	}()
+
+	return nil
 }
 
 func (n *NgaSim) createDemoDevices() {
 	n.mutex.Lock()
+	defer n.mutex.Unlock()
 
+	// Create two sanitizer devices with realistic serial numbers and telemetry
+	n.devices["1234567890ABCDEF00"] = &Device{
+		ID:               "1234567890ABCDEF00",
+		Type:             "sanitizerGen2",
+		Name:             "Pool Sanitizer A",
+		Serial:           "1234567890ABCDEF00",
+		Status:           "ONLINE",
+		LastSeen:         time.Now(),
+		Category:         "sanitizerGen2",
+		ProductName:      "AquaRite Pro",
+		ModelId:          "AQR-PRO-15",
+		FirmwareVersion:  "2.1.4",
+		PercentageOutput: 50,
+		PPMSalt:          3200,
+		LineInputVoltage: 240,
+		RSSI:             -45,
+	}
+
+	n.devices["1234567890ABCDEF01"] = &Device{
+		ID:               "1234567890ABCDEF01",
+		Type:             "sanitizerGen2",
+		Name:             "Pool Sanitizer B",
+		Serial:           "1234567890ABCDEF01",
+		Status:           "ONLINE",
+		LastSeen:         time.Now(),
+		Category:         "sanitizerGen2",
+		ProductName:      "AquaRite Pro",
+		ModelId:          "AQR-PRO-15",
+		FirmwareVersion:  "2.1.4",
+		PercentageOutput: 0,
+		PPMSalt:          2800,
+		LineInputVoltage: 238,
+		RSSI:             -52,
+	}
+
+	// Keep all your existing demo devices (VSP, ICL, etc.)
 	// VSP - Variable Speed Pump
 	n.devices["VSP001"] = &Device{
 		ID:       "VSP001",
@@ -1012,12 +1147,27 @@ func (n *NgaSim) createDemoDevices() {
 		Temp:     26.5, // Controller temperature
 	}
 
-	n.mutex.Unlock()
+	log.Println("Created demo devices with working sanitizer protobuf reflection")
 }
 
 // sendSanitizerCommand sends a power level command to a sanitizer device
 // Matches the Python script send_salt_command() functionality
 func (sim *NgaSim) sendSanitizerCommand(deviceSerial, category string, targetPercentage int) error {
+	// Check if MQTT is connected
+	if sim.mqtt == nil || !sim.mqtt.IsConnected() {
+		log.Printf("⚠️  MQTT not connected - simulating command for demo mode")
+		// In demo mode, simulate the command by updating the device state
+		sim.mutex.Lock()
+		if device, exists := sim.devices[deviceSerial]; exists {
+			device.PercentageOutput = int32(targetPercentage)
+			device.ActualPercentage = int32(targetPercentage)
+			device.PendingPercentage = 0
+		}
+		sim.mutex.Unlock()
+		log.Printf("✅ Demo command completed: %s -> %d%%", deviceSerial, targetPercentage)
+		return nil
+	}
+
 	// Create SetSanitizerTargetPercentageRequestPayload
 	saltCmd := &ned.SetSanitizerTargetPercentageRequestPayload{
 		TargetPercentage: int32(targetPercentage),
@@ -1052,15 +1202,6 @@ func (sim *NgaSim) sendSanitizerCommand(deviceSerial, category string, targetPer
 		return fmt.Errorf("sanitizer RequestType not set properly")
 	}
 
-	// CRITICAL FIX: Create CommandRequestMessage wrapper to match Python structure
-	// Python: msg = sanitizer_pb2.CommandRequestMessage()
-	//         msg.command_uuid = uuid
-	//         msg.sanitizer.CopyFrom(wrapper)
-	// But Go ned.CommandRequestMessage doesn't have sanitizer field!
-
-	// Create a custom message structure that matches what device expects
-	// Since Go protobuf doesn't match Python, we need to create the bytes manually
-
 	// Serialize the sanitizer payload first
 	sanitizerBytes, err := proto.Marshal(wrapper)
 	if err != nil {
@@ -1072,7 +1213,6 @@ func (sim *NgaSim) sendSanitizerCommand(deviceSerial, category string, targetPer
 	// Field 1 (string): command_uuid
 	// Field 3 (bytes): sanitizer payload (field 3 based on Python structure)
 	// This mimics: CommandRequestMessage { command_uuid=..., sanitizer=... }
-
 	var msgBuf []byte
 
 	// Add field 1: command_uuid (string, wire type 2)
@@ -1119,24 +1259,20 @@ func (sim *NgaSim) sendSanitizerCommand(deviceSerial, category string, targetPer
 		// Log the MQTT error
 		if sim.logger != nil {
 			sim.logger.LogError(deviceSerial, "SetSanitizerTargetPercentage",
-				fmt.Sprintf("MQTT publish failed: %v", token.Error()), correlationID,
-				"chlorination", "mqtt_error")
+				fmt.Sprintf("MQTT publish failed: %v", token.Error()),
+				correlationID,
+				"mqtt_error",
+				"publish_failed")
 		}
-		return fmt.Errorf("failed to publish sanitizer command: %v", token.Error())
+		return fmt.Errorf("MQTT publish failed: %v", token.Error())
 	}
 
-	log.Printf("✅ Sanitizer command sent successfully: %s -> %d%% (Correlation: %s)",
-		deviceSerial, targetPercentage, correlationID)
-
-	log.Printf("📝 Structured logging: Check device_commands.log for detailed protobuf data")
-
+	log.Printf("✅ Command published successfully to %s", topic)
 	return nil
 }
 
 // handleAllDeviceCommands returns all available device commands
 func (n *NgaSim) handleAllDeviceCommands(w http.ResponseWriter, r *http.Request) {
-	log.Println("🔍 API request: /api/device-commands")
-
 	categories := n.commandRegistry.GetAllCategories()
 	result := make(map[string]DeviceCommands)
 
@@ -1148,9 +1284,6 @@ func (n *NgaSim) handleAllDeviceCommands(w http.ResponseWriter, r *http.Request)
 		}
 	}
 
-	log.Printf("📤 Sending %d device command categories\n", len(result))
-
-	// Return as JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -1305,22 +1438,12 @@ var tmpl = template.Must(template.New("home").Parse(`
 <body>
   <div class="page">
 	<div class="header">
-				<div class="hdr-title">NgaSim Dashboard v{{.Version}}</div>
-				<div style="display:flex;align-items:center;gap:12px">
-					<div class="hdr-right" id="hdr-count">{{len .Devices}} devices</div>
-				fetch('/api/exit',{method:'POST'}).then(r=>r.json()).then(j=>{alert(j.message);}).catch(e=>alert('Exit request failed: '+e.message));
-			}
-  </script>
-</head>
-<body>
-  <div class="page">
-	<div class="header">
-				<div class="hdr-title">NgaSim Dashboard v{{.Version}}</div>
-				<div style="display:flex;align-items:center;gap:12px">
-					<div class="hdr-right" id="hdr-count">{{len .Devices}} devices</div>
-					<button id="exitBtn" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:6px;font-weight:700;cursor:pointer" onclick="confirmExit()">EXIT</button>
-				</div>
-	</div>
+        <div class="hdr-title">NgaSim Dashboard v{{.Version}}</div>
+        <div style="display:flex;align-items:center;gap:12px">
+            <div class="hdr-right" id="hdr-count">{{len .Devices}} devices</div>
+            <button id="exitBtn" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:6px;font-weight:700;cursor:pointer" onclick="confirmExit()">EXIT</button>
+        </div>
+    </div>
 
 	<div id="grid" class="grid">
 	  {{range .Devices}}
@@ -1830,6 +1953,356 @@ func (n *NgaSim) handleGoDemo(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 	goDemoTemplate.Execute(w, data)
+}
+
+// NewDeviceLogger creates a new device logger
+func NewDeviceLogger(maxEntries int, logFilePath string, registry *ProtobufRegistry) (*DeviceLogger, error) {
+	logger := &DeviceLogger{
+		entries:    make([]*DeviceLogEntry, 0),
+		maxEntries: maxEntries,
+		registry:   registry,
+	}
+
+	// Open log file for persistent storage
+	if logFilePath != "" {
+		file, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open log file: %v", err)
+		}
+		logger.logFile = file
+	}
+
+	return logger, nil
+}
+
+// LogRequest logs an outgoing device request
+func (dl *DeviceLogger) LogRequest(deviceID, messageType string, data []byte, tags ...string) string {
+	correlationID := dl.generateCorrelationID()
+
+	entry := &DeviceLogEntry{
+		ID:            dl.generateEntryID(),
+		Timestamp:     time.Now(),
+		DeviceID:      deviceID,
+		Direction:     "REQUEST",
+		MessageType:   messageType,
+		RawData:       data,
+		Success:       true,
+		Level:         LogLevelInfo,
+		Tags:          tags,
+		CorrelationID: correlationID,
+	}
+
+	// Parse protobuf data if possible
+	if parsedData, err := dl.parseProtobufData(messageType, data); err == nil {
+		entry.ParsedData = parsedData
+	} else {
+		entry.Error = fmt.Sprintf("Failed to parse protobuf: %v", err)
+		entry.Success = false
+		entry.Level = LogLevelWarn
+	}
+
+	dl.addEntry(entry)
+	return correlationID
+}
+
+// LogResponse logs an incoming device response
+func (dl *DeviceLogger) LogResponse(deviceID, messageType string, data []byte, correlationID string, duration time.Duration, tags ...string) {
+	entry := &DeviceLogEntry{
+		ID:            dl.generateEntryID(),
+		Timestamp:     time.Now(),
+		DeviceID:      deviceID,
+		Direction:     "RESPONSE",
+		MessageType:   messageType,
+		RawData:       data,
+		Success:       true,
+		Level:         LogLevelInfo,
+		Duration:      duration,
+		Tags:          tags,
+		CorrelationID: correlationID,
+	}
+
+	// Parse protobuf data if possible
+	if parsedData, err := dl.parseProtobufData(messageType, data); err == nil {
+		entry.ParsedData = parsedData
+	} else {
+		entry.Error = fmt.Sprintf("Failed to parse protobuf: %v", err)
+		entry.Success = false
+		entry.Level = LogLevelWarn
+	}
+
+	dl.addEntry(entry)
+}
+
+// LogError logs an error that occurred during device communication
+func (dl *DeviceLogger) LogError(deviceID, messageType, errorMsg string, correlationID string, tags ...string) {
+	entry := &DeviceLogEntry{
+		ID:            dl.generateEntryID(),
+		Timestamp:     time.Now(),
+		DeviceID:      deviceID,
+		Direction:     "ERROR",
+		MessageType:   messageType,
+		Success:       false,
+		Error:         errorMsg,
+		Level:         LogLevelError,
+		Tags:          tags,
+		CorrelationID: correlationID,
+	}
+
+	dl.addEntry(entry)
+}
+
+// parseProtobufData attempts to parse protobuf data into a readable format
+func (dl *DeviceLogger) parseProtobufData(messageType string, data []byte) (map[string]interface{}, error) {
+	if dl.registry == nil {
+		return nil, fmt.Errorf("no protobuf registry available")
+	}
+
+	// Create message instance
+	msg, err := dl.registry.CreateMessage(messageType)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal the data
+	if err := proto.Unmarshal(data, msg); err != nil {
+		return nil, err
+	}
+
+	// Convert to map using reflection
+	return dl.protoMessageToMap(msg.ProtoReflect()), nil
+}
+
+// protoMessageToMap converts a protobuf message to a map using reflection
+func (dl *DeviceLogger) protoMessageToMap(msg protoreflect.Message) map[string]interface{} {
+	result := make(map[string]interface{})
+
+	msg.Range(func(fd protoreflect.FieldDescriptor, v protoreflect.Value) bool {
+		fieldName := string(fd.Name())
+
+		switch {
+		case fd.IsList():
+			list := v.List()
+			items := make([]interface{}, list.Len())
+			for i := 0; i < list.Len(); i++ {
+				items[i] = dl.convertValue(fd, list.Get(i))
+			}
+			result[fieldName] = items
+		case fd.IsMap():
+			mapVal := v.Map()
+			mapResult := make(map[string]interface{})
+			mapVal.Range(func(k protoreflect.MapKey, v protoreflect.Value) bool {
+				mapResult[k.String()] = dl.convertValue(fd.MapValue(), v)
+				return true
+			})
+			result[fieldName] = mapResult
+		default:
+			result[fieldName] = dl.convertValue(fd, v)
+		}
+
+		return true
+	})
+
+	return result
+}
+
+// convertValue converts a protobuf value to a Go interface{}
+func (dl *DeviceLogger) convertValue(fd protoreflect.FieldDescriptor, v protoreflect.Value) interface{} {
+	switch fd.Kind() {
+	case protoreflect.BoolKind:
+		return v.Bool()
+	case protoreflect.Int32Kind, protoreflect.Sint32Kind, protoreflect.Sfixed32Kind:
+		return int32(v.Int())
+	case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
+		return v.Int()
+	case protoreflect.Uint32Kind, protoreflect.Fixed32Kind:
+		return uint32(v.Uint())
+	case protoreflect.Uint64Kind, protoreflect.Fixed64Kind:
+		return v.Uint()
+	case protoreflect.FloatKind:
+		return float32(v.Float())
+	case protoreflect.DoubleKind:
+		return v.Float()
+	case protoreflect.StringKind:
+		return v.String()
+	case protoreflect.BytesKind:
+		return v.Bytes()
+	case protoreflect.EnumKind:
+		return fd.Enum().Values().ByNumber(v.Enum()).Name()
+	case protoreflect.MessageKind:
+		return dl.protoMessageToMap(v.Message())
+	default:
+		return v.Interface()
+	}
+}
+
+// addEntry adds a new log entry and manages rotation
+func (dl *DeviceLogger) addEntry(entry *DeviceLogEntry) {
+	dl.mutex.Lock()
+	defer dl.mutex.Unlock()
+
+	// Add to memory
+	dl.entries = append(dl.entries, entry)
+
+	// Rotate if necessary
+	if len(dl.entries) > dl.maxEntries {
+		dl.entries = dl.entries[1:]
+	}
+
+	// Write to file if configured
+	if dl.logFile != nil {
+		if jsonData, err := json.Marshal(entry); err == nil {
+			dl.logFile.WriteString(string(jsonData) + "\n")
+			dl.logFile.Sync()
+		}
+	}
+
+	// Log to standard logger as well
+	log.Printf("[%s] %s %s -> %s: %s",
+		entry.Level.String(),
+		entry.Direction,
+		entry.DeviceID,
+		entry.MessageType,
+		dl.formatLogMessage(entry))
+}
+
+// formatLogMessage formats a log entry for display
+func (dl *DeviceLogger) formatLogMessage(entry *DeviceLogEntry) string {
+	if entry.Success {
+		if entry.Duration > 0 {
+			return fmt.Sprintf("Success (%v)", entry.Duration)
+		}
+		return "Success"
+	} else {
+		return fmt.Sprintf("Error: %s", entry.Error)
+	}
+}
+
+// GetEntries returns log entries with optional filtering
+func (dl *DeviceLogger) GetEntries(filter LogFilter) []*DeviceLogEntry {
+	dl.mutex.RLock()
+	defer dl.mutex.RUnlock()
+
+	var filtered []*DeviceLogEntry
+
+	for _, entry := range dl.entries {
+		if filter.matches(entry) {
+			filtered = append(filtered, entry)
+		}
+	}
+
+	return filtered
+}
+
+// matches checks if a log entry matches the filter criteria
+func (lf *LogFilter) matches(entry *DeviceLogEntry) bool {
+	if lf.DeviceID != "" && entry.DeviceID != lf.DeviceID {
+		return false
+	}
+
+	if lf.MessageType != "" && entry.MessageType != lf.MessageType {
+		return false
+	}
+
+	if lf.Direction != "" && entry.Direction != lf.Direction {
+		return false
+	}
+
+	if lf.Level != 0 && entry.Level < lf.Level {
+		return false
+	}
+
+	if !lf.StartTime.IsZero() && entry.Timestamp.Before(lf.StartTime) {
+		return false
+	}
+
+	if !lf.EndTime.IsZero() && entry.Timestamp.After(lf.EndTime) {
+		return false
+	}
+
+	if lf.Success != nil && entry.Success != *lf.Success {
+		return false
+	}
+
+	if lf.CorrelationID != "" && entry.CorrelationID != lf.CorrelationID {
+		return false
+	}
+
+	// Check tags
+	if len(lf.Tags) > 0 {
+		tagMatch := false
+		for _, filterTag := range lf.Tags {
+			for _, entryTag := range entry.Tags {
+				if filterTag == entryTag {
+					tagMatch = true
+					break
+				}
+			}
+			if tagMatch {
+				break
+			}
+		}
+		if !tagMatch {
+			return false
+		}
+	}
+
+	return true
+}
+
+// generateEntryID generates a unique ID for a log entry
+func (dl *DeviceLogger) generateEntryID() string {
+	return fmt.Sprintf("log_%d", time.Now().UnixNano())
+}
+
+// generateCorrelationID generates a unique correlation ID for request/response pairs
+func (dl *DeviceLogger) generateCorrelationID() string {
+	return fmt.Sprintf("corr_%d", time.Now().UnixNano())
+}
+
+// GetStats returns statistics about logged communications
+func (dl *DeviceLogger) GetStats() map[string]interface{} {
+	dl.mutex.RLock()
+	defer dl.mutex.RUnlock()
+
+	stats := map[string]interface{}{
+		"total_entries": len(dl.entries),
+		"by_device":     make(map[string]int),
+		"by_message":    make(map[string]int),
+		"by_level":      make(map[string]int),
+		"success_rate":  0.0,
+	}
+
+	successCount := 0
+	for _, entry := range dl.entries {
+		// Count by device
+		stats["by_device"].(map[string]int)[entry.DeviceID]++
+
+		// Count by message type
+		stats["by_message"].(map[string]int)[entry.MessageType]++
+
+		// Count by level
+		stats["by_level"].(map[string]int)[entry.Level.String()]++
+
+		// Count successes
+		if entry.Success {
+			successCount++
+		}
+	}
+
+	// Calculate success rate
+	if len(dl.entries) > 0 {
+		stats["success_rate"] = float64(successCount) / float64(len(dl.entries)) * 100
+	}
+
+	return stats
+}
+
+// Close closes the logger and any open files
+func (dl *DeviceLogger) Close() error {
+	if dl.logFile != nil {
+		return dl.logFile.Close()
+	}
+	return nil
 }
 
 func main() {

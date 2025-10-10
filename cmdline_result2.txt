@@ -1,0 +1,314 @@
+test@cm4:~/projects/pooltester3_20250916 $ # See what handlers existed in the TOML frontend version
+git show 6a3119b:main.go | grep -A 5 -B 5 "func.*handle.*"
+
+# Look for the demo.html and TOML UI spec features
+git show 6a3119b:main.go | grep -A 20 "handleDemo\|handleUISpec"
+                log.Printf("Unknown message type: %s", messageType)
+        }
+}
+
+// handleDeviceAnnounce processes device announcement messages
+func (sim *NgaSim) handleDeviceAnnounce(category, deviceSerial string, payload []byte) {
+        log.Printf("Device announce from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
+
+        // Try to parse as protobuf GetDeviceInformationResponsePayload
+        announce := &ned.GetDeviceInformationResponsePayload{}
+        if err := proto.Unmarshal(payload, announce); err == nil {
+--
+
+        log.Printf("Updated device %s: type=%s, name=%s", deviceID, device.Type, device.Name)
+}
+
+// handleDeviceStatus processes device status messages
+func (sim *NgaSim) handleDeviceStatus(category, deviceSerial string, payload []byte) {
+        log.Printf("Device status from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
+        // TODO: Implement status message parsing
+}
+
+// handleDeviceError processes device error messages
+func (sim *NgaSim) handleDeviceError(category, deviceSerial string, payload []byte) {
+        log.Printf("Device error from %s (category: %s): %d bytes - %s", deviceSerial, category, len(payload), string(payload))
+        // TODO: Implement error message parsing
+}
+
+// updateDeviceFromSanitizerTelemetry updates device with sanitizer telemetry data
+--
+        sim.sanitizerController.RegisterSanitizer(deviceSerial)
+        sim.sanitizerController.UpdateFromTelemetry(deviceSerial, telemetry.GetPercentageOutput())
+}
+
+// handleDeviceTelemetry processes device telemetry messages
+func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload []byte) {
+        log.Printf("Device telemetry from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
+
+        // Try sanitizer-specific protobuf parsing for sanitizer devices
+        if strings.Contains(strings.ToLower(category), "sanitizer") {
+                telemetry := &ned.TelemetryMessage{}
+--
+  </div>
+</body>
+</html>
+`))
+
+func (n *NgaSim) handleHome(w http.ResponseWriter, r *http.Request) {
+        n.mutex.RLock()
+        devices := make([]*Device, 0, len(n.devices))
+        for _, device := range n.devices {
+                devices = append(devices, device)
+        }
+--
+
+        w.Header().Set("Content-Type", "text/html")
+        tmpl.Execute(w, data)
+}
+
+func (n *NgaSim) handleAPI(w http.ResponseWriter, r *http.Request) {
+        n.mutex.RLock()
+        devices := make([]*Device, 0, len(n.devices))
+        for _, device := range n.devices {
+                devices = append(devices, device)
+        }
+--
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(devices)
+}
+
+// handleSanitizerCommand provides a web API to test sanitizer commands
+func (n *NgaSim) handleSanitizerCommand(w http.ResponseWriter, r *http.Request) {
+        if r.Method != "POST" {
+                http.Error(w, "POST required", http.StatusMethodNotAllowed)
+                return
+        }
+
+--
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(response)
+}
+
+// handleExit performs a graceful cleanup and then exits the process.
+func (n *NgaSim) handleExit(w http.ResponseWriter, r *http.Request) {
+        if r.Method != "POST" {
+                http.Error(w, "POST required", http.StatusMethodNotAllowed)
+                return
+        }
+        // Redirect client to a goodbye page which will attempt to close the tab
+--
+                os.Exit(0)
+        }()
+}
+
+// handleGoodbye serves a small page that attempts to auto-close the browser tab
+func (n *NgaSim) handleGoodbye(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/html")
+        fmt.Fprint(w, `<!doctype html>
+<html><head><meta charset="utf-8"><title>Goodbye</title></head>
+<body style="font-family:Arial;background:#f8fafc;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
+  <div style="text-align:center;padding:20px;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08)">
+--
+  </script>
+</body></html>`)
+}
+
+// handleSanitizerStates returns all sanitizer states from the controller
+func (n *NgaSim) handleSanitizerStates(w http.ResponseWriter, r *http.Request) {
+        states := n.sanitizerController.GetAllStates()
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(states)
+}
+
+// handlePowerLevels returns valid power level definitions
+func (n *NgaSim) handlePowerLevels(w http.ResponseWriter, r *http.Request) {
+        levels := GetValidPowerLevels()
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(levels)
+}
+
+// handleEmergencyStop stops all sanitizers immediately
+func (n *NgaSim) handleEmergencyStop(w http.ResponseWriter, r *http.Request) {
+        if r.Method != "POST" {
+                http.Error(w, "POST required", http.StatusMethodNotAllowed)
+                return
+        }
+
+--
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(response)
+}
+
+// handleWireframeSVG serves the SVG wireframe for web developers
+func (n *NgaSim) handleWireframeSVG(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "image/svg+xml")
+        http.ServeFile(w, r, "Device_Window_wireframe.svg")
+}
+
+// handleWireframeMMD serves the Mermaid diagram for web developers
+func (n *NgaSim) handleWireframeMMD(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/plain")
+        http.ServeFile(w, r, "Device_Window_diagram.mmd")
+}
+
+// handleUISpecTOML serves the TOML UI specification for web developers
+func (n *NgaSim) handleUISpecTOML(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/plain")
+        http.ServeFile(w, r, "Device_Window_spec-20251002bc.toml")
+}
+
+// handleUISpecTXT serves the text UI specification for web developers
+func (n *NgaSim) handleUISpecTXT(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/plain")
+        http.ServeFile(w, r, "Device_Window_spec-20251002bc.txt")
+}
+
+// handleUISpecAPI parses TOML UI spec and serves as JSON for dynamic frontends
+func (n *NgaSim) handleUISpecAPI(w http.ResponseWriter, r *http.Request) {
+        // Read the TOML file
+        data, err := ioutil.ReadFile("Device_Window_spec-20251002bc.toml")
+        if err != nil {
+                http.Error(w, fmt.Sprintf("Error reading TOML file: %v", err), http.StatusInternalServerError)
+                return
+--
+                return
+        }
+}
+
+// handleDemo serves the frontend demo HTML page
+func (n *NgaSim) handleDemo(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/html")
+        http.ServeFile(w, r, "demo.html")
+}
+
+func main() {
+--
+        // Wait for interrupt
+        sigChan := make(chan os.Signal, 1)
+        signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
+        <-sigChan
+
+        // The defer function will handle cleanup
+}
+        mux.HandleFunc("/api/ui/spec", n.handleUISpecAPI)
+
+        // Frontend demo
+        mux.HandleFunc("/demo", n.handleDemo)
+
+        // Serve design assets for web developers
+        mux.HandleFunc("/static/wireframe.svg", n.handleWireframeSVG)
+        mux.HandleFunc("/static/wireframe.mmd", n.handleWireframeMMD)
+        mux.HandleFunc("/static/ui-spec.toml", n.handleUISpecTOML)
+        mux.HandleFunc("/static/ui-spec.txt", n.handleUISpecTXT)
+
+        n.server = &http.Server{Addr: ":8082", Handler: mux}
+
+        go func() {
+                log.Println("Web server starting on :8082")
+                if err := n.server.ListenAndServe(); err != http.ErrServerClosed {
+                        log.Printf("Server error: %v", err)
+                }
+        }()
+
+        return nil
+}
+
+var tmpl = template.Must(template.New("home").Parse(`
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>NgaSim Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+--
+// handleUISpecTOML serves the TOML UI specification for web developers
+func (n *NgaSim) handleUISpecTOML(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/plain")
+        http.ServeFile(w, r, "Device_Window_spec-20251002bc.toml")
+}
+
+// handleUISpecTXT serves the text UI specification for web developers
+func (n *NgaSim) handleUISpecTXT(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/plain")
+        http.ServeFile(w, r, "Device_Window_spec-20251002bc.txt")
+}
+
+// handleUISpecAPI parses TOML UI spec and serves as JSON for dynamic frontends
+func (n *NgaSim) handleUISpecAPI(w http.ResponseWriter, r *http.Request) {
+        // Read the TOML file
+        data, err := ioutil.ReadFile("Device_Window_spec-20251002bc.toml")
+        if err != nil {
+                http.Error(w, fmt.Sprintf("Error reading TOML file: %v", err), http.StatusInternalServerError)
+                return
+        }
+
+        // Parse TOML into our struct
+        var spec UISpec
+        if err := toml.Unmarshal(data, &spec); err != nil {
+                http.Error(w, fmt.Sprintf("Error parsing TOML: %v", err), http.StatusInternalServerError)
+                return
+        }
+
+        // Return as JSON
+        w.Header().Set("Content-Type", "application/json")
+        w.Header().Set("Access-Control-Allow-Origin", "*") // Allow CORS for frontend development
+        if err := json.NewEncoder(w).Encode(spec); err != nil {
+                http.Error(w, fmt.Sprintf("Error encoding JSON: %v", err), http.StatusInternalServerError)
+                return
+--
+// handleDemo serves the frontend demo HTML page
+func (n *NgaSim) handleDemo(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "text/html")
+        http.ServeFile(w, r, "demo.html")
+}
+
+func main() {
+        log.Println("=== NgaSim Pool Controller Simulator ===")
+
+        nga := NewNgaSim()
+
+        // Ensure cleanup happens on any exit
+        defer func() {
+                log.Println("Shutting down NgaSim...")
+                nga.cleanup()
+        }()
+
+        if err := nga.Start(); err != nil {
+                log.Fatalf("Failed to start: %v", err)
+        }
+
+        log.Println("NgaSim started successfully!")
+test@cm4:~/projects/pooltester3_20250916 $ # See what HTTP routes were registered
+git show 6a3119b:main.go | grep -A 10 -B 5 "HandleFunc"
+}
+
+func (n *NgaSim) startWebServer() error {
+        // Start web server
+        mux := http.NewServeMux()
+        mux.HandleFunc("/", n.handleHome)
+        mux.HandleFunc("/goodbye", n.handleGoodbye)
+        mux.HandleFunc("/api/exit", n.handleExit)
+        mux.HandleFunc("/api/devices", n.handleAPI)
+        mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand)
+        mux.HandleFunc("/api/sanitizer/states", n.handleSanitizerStates)
+        mux.HandleFunc("/api/power-levels", n.handlePowerLevels)
+        mux.HandleFunc("/api/emergency-stop", n.handleEmergencyStop)
+
+        // UI Specification API - parsed TOML as JSON
+        mux.HandleFunc("/api/ui/spec", n.handleUISpecAPI)
+
+        // Frontend demo
+        mux.HandleFunc("/demo", n.handleDemo)
+
+        // Serve design assets for web developers
+        mux.HandleFunc("/static/wireframe.svg", n.handleWireframeSVG)
+        mux.HandleFunc("/static/wireframe.mmd", n.handleWireframeMMD)
+        mux.HandleFunc("/static/ui-spec.toml", n.handleUISpecTOML)
+        mux.HandleFunc("/static/ui-spec.txt", n.handleUISpecTXT)
+
+        n.server = &http.Server{Addr: ":8082", Handler: mux}
+
+        go func() {
+                log.Println("Web server starting on :8082")
+                if err := n.server.ListenAndServe(); err != http.ErrServerClosed {
+                        log.Printf("Server error: %v", err)
+                }
+        }()
+
+test@cm4:~/projects/pooltester3_20250916 $ 
