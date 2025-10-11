@@ -1,0 +1,19 @@
+# Doxyfile for NgaSim Pool Controller
+PROJECT_NAME           = "NgaSim Pool Controller"
+PROJECT_NUMBER         = "2.1.3"
+PROJECT_BRIEF          = "MQTT-based pool device simulator and controller"
+OUTPUT_DIRECTORY       = docs
+INPUT                  = .
+FILE_PATTERNS          = *.go *.md
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+HTML_OUTPUT            = html
+USE_MDFILE_AS_MAINPAGE = README.md
+OPTIMIZE_OUTPUT_FOR_C  = NO
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+MULTILINE_CPP_IS_BRIEF = NO
