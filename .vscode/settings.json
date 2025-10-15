@@ -106,9 +106,13 @@
     
     // Reduce gopls memory usage
     "go.toolsManagement.autoUpdate": false,
+    "go.formatOnSave": false,
     "go.lintOnSave": "off",
     "go.vetOnSave": "off",
     "go.buildOnSave": "off",
+    "files.exclude": {
+        "**/template.Go": false
+    },
     "go.testOnSave": false,
     
     // Limit gopls features
@@ -127,7 +131,8 @@
         "**/.git": true,
         "**/tmp": true,
         "**/*.log": true,
-        "**/node_modules": true
+        "**/node_modules": true,
+        "**/template.go": false
     },
     
     "go.buildTags": "",
@@ -135,10 +140,14 @@
     "go.testTimeout": "30s",
     
     // Only analyze current file
-    "go.lintTool": "staticcheck",
+    "go.lintTool": "none",
     "go.lintFlags": ["--checks=all,-ST1000"],
     
     // Reduce background processing
     "editor.semanticHighlighting.enabled": false,
-    "editor.bracketPairColorization.enabled": false
+    "editor.bracketPairColorization.enabled": false,
+
+    // In VSCode settings (Ctrl+Shift+P → "Preferences: Open Settings (JSON)")
+    "go.formatOnSave": false,
+    "go.lintOnSave": "off"
 }

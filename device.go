@@ -75,10 +75,11 @@ type Device struct {
 
 // TerminalEntry represents a single terminal log entry for a device
 type TerminalEntry struct {
-	Timestamp time.Time `json:"timestamp"`
-	Type      string    `json:"type"` // ANNOUNCE, TELEMETRY, COMMAND, RESPONSE, ERROR
-	Message   string    `json:"message"`
-	Data      string    `json:"data"` // Raw data for debugging
+	Timestamp      time.Time              `json:"timestamp"`
+	Type           string                 `json:"type"`                      // ANNOUNCE, TELEMETRY, COMMAND, RESPONSE, ERROR
+	Message        string                 `json:"message"`                   // Summary message
+	Data           string                 `json:"data"`                      // Raw data for debugging
+	ParsedProtobuf *ParsedProtobufMessage `json:"parsed_protobuf,omitempty"` // Structured protobuf data
 }
 
 // Command Discovery Structures for Protobuf Reflection

@@ -58,7 +58,7 @@ type DeviceLogger struct {
 	maxEntries int
 	mutex      sync.RWMutex
 	filename   string
-	registry   *ProtobufRegistry // For command introspection
+	registry   *ProtobufCommandRegistry // For command introspection
 }
 
 // LogFilter represents criteria for filtering log entries

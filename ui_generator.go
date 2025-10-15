@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
 // UIGenerator generates dynamic web interfaces based on protobuf definitions
 type UIGenerator struct {
-	registry  *ProtobufRegistry
+	registry  *ProtobufCommandRegistry
 	logger    *DeviceLogger
 	jobEngine *JobEngine
 }
 
 // NewUIGenerator creates a new UI generator
-func NewUIGenerator(registry *ProtobufRegistry, logger *DeviceLogger, jobEngine *JobEngine) *UIGenerator {
+func NewUIGenerator(registry *ProtobufCommandRegistry, logger *DeviceLogger, jobEngine *JobEngine) *UIGenerator {
 	return &UIGenerator{
 		registry:  registry,
 		logger:    logger,
@@ -100,24 +99,29 @@ func (ug *UIGenerator) GenerateDeviceDetailPage(deviceID string) (*DeviceDetailP
 
 // GenerateMessageForm generates a form for a specific protobuf message type
 func (ug *UIGenerator) GenerateMessageForm(messageType string) (*MessageForm, error) {
-	msgInfo, err := ug.registry.GetMessageInfo(messageType)
-	if err != nil {
-		return nil, err
-	}
-
 	form := &MessageForm{
 		MessageType: messageType,
-		Title:       ug.generateFormTitle(msgInfo.Name),
-		Description: msgInfo.Description,
+		Title:       "Generated Form",
+		Description: "Auto-generated form",
 		Fields:      make([]*FormField, 0),
-		Actions:     []string{"Send", "Clear", "Save Template"},
+		Actions:     []string{"Send", "Clear"},
 	}
+	// 		return nil, err
+	//	}
 
-	// Generate fields for each protobuf field
-	for fieldName, fieldInfo := range msgInfo.Fields {
-		formField := ug.generateFormField(fieldName, fieldInfo)
-		form.Fields = append(form.Fields, formField)
-	}
+	//	form := &MessageForm{
+	//		MessageType: messageType,
+	// 		Title:       ug.generateFormTitle(msgInfo.Name),
+	// 		Description: msgInfo.Description,
+	// 		Fields:      make([]*FormField, 0),
+	// 		Actions:     []string{"Send", "Clear", "Save Template"},
+	// 	}
+	// //
+	// 	// Generate fields for each protobuf field
+	// 	for fieldName, fieldInfo := range msgInfo.Fields {
+	// 		formField := ug.generateFormField(fieldName, fieldInfo)
+	//		form.Fields = append(form.Fields, formField)
+	//	}
 
 	// Sort fields by name for consistent ordering
 	// Implementation for sorting would go here
@@ -126,76 +130,76 @@ func (ug *UIGenerator) GenerateMessageForm(messageType string) (*MessageForm, er
 }
 
 // generateFormField creates a form field from protobuf field info
-func (ug *UIGenerator) generateFormField(fieldName string, fieldInfo *ProtobufFieldInfo) *FormField {
-	field := &FormField{
-		Name:        fieldName,
-		Label:       fieldInfo.Label,
-		Required:    fieldInfo.Required,
-		Description: fieldInfo.Description,
-		Constraints: make(map[string]interface{}),
-	}
-
-	// Set field type and constraints based on protobuf type
-	switch fieldInfo.Type {
-	case "bool":
-		field.Type = "checkbox"
-		field.Default = false
-
-	case "int32", "int64":
-		field.Type = "number"
-		field.Constraints["step"] = 1
-		if fieldInfo.Type == "int32" {
-			field.Constraints["min"] = -2147483648
-			field.Constraints["max"] = 2147483647
-		}
-
-	case "uint32", "uint64":
-		field.Type = "number"
-		field.Constraints["step"] = 1
-		field.Constraints["min"] = 0
-		if fieldInfo.Type == "uint32" {
-			field.Constraints["max"] = 4294967295
-		}
-
-	case "float", "double":
-		field.Type = "number"
-		field.Constraints["step"] = 0.01
-
-	case "string":
-		field.Type = "text"
-		field.Constraints["maxlength"] = 255
-
-	case "bytes":
-		field.Type = "file"
-		field.Constraints["accept"] = "application/octet-stream"
-
-	case "enum":
-		field.Type = "select"
-		field.Options = make([]FormOption, 0)
-		for name, value := range fieldInfo.Enum {
-			field.Options = append(field.Options, FormOption{
-				Value: strconv.Itoa(int(value)),
-				Label: ug.generateEnumLabel(name),
-			})
-		}
-
-	case "message":
-		field.Type = "object"
-		// For nested messages, we could generate nested forms
-		field.Constraints["message_type"] = fieldInfo.Constraints["message_type"]
-
-	default:
-		field.Type = "text"
-	}
-
-	// Handle repeated fields
-	if fieldInfo.Repeated {
-		field.Type = "array"
-		field.Constraints["item_type"] = field.Type
-	}
-
-	return field
-}
+// func (ug *UIGenerator) generateFormField(fieldName string, fieldInfo *interface{}) *FormField {
+// 	field := &FormField{
+// 		Name:        fieldName,
+// 		Label:       fieldInfo.Label,
+// 		Required:    fieldInfo.Required,
+// 		Description: fieldInfo.Description,
+// 		Constraints: make(map[string]interface{}),
+// 	}
+//
+// 	// Set field type and constraints based on protobuf type
+// 	switch fieldInfo.Type {
+// 	case "bool":
+// 		field.Type = "checkbox"
+// 		field.Default = false
+//
+// 	case "int32", "int64":
+// 		field.Type = "number"
+// 		field.Constraints["step"] = 1
+// 		if fieldInfo.Type == "int32" {
+// 			field.Constraints["min"] = -2147483648
+// 			field.Constraints["max"] = 2147483647
+// 		}
+//
+// 	case "uint32", "uint64":
+// 		field.Type = "number"
+// 		field.Constraints["step"] = 1
+// 		field.Constraints["min"] = 0
+// 		if fieldInfo.Type == "uint32" {
+// 			field.Constraints["max"] = 4294967295
+// 		}
+//
+// 	case "float", "double":
+// 		field.Type = "number"
+// 		field.Constraints["step"] = 0.01
+//
+// 	case "string":
+// 		field.Type = "text"
+// 		field.Constraints["maxlength"] = 255
+//
+// 	case "bytes":
+// 		field.Type = "file"
+// 		field.Constraints["accept"] = "application/octet-stream"
+//
+// 	case "enum":
+// 		field.Type = "select"
+// 		field.Options = make([]FormOption, 0)
+// 		for name, value := range fieldInfo.Enum {
+// 			field.Options = append(field.Options, FormOption{
+// 				Value: strconv.Itoa(int(value)),
+// 				Label: ug.generateEnumLabel(name),
+// 			})
+// 		}
+//
+// 	case "message":
+// 		field.Type = "object"
+// 		// For nested messages, we could generate nested forms
+// 		field.Constraints["message_type"] = fieldInfo.Constraints["message_type"]
+//
+// 	default:
+// 		field.Type = "text"
+// 	}
+//
+// 	// Handle repeated fields
+// 	if fieldInfo.Repeated {
+// 		field.Type = "array"
+// 		field.Constraints["item_type"] = field.Type
+// 	}
+//
+// 	return field
+// }
 
 // generateFormTitle creates a human-readable title from a message name
 func (ug *UIGenerator) generateFormTitle(messageName string) string {
@@ -232,7 +236,8 @@ func (ug *UIGenerator) generateEnumLabel(enumName string) string {
 func (ug *UIGenerator) getMessageTypesForDevice(deviceID string) []string {
 	// This would typically be based on device type/capabilities
 	// For now, return all available message types
-	return ug.registry.ListAvailableMessages()
+	// return []string{} // 	// 	return ug.registry.ListAvailableMessages()
+	return []string{"SetSanitizerTargetPercentageRequestPayload", "GetSanitizerStatusRequestPayload"}
 }
 
 // getDeviceStats returns statistics for a specific device

@@ -1139,7 +1139,7 @@ func (n *NgaSim) testProtobufSystem() {
 	log.Println("✅ Protobuf system test complete")
 }
 
-// Add this method to update device live terminals
+// Enhanced addDeviceTerminalEntry with protobuf parsing
 func (n *NgaSim) addDeviceTerminalEntry(deviceSerial, entryType, message string, rawData []byte) {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
@@ -1149,12 +1149,42 @@ func (n *NgaSim) addDeviceTerminalEntry(deviceSerial, entryType, message string,
 		return
 	}
 
+	// Create protobuf parser
+	parser := NewProtobufMessageParser(n.reflectionEngine)
+
 	// Create terminal entry
 	entry := TerminalEntry{
 		Timestamp: time.Now(),
 		Type:      entryType,
 		Message:   message,
 		Data:      string(rawData),
+	}
+
+	// Try to parse protobuf data based on entry type
+	switch strings.ToUpper(entryType) {
+	case "ANNOUNCE":
+		if parsed, err := parser.ParseAnnounceMessage(rawData, deviceSerial); err == nil {
+			entry.ParsedProtobuf = parsed
+			// Update message with parsed info
+			if len(parsed.Fields) > 0 {
+				entry.Message = fmt.Sprintf("Device announced: %s (%d fields parsed)",
+					device.Name, len(parsed.Fields))
+			}
+		} else {
+			log.Printf("Failed to parse announce protobuf: %v", err)
+		}
+
+	case "TELEMETRY":
+		if parsed, err := parser.ParseTelemetryMessage(rawData, deviceSerial); err == nil {
+			entry.ParsedProtobuf = parsed
+			// Update message with key telemetry info
+			if len(parsed.Fields) > 0 {
+				entry.Message = fmt.Sprintf("Telemetry received (%d fields parsed)",
+					len(parsed.Fields))
+			}
+		} else {
+			log.Printf("Failed to parse telemetry protobuf: %v", err)
+		}
 	}
 
 	// Add to device's live terminal

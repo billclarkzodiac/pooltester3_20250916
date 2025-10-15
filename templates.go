@@ -673,10 +673,26 @@ var goDemoTemplateHTML = `
                     <div class="control-label">📺 Live Device Terminal</div>
                     <div class="device-terminal" id="terminal-{{.Serial}}">
                         {{range .LiveTerminal}}
-                        <div class="terminal-entry">
-                            <span style="color: #a0aec0;">[{{.Timestamp.Format "15:04:05"}}]</span>
-                            <span class="terminal-{{.Type | lower}}">[{{.Type}}]</span>
-                            <span>{{.Message}}</span>
+                        <div class="terminal-entry terminal-{{.Type | lower}}">
+                            <div class="terminal-header">
+                                <span style="color: #a0aec0;">[{{.Timestamp.Format "15:04:05"}}]</span>
+                                <span class="terminal-{{.Type | lower}}">[{{.Type}}]</span>
+                                <span>{{.Message}}</span>
+                            </div>
+                            {{if .ParsedProtobuf}}
+                            <div class="protobuf-details" style="margin-left: 20px; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 3px; font-size: 0.85em;">
+                                <div style="color: #63b3ed; font-weight: bold; margin-bottom: 3px;">📋 {{.ParsedProtobuf.MessageType}} ({{len .ParsedProtobuf.Fields}} fields)</div>
+                                {{range .ParsedProtobuf.Fields}}
+                                {{if .IsSet}}
+                                <div style="margin-bottom: 1px;">
+                                    <span style="color: #a0aec0; font-weight: bold;">{{.Name}}:</span>
+                                    <span style="color: #e2e8f0; margin-left: 8px;">{{.RawValue}}</span>
+                                    {{if .Description}}<span style="color: #718096; font-style: italic; font-size: 0.8em;"> - {{.Description}}</span>{{end}}
+                                </div>
+                                {{end}}
+                                {{end}}
+                            </div>
+                            {{end}}
                         </div>
                         {{end}}
                         {{if not .LiveTerminal}}

@@ -94,13 +94,13 @@ type JobEngine struct {
 	scheduler  *JobScheduler
 	deviceComm *DeviceCommunicator
 	logger     *DeviceLogger
-	registry   *ProtobufRegistry
+	registry   *ProtobufCommandRegistry
 	stopChan   chan struct{}
 	running    bool
 }
 
 // NewJobEngine creates a new job automation engine
-func NewJobEngine(deviceComm *DeviceCommunicator, logger *DeviceLogger, registry *ProtobufRegistry) *JobEngine {
+func NewJobEngine(deviceComm *DeviceCommunicator, logger *DeviceLogger, registry *ProtobufCommandRegistry) *JobEngine {
 	engine := &JobEngine{
 		jobs:       make(map[string]*Job),
 		executions: make(map[string]*JobExecution),
@@ -333,30 +333,39 @@ func (je *JobEngine) executeAction(action *JobAction, index int, execution *JobE
 // executeSendMessage executes a send_message action
 func (je *JobEngine) executeSendMessage(action *JobAction, execution *JobExecution, result *ActionResult) error {
 	// Create protobuf message
-	msg, err := je.registry.CreateMessage(action.MessageType)
-	if err != nil {
-		return fmt.Errorf("failed to create message: %v", err)
-	}
+	// // 	msg, err := je.registry.CreateMessage(action.MessageType)
+	//	if err != nil {
+	//		return fmt.Errorf("failed to create message: %v", err)
+	//	}
 
 	// Populate message fields from parameters
-	if err := je.populateMessage(msg, action.Parameters); err != nil {
-		return fmt.Errorf("failed to populate message: %v", err)
-	}
+	//	if err := je.populateMessage(msg, action.Parameters); err != nil {
+	//		return fmt.Errorf("failed to populate message: %v", err)
+	//	}
 
 	// Send message and get response (placeholder implementation)
 	// response, err := je.deviceComm.SendMessage(action.DeviceID, msg)
-	response := msg // For now, just echo the message back
-	err = nil
-	if err != nil {
-		return fmt.Errorf("failed to send message: %v", err)
-	}
+	//	response := msg // For now, just echo the message back
+	//	err = nil
+	//	if err != nil {
+	//		return fmt.Errorf("failed to send message: %v", err)
+	//	}
 
 	// Store response in result and execution context
-	if response != nil {
-		result.Response = je.protoToMap(response)
-		execution.Context[fmt.Sprintf("response_%d", result.ActionIndex)] = result.Response
-	}
+	// 	if response != nil {
+	// 		result.Response = je.protoToMap(response)
+	// 		execution.Context[fmt.Sprintf("response_%d", result.ActionIndex)] = result.Response
+	// 	}
 
+	// TODO: Implement actual message sending when protobuf issues are resolved
+	fmt.Printf("📤 Would send message: %s to device: %s\n", action.MessageType, action.DeviceID)
+
+	// Store a placeholder response
+	result.Response = map[string]interface{}{
+		"message_type": action.MessageType,
+		"device_id":    action.DeviceID,
+		"status":       "simulated",
+	}
 	return nil
 }
 
