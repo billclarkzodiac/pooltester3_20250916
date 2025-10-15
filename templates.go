@@ -1,6 +1,16 @@
 package main
 
-import "html/template"
+import (
+	"html/template"
+	"strings" // This will stay now because we're using it below
+)
+
+// Add custom template functions - THIS IS WHAT MAKES strings STAY
+var templateFuncs = template.FuncMap{
+	"lower": strings.ToLower,
+	"upper": strings.ToUpper,
+	"title": strings.Title,
+}
 
 // HTML templates for the web interface
 
@@ -436,6 +446,103 @@ var goDemoTemplateHTML = `
             color: #742a2a;
             margin-bottom: 10px;
         }
+        
+        /* Smart Form Styles */
+        .smart-design .popup-header {
+            background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
+            color: white;
+        }
+        
+        .popup-body.smart-design {
+            padding: 25px;
+        }
+        
+        .smart-form-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .smart-label {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .smart-help {
+            font-size: 0.9em;
+            color: #4a5568;
+            margin-bottom: 12px;
+            padding: 6px 10px;
+            background: #edf2f7;
+            border-radius: 4px;
+        }
+        
+        /* Enhanced Slider */
+        .slider-control {
+            margin: 10px 0;
+        }
+        
+        .smart-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .smart-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4299e1;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .slider-display {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2d3748;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 2px solid #4299e1;
+        }
+        
+        /* Device Terminal Styles */
+        .device-terminal {
+            background: #1a202c;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            padding: 10px;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border: 1px solid #4a5568;
+        }
+        
+        .terminal-entry {
+            margin-bottom: 3px;
+            padding: 1px 0;
+        }
+        
+        .terminal-announce { color: #f6e05e; }
+        .terminal-telemetry { color: #68d391; }
+        .terminal-command { color: #63b3ed; }
+        .terminal-response { color: #9ae6b4; }
+        .terminal-error { color: #fc8181; }
     </style>
 </head>
 <body>
@@ -560,6 +667,26 @@ var goDemoTemplateHTML = `
                     </div>
                 </div>
                 {{end}}
+
+                <!-- Device Live Terminal -->
+                <div class="control-group">
+                    <div class="control-label">📺 Live Device Terminal</div>
+                    <div class="device-terminal" id="terminal-{{.Serial}}">
+                        {{range .LiveTerminal}}
+                        <div class="terminal-entry">
+                            <span style="color: #a0aec0;">[{{.Timestamp.Format "15:04:05"}}]</span>
+                            <span class="terminal-{{.Type | lower}}">[{{.Type}}]</span>
+                            <span>{{.Message}}</span>
+                        </div>
+                        {{end}}
+                        {{if not .LiveTerminal}}
+                        <div class="terminal-entry">
+                            <span style="color: #a0aec0;">Waiting for device activity...</span>
+                        </div>
+                        {{end}}
+                    </div>
+                    <button class="btn btn-secondary btn-small" onclick="clearDeviceTerminal('{{.Serial}}')">🗑️ Clear</button>
+                </div>
             </div>
             {{end}}
         </div>
@@ -1113,18 +1240,72 @@ var terminalViewTemplateHTML = `
                 }
             }, 1000);
         }
+            // Enhanced JavaScript for smart forms and live terminals
+
+function updateSliderDisplay(fieldName, value, unit) {
+    document.getElementById('display_' + fieldName).textContent = value;
+}
+
+function executeSmartCommand() {
+    const form = document.getElementById('smart-command-form');
+    const formData = new FormData(form);
+    
+    // Convert form data to object with smart processing
+    const fieldValues = {};
+    for (let [key, value] of formData.entries()) {
+        if (key !== 'message_type' && key !== 'device_serial' && key !== 'category') {
+            // Smart type conversion
+            if (value === 'true' || value === 'false') {
+                fieldValues[key] = value === 'true';
+            } else if (!isNaN(value) && value !== '') {
+                fieldValues[key] = parseFloat(value);
+            } else {
+                fieldValues[key] = value;
+            }
+        }
+    }
+    
+    const commandData = {
+        message_type: formData.get('message_type'),
+        device_serial: formData.get('device_serial'),
+        category: formData.get('category'),
+        field_values: fieldValues
+    };
+    
+    console.log('🚀 Executing smart command:', commandData);
+    
+    // Execute the command (same as before but with better feedback)
+    executeProtobufCommand(); // Reuse existing function
+}
+
+function clearDeviceTerminal(deviceSerial) {
+    const terminal = document.getElementById('terminal-' + deviceSerial);
+    if (terminal) {
+        terminal.innerHTML = '<div class="terminal-entry"><span style="color: #a0aec0;">Terminal cleared</span></div>';
+    }
+}
+
+// Auto-refresh device terminals every 5 seconds
+setInterval(function() {
+    // Refresh page to get updated device terminals
+    // In a real implementation, this would be WebSocket updates
+    if (document.querySelector('.device-terminal')) {
+        location.reload();
+    }
+}, 5000);
+
     </script>
 </body>
 </html>
 `
 
 // Compile templates
-var goDemoTemplate = template.Must(template.New("goDemo").Parse(goDemoTemplateHTML))
-var protobufInterfaceTemplate = template.Must(template.New("protobufInterface").Parse(protobufInterfaceTemplateHTML))
-var terminalViewTemplate = template.Must(template.New("terminalView").Parse(terminalViewTemplateHTML))
+var goDemoTemplate = template.Must(template.New("goDemo").Funcs(templateFuncs).Parse(goDemoTemplateHTML))
+var protobufInterfaceTemplate = template.Must(template.New("protobufInterface").Funcs(templateFuncs).Parse(protobufInterfaceTemplateHTML))
+var terminalViewTemplate = template.Must(template.New("terminalView").Funcs(templateFuncs).Parse(terminalViewTemplateHTML))
 
 // Keep your existing templates (tmpl, goodbyeTemplate, etc.)
-var tmpl = template.Must(template.New("home").Parse(`
+var tmpl = template.Must(template.New("home").Funcs(templateFuncs).Parse(`
 <!DOCTYPE html>
 <html>
 <head><title>NgaSim Pool Controller</title></head>
@@ -1140,7 +1321,7 @@ var tmpl = template.Must(template.New("home").Parse(`
 </html>
 `))
 
-var goodbyeTemplate = template.Must(template.New("goodbye").Parse(`
+var goodbyeTemplate = template.Must(template.New("goodbye").Funcs(templateFuncs).Parse(`
 <!DOCTYPE html>
 <html>
 <head><title>NgaSim - Goodbye</title></head>

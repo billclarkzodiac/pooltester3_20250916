@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -422,4 +423,59 @@ func (n *NgaSim) handleUISpecTXT(w http.ResponseWriter, r *http.Request) {
 Version: ` + NgaSimVersion + `
 Device Types: Sanitizer, VSP, ICL, TruSense, Heater, HeatPump
 `))
+}
+
+// Find your main device listing handler and add sorting:
+func (n *NgaSim) handleRoot(w http.ResponseWriter, r *http.Request) {
+	log.Println("🏠 Serving main interface")
+
+	n.mutex.RLock()
+	// Convert map to slice for sorting
+	devices := make([]*Device, 0, len(n.devices))
+	for _, device := range n.devices {
+		devices = append(devices, device)
+	}
+	n.mutex.RUnlock()
+
+	// SORT BY SERIAL NUMBER - This was missing!
+	sort.Slice(devices, func(i, j int) bool {
+		return devices[i].Serial < devices[j].Serial
+	})
+
+	data := struct {
+		Title    string
+		Version  string
+		Devices  []*Device
+		Commands map[string][]string
+	}{
+		Title:    "NgaSim Pool Controller",
+		Version:  NgaSimVersion,
+		Devices:  devices, // Now sorted!
+		Commands: n.deviceCommands,
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	if err := goDemoTemplate.Execute(w, data); err != nil {
+		http.Error(w, fmt.Sprintf("Template error: %v", err), http.StatusInternalServerError)
+		return
+	}
+}
+
+// Update the API devices handler:
+func (n *NgaSim) handleDevices(w http.ResponseWriter, r *http.Request) {
+	n.mutex.RLock()
+	devices := make([]*Device, 0, len(n.devices))
+	for _, device := range n.devices {
+		devices = append(devices, device)
+	}
+	n.mutex.RUnlock()
+
+	// SORT BY SERIAL NUMBER for consistent API responses
+	sort.Slice(devices, func(i, j int) bool {
+		return devices[i].Serial < devices[j].Serial
+	})
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	json.NewEncoder(w).Encode(devices)
 }

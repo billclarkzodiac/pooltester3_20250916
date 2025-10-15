@@ -17,6 +17,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"sort"
 	"strings"
 	"sync"
 	"syscall"
@@ -124,6 +125,9 @@ type NgaSim struct {
 	reflectionEngine *ProtobufReflectionEngine // Dynamic protobuf discovery
 	terminalLogger   *TerminalLogger           // Terminal display with file tee
 	popupGenerator   *PopupUIGenerator         // Dynamic popup UI generator
+
+	// Add this missing field:
+	deviceCommands map[string][]string // Device command mappings
 }
 
 // MQTT connection parameters
@@ -344,7 +348,17 @@ func (sim *NgaSim) subscribeToTopics() {
 }
 
 // handleDeviceTelemetry processes device telemetry messages
-func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload []byte) {
+func (n *NgaSim) handleDeviceTelemetry(topic string, payload []byte) {
+	// Parse topic to extract device info
+	parts := strings.Split(topic, "/")
+	if len(parts) < 4 {
+		log.Printf("Invalid topic format: %s", topic)
+		return
+	}
+
+	category := parts[1]
+	deviceSerial := parts[2]
+
 	log.Printf("Device telemetry from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
 
 	// Try to parse as sanitizer telemetry first
@@ -361,7 +375,11 @@ func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload 
 			log.Printf("is_cell_flow_reversed: %t", telemetry.GetIsCellFlowReversed())
 			log.Printf("========================================")
 
-			sim.updateDeviceFromSanitizerTelemetry(deviceSerial, telemetry)
+			n.updateDeviceFromSanitizerTelemetry(deviceSerial, telemetry)
+
+			// Add to device terminal
+			n.addDeviceTerminalEntry(deviceSerial, "TELEMETRY",
+				fmt.Sprintf("Telemetry received - Output: %d%%", telemetry.GetPercentageOutput()), payload)
 			return
 		} else {
 			log.Printf("Failed to parse as sanitizer TelemetryMessage: %v", err)
@@ -371,7 +389,10 @@ func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload 
 	// Try to parse as JSON (fallback)
 	var telemetryData map[string]interface{}
 	if err := json.Unmarshal(payload, &telemetryData); err == nil {
-		sim.updateDeviceFromTelemetry(deviceSerial, telemetryData)
+		n.updateDeviceFromTelemetry(deviceSerial, telemetryData)
+
+		// Add to device terminal
+		n.addDeviceTerminalEntry(deviceSerial, "TELEMETRY", "Telemetry received (JSON)", payload)
 		return
 	}
 
@@ -381,10 +402,9 @@ func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload 
 // messageHandler processes incoming MQTT messages
 func (sim *NgaSim) messageHandler(client mqtt.Client, msg mqtt.Message) {
 	topic := msg.Topic()
-	payload := string(msg.Payload())
+	payload := msg.Payload()
 
 	log.Printf("Received MQTT message on topic: %s", topic)
-	log.Printf("Payload: %s", payload)
 
 	// Parse topic to extract device info
 	// Topic format: async/category/serial/type
@@ -400,20 +420,30 @@ func (sim *NgaSim) messageHandler(client mqtt.Client, msg mqtt.Message) {
 
 	switch messageType {
 	case "anc":
-		sim.handleDeviceAnnounce(category, deviceSerial, msg.Payload())
+		sim.handleDeviceAnnounce(topic, payload)
 	case "dt":
-		sim.handleDeviceTelemetry(category, deviceSerial, msg.Payload())
+		sim.handleDeviceTelemetry(topic, payload)
 	case "sts":
-		sim.handleDeviceStatus(category, deviceSerial, msg.Payload())
+		sim.handleDeviceStatus(category, deviceSerial, payload)
 	case "error":
-		sim.handleDeviceError(category, deviceSerial, msg.Payload())
+		sim.handleDeviceError(category, deviceSerial, payload)
 	default:
 		log.Printf("Unknown message type: %s", messageType)
 	}
 }
 
 // handleDeviceAnnounce processes device announcement messages
-func (sim *NgaSim) handleDeviceAnnounce(category, deviceSerial string, payload []byte) {
+func (n *NgaSim) handleDeviceAnnounce(topic string, payload []byte) {
+	// Parse topic to extract device info
+	parts := strings.Split(topic, "/")
+	if len(parts) < 4 {
+		log.Printf("Invalid topic format: %s", topic)
+		return
+	}
+
+	category := parts[1]
+	deviceSerial := parts[2]
+
 	log.Printf("Device announce from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
 
 	// Try to parse as protobuf GetDeviceInformationResponsePayload
@@ -434,7 +464,11 @@ func (sim *NgaSim) handleDeviceAnnounce(category, deviceSerial string, payload [
 		}
 		log.Printf("===========================================")
 
-		sim.updateDeviceFromProtobufAnnounce(category, deviceSerial, announce)
+		n.updateDeviceFromProtobufAnnounce(category, deviceSerial, announce)
+
+		// Add to device terminal
+		n.addDeviceTerminalEntry(deviceSerial, "ANNOUNCE",
+			fmt.Sprintf("Device announced: %s", announce.GetProductName()), payload)
 		return
 	} else {
 		log.Printf("Failed to parse as protobuf GetDeviceInformationResponsePayload: %v", err)
@@ -443,7 +477,10 @@ func (sim *NgaSim) handleDeviceAnnounce(category, deviceSerial string, payload [
 	// Fallback: try to parse as JSON
 	var announceData map[string]interface{}
 	if err := json.Unmarshal(payload, &announceData); err == nil {
-		sim.updateDeviceFromJSONAnnounce(deviceSerial, announceData)
+		n.updateDeviceFromJSONAnnounce(deviceSerial, announceData)
+
+		// Add to device terminal
+		n.addDeviceTerminalEntry(deviceSerial, "ANNOUNCE", "Device announced (JSON)", payload)
 		return
 	}
 
@@ -714,6 +751,7 @@ func NewNgaSim() *NgaSim {
 		commandRegistry:  NewProtobufCommandRegistry(),
 		reflectionEngine: reflectionEngine,
 		terminalLogger:   terminalLogger,
+		deviceCommands:   make(map[string][]string), // Initialize the field
 	}
 
 	// Create popup generator
@@ -724,8 +762,11 @@ func NewNgaSim() *NgaSim {
 	// Initialize sanitizer controller
 	ngaSim.sanitizerController = NewSanitizerController(ngaSim)
 
-	// Discover commands
+	// Discover commands and populate deviceCommands
 	ngaSim.commandRegistry.discoverCommands()
+
+	// Populate deviceCommands from discovered protobuf messages
+	ngaSim.populateDeviceCommands()
 
 	return ngaSim
 }
@@ -1096,4 +1137,82 @@ func (n *NgaSim) testProtobufSystem() {
 	}
 
 	log.Println("✅ Protobuf system test complete")
+}
+
+// Add this method to update device live terminals
+func (n *NgaSim) addDeviceTerminalEntry(deviceSerial, entryType, message string, rawData []byte) {
+	n.mutex.Lock()
+	defer n.mutex.Unlock()
+
+	device, exists := n.devices[deviceSerial]
+	if !exists {
+		return
+	}
+
+	// Create terminal entry
+	entry := TerminalEntry{
+		Timestamp: time.Now(),
+		Type:      entryType,
+		Message:   message,
+		Data:      string(rawData),
+	}
+
+	// Add to device's live terminal
+	device.LiveTerminal = append(device.LiveTerminal, entry)
+
+	// Keep only last 50 entries per device
+	if len(device.LiveTerminal) > 50 {
+		device.LiveTerminal = device.LiveTerminal[len(device.LiveTerminal)-50:]
+	}
+
+	// Also log to global terminal if available
+	if n.terminalLogger != nil {
+		n.terminalLogger.LogProtobufMessage(entryType, deviceSerial, "DEVICE", message, rawData)
+	}
+}
+
+// getSortedDevices returns devices sorted by serial number
+func (n *NgaSim) getSortedDevices() []*Device {
+	n.mutex.RLock()
+	devices := make([]*Device, 0, len(n.devices))
+	for _, device := range n.devices {
+		devices = append(devices, device)
+	}
+	n.mutex.RUnlock()
+
+	// Sort by serial number for consistent ordering
+	sort.Slice(devices, func(i, j int) bool {
+		return devices[i].Serial < devices[j].Serial
+	})
+
+	return devices
+}
+
+// populateDeviceCommands populates the deviceCommands map from discovered protobuf messages
+func (n *NgaSim) populateDeviceCommands() {
+	if n.reflectionEngine == nil {
+		return
+	}
+
+	messages := n.reflectionEngine.GetAllMessages()
+
+	// Group commands by category
+	for _, desc := range messages {
+		if desc.IsRequest && desc.Category != "" {
+			// Add command to category
+			if n.deviceCommands[desc.Category] == nil {
+				n.deviceCommands[desc.Category] = make([]string, 0)
+			}
+
+			// Add command name (simplified from technical name)
+			commandName := desc.Name
+			if strings.HasSuffix(commandName, "RequestPayload") {
+				commandName = strings.TrimSuffix(commandName, "RequestPayload")
+			}
+
+			n.deviceCommands[desc.Category] = append(n.deviceCommands[desc.Category], commandName)
+		}
+	}
+
+	log.Printf("📋 Populated device commands for %d categories", len(n.deviceCommands))
 }

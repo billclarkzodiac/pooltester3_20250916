@@ -64,6 +64,21 @@ type Device struct {
 	PendingPercentage int32     `json:"pending_percentage"`          // What we asked device to do
 	LastCommandTime   time.Time `json:"last_command_time,omitempty"` // When we sent the last command
 	ActualPercentage  int32     `json:"actual_percentage"`           // Alias for PercentageOutput (for clarity)
+
+	// NEW FIELDS for Phase 1 human-friendly interface
+	LiveTerminal   []TerminalEntry `json:"live_terminal"`   // Device-specific terminal
+	LastCommand    string          `json:"last_command"`    // Last command sent
+	CommandStatus  string          `json:"command_status"`  // SUCCESS/FAILED/PENDING
+	HumanName      string          `json:"human_name"`      // Friendly display name
+	ConnectionTime time.Time       `json:"connection_time"` // When device first connected
+}
+
+// TerminalEntry represents a single terminal log entry for a device
+type TerminalEntry struct {
+	Timestamp time.Time `json:"timestamp"`
+	Type      string    `json:"type"` // ANNOUNCE, TELEMETRY, COMMAND, RESPONSE, ERROR
+	Message   string    `json:"message"`
+	Data      string    `json:"data"` // Raw data for debugging
 }
 
 // Command Discovery Structures for Protobuf Reflection
