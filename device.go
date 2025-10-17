@@ -79,7 +79,7 @@ type TerminalEntry struct {
 	Type           string                 `json:"type"`                      // ANNOUNCE, TELEMETRY, COMMAND, RESPONSE, ERROR
 	Message        string                 `json:"message"`                   // Summary message
 	Data           string                 `json:"data"`                      // Raw data for debugging
-	ParsedProtobuf *ParsedProtobufMessage `json:"parsed_protobuf,omitempty"` // Structured protobuf data
+	ParsedProtobuf *ParsedProtobuf `json:"parsed_protobuf,omitempty"` // Structured protobuf data
 }
 
 // Command Discovery Structures for Protobuf Reflection

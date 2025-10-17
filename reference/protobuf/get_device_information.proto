@@ -1,0 +1,36 @@
+/***************************************************************
+Get Device Information Message proto file
+- command/response definition
+****************************************************************/
+syntax = "proto3";
+option go_package = "pooltester3_20250916/ned";
+
+package ned;
+
+message GetDeviceInformationRequestPayload{} // No fields, juste used for identification
+
+// This payload is used for the response to the GetDeviceInformationRequestPayload, and for the device connected announcement
+// MQTT  topic: 'async/<category>/<serial number>/anc'
+message GetDeviceInformationResponsePayload {
+    string product_name = 1;
+    string serial_number = 2;
+    string category = 3;
+    string model_id = 4; // Model id used to map the device to the correct model type
+    string model_version = 5; // Model id used to map the device to the correct model version
+    string firmware_version = 6;
+    string ota_version = 7;
+    repeated BusType available_bus_types = 8; // List of buses the device can use
+    BusDescription active_bus = 9; // Active bus
+}
+
+enum BusType {
+    BUS_TYPE_UNKNOWN = 0; // Unknown bus type
+    BUS_TYPE_SLIP = 1; // Serial Line Internet Protocol bus
+    BUS_TYPE_WIFI = 2; // Wireless bus
+    BUS_TYPE_ETHERNET = 3; // Ethernet bus
+}
+
+message BusDescription {
+    BusType bus_type = 1; // Bus type
+    string ip_address = 2; // IP address of the bus
+}

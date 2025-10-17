@@ -8,8 +8,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"google.golang.org/protobuf/proto"
 )
 
 // PopupUIGenerator creates dynamic UI pop-ups based on protobuf reflection
@@ -239,7 +237,7 @@ func (pug *PopupUIGenerator) ExecuteProtobufCommand(req CommandExecutionRequest)
 	}
 
 	// Serialize the message
-	msgBytes, err := proto.Marshal(msg)
+	msgBytes, err := json.Marshal(msg)
 	if err != nil {
 		return &CommandExecutionResponse{
 			Success: false,

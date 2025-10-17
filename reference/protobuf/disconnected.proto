@@ -1,0 +1,12 @@
+/***************************************************************
+Disconnected Message proto file
+The disconnected message is used to notify that the device is disconnected from the broker. The mqtt client must be
+configured as a last will and sent on the "async/<category>/<serial>/disconnected" topic.
+****************************************************************/
+syntax = "proto3";
+option go_package = "pooltester3_20250916/ned";
+
+package ned;
+
+// MQTT topic: 'async/<category>/<serial number>/disconnected'
+message DisconnectedMessagePayload {} // No fields, juste used for identification
