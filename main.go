@@ -448,7 +448,7 @@ func (sim *NgaSim) Start() error {
 	mux := http.NewServeMux()
 
 	// Main routes
-	mux.HandleFunc("/", sim.handleRoot)
+	mux.HandleFunc("/", sim.handleHome)
 	mux.HandleFunc("/api/devices", sim.handleDevices)
 	mux.HandleFunc("/api/sanitizer/command", sim.handleSanitizerCommand)
 	mux.HandleFunc("/goodbye", sim.handleGoodbye)
