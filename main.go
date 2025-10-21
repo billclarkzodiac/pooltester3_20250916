@@ -1,3 +1,4 @@
+// Package main implements NgaSim Pool Controller v2.2.0-clean
 // NgaSim Pool Controller - Main application entry point
 package main
 
@@ -31,63 +32,63 @@ type ProtobufReflectionEngine struct {
 
 // MessageDescriptor represents a protobuf message descriptor
 type MessageDescriptor struct {
-    Name        string
-    Package     string
-    Fields      []FieldDescriptor
-    Category    string
-    Description string
-    IsRequest   bool
+	Name        string
+	Package     string
+	Fields      []FieldDescriptor
+	Category    string
+	Description string
+	IsRequest   bool
 }
 
 // FieldDescriptor represents a protobuf field descriptor
 type FieldDescriptor struct {
-    Name         string
-    Type         string
-    Number       int32
-    Description  string
-    Unit         string
-    Required     bool
-    Label        string
-    Min          interface{}
-    Max          interface{}
-    DefaultValue interface{}
-    EnumValues   []string
+	Name         string
+	Type         string
+	Number       int32
+	Description  string
+	Unit         string
+	Required     bool
+	Label        string
+	Min          interface{}
+	Max          interface{}
+	DefaultValue interface{}
+	EnumValues   []string
 }
 
 // NewCommandRegistry creates a new command registry (placeholder)
 func NewCommandRegistry() *CommandRegistry {
-    return &CommandRegistry{
-        categories: map[string][]CommandInfo{
-            "sanitizerGen2": {
-                {
-                    Name:        "SetSanitizerTargetPercentageRequestPayload",
-                    DisplayName: "Set Target Percentage",
-                    Description: "Set sanitizer target percentage",
-                    Category:    "sanitizerGen2",
-                    Fields:      []CommandField{},
-                    IsQuery:     false,
-                },
-                {
-                    Name:        "GetSanitizerStatusRequestPayload",
-                    DisplayName: "Get Status",
-                    Description: "Get sanitizer status",
-                    Category:    "sanitizerGen2",
-                    Fields:      []CommandField{},
-                    IsQuery:     true,
-                },
-            },
-            "lights": {
-                {
-                    Name:        "SetBrightness",
-                    DisplayName: "Set Brightness",
-                    Description: "Set light brightness",
-                    Category:    "lights",
-                    Fields:      []CommandField{},
-                    IsQuery:     false,
-                },
-            },
-        },
-    }
+	return &CommandRegistry{
+		categories: map[string][]CommandInfo{
+			"sanitizerGen2": {
+				{
+					Name:        "SetSanitizerTargetPercentageRequestPayload",
+					DisplayName: "Set Target Percentage",
+					Description: "Set sanitizer target percentage",
+					Category:    "sanitizerGen2",
+					Fields:      []CommandField{},
+					IsQuery:     false,
+				},
+				{
+					Name:        "GetSanitizerStatusRequestPayload",
+					DisplayName: "Get Status",
+					Description: "Get sanitizer status",
+					Category:    "sanitizerGen2",
+					Fields:      []CommandField{},
+					IsQuery:     true,
+				},
+			},
+			"lights": {
+				{
+					Name:        "SetBrightness",
+					DisplayName: "Set Brightness",
+					Description: "Set light brightness",
+					Category:    "lights",
+					Fields:      []CommandField{},
+					IsQuery:     false,
+				},
+			},
+		},
+	}
 }
 
 // NgaSim is the main application structure
@@ -108,7 +109,7 @@ type NgaSim struct {
 // MQTT connection parameters
 const (
 	MQTTBroker   = "tcp://169.254.1.1:1883"
-	MQTTClientID = "NgaSim-WebUI"
+	MQTTClientID = "NgaSim-WebUI-1761071868"
 )
 
 // MQTT Topics for device discovery
@@ -154,6 +155,9 @@ func (sim *NgaSim) connectMQTT() error {
 	})
 
 	opts.SetOnConnectHandler(func(client mqtt.Client) {
+	mqtt.ERROR = log.New(os.Stdout, "[MQTT-ERROR] ", log.LstdFlags)
+	mqtt.WARN = log.New(os.Stdout, "[MQTT-WARN] ", log.LstdFlags)
+	mqtt.DEBUG = log.New(os.Stdout, "[MQTT-DEBUG] ", log.LstdFlags)
 		log.Println("Connected to MQTT broker at", MQTTBroker)
 		sim.subscribeToTopics()
 	})
@@ -185,6 +189,7 @@ func (sim *NgaSim) messageHandler(client mqtt.Client, msg mqtt.Message) {
 	payload := msg.Payload()
 
 	log.Printf("Received MQTT message on topic: %s", topic)
+	log.Printf("DEBUG: Topic parts: %v", strings.Split(topic, "/"))
 
 	// Parse topic to extract device info
 	parts := strings.Split(topic, "/")
@@ -213,6 +218,7 @@ func (sim *NgaSim) messageHandler(client mqtt.Client, msg mqtt.Message) {
 
 // handleDeviceAnnounce processes device announcement messages
 func (sim *NgaSim) handleDeviceAnnounce(category, deviceSerial string, payload []byte) {
+	log.Printf("DEBUG: handleDeviceAnnounce called with category=%s, deviceSerial=%s, payload length=%d", category, deviceSerial, len(payload))
 	log.Printf("Device announce from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
 
 	sim.mutex.Lock()
@@ -241,21 +247,34 @@ func (sim *NgaSim) handleDeviceAnnounce(category, deviceSerial string, payload [
 		fmt.Sprintf("Device announced: %s", device.Name), payload)
 }
 
-// handleDeviceTelemetry processes device telemetry messages
 func (sim *NgaSim) handleDeviceTelemetry(category, deviceSerial string, payload []byte) {
+	log.Printf("DEBUG: handleDeviceTelemetry called with category=%s, deviceSerial=%s, payload length=%d", category, deviceSerial, len(payload))
 	log.Printf("Device telemetry from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
 
 	sim.mutex.Lock()
 	device, exists := sim.devices[deviceSerial]
-	if exists {
-		device.Status = "ONLINE"
-		device.LastSeen = time.Now()
+	if !exists {
+		// Auto-create device from telemetry if it doesn't exist
+		device = &Device{
+			ID:       deviceSerial,
+			Serial:   deviceSerial,
+			Name:     fmt.Sprintf("Device-%s", deviceSerial),
+			Type:     category,
+			Category: category,
+			Status:   "DISCOVERED",
+			LastSeen: time.Now(),
+		}
+		sim.devices[deviceSerial] = device
+		log.Printf("Auto-created device from telemetry: %s", deviceSerial)
 	}
+	device.Status = "ONLINE"
+	device.LastSeen = time.Now()
 	sim.mutex.Unlock()
 
 	// Add to device terminal
 	sim.addDeviceTerminalEntry(deviceSerial, "TELEMETRY",
-		"Telemetry received", payload)
+		"Telemetry received",
+		payload)
 }
 
 // handleDeviceStatus processes device status messages
@@ -305,6 +324,11 @@ func (sim *NgaSim) addDeviceTerminalEntry(deviceSerial, entryType, message strin
 
 // startPoller starts the C poller subprocess
 func (sim *NgaSim) startPoller() error {
+	// Check if poller is already running
+	if sim.pollerCmd != nil && sim.pollerCmd.Process != nil {
+		log.Println("Poller already running, skipping start")
+		return nil
+	}
 	log.Println("Starting C poller subprocess...")
 
 	sim.pollerCmd = exec.Command("sudo", "./poller")
@@ -549,10 +573,10 @@ func (cr *CommandRegistry) GetAllCategories() []string {
 
 // GetCommandsForCategory returns commands for a specific category
 func (cr *CommandRegistry) GetCommandsForCategory(category string) ([]CommandInfo, bool) {
-    if commands, exists := cr.categories[category]; exists {
-        return commands, true
-    }
-    return []CommandInfo{}, false
+	if commands, exists := cr.categories[category]; exists {
+		return commands, true
+	}
+	return []CommandInfo{}, false
 }
 
 // GetAllMessages returns all available message descriptors
@@ -562,29 +586,29 @@ func (pre *ProtobufReflectionEngine) GetAllMessages() map[string]MessageDescript
 		return map[string]MessageDescriptor{
 			"SetSanitizerTargetPercentageRequestPayload": {
 				Name:        "SetSanitizerTargetPercentageRequestPayload",
-                IsRequest:   true,
+				IsRequest:   true,
 				Package:     "sanitizer",
 				Category:    "sanitizerGen2",
 				Description: "Set sanitizer target percentage",
 				Fields: []FieldDescriptor{
 					{
-                        Name:         "targetPercentage",
-                        Type:         "int32",
-                        Number:       1,
-                        Description:  "Target percentage (0-100)",
-                        Unit:         "%",
-                        Required:     true,
-                        Label:        "Target Percentage",
-                        Min:          0,
-                        Max:          100,
-                        DefaultValue: 50,
-                        EnumValues:   []string{},
+						Name:         "targetPercentage",
+						Type:         "int32",
+						Number:       1,
+						Description:  "Target percentage (0-100)",
+						Unit:         "%",
+						Required:     true,
+						Label:        "Target Percentage",
+						Min:          0,
+						Max:          100,
+						DefaultValue: 50,
+						EnumValues:   []string{},
 					},
 				},
 			},
 			"GetSanitizerStatusRequestPayload": {
 				Name:        "GetSanitizerStatusRequestPayload",
-                IsRequest:   true,
+				IsRequest:   true,
 				Package:     "sanitizer",
 				Category:    "sanitizerGen2",
 				Description: "Get sanitizer status",
@@ -598,35 +622,162 @@ func (pre *ProtobufReflectionEngine) GetAllMessages() map[string]MessageDescript
 
 // CreateMessage creates a new protobuf message (placeholder)
 func (pre *ProtobufReflectionEngine) CreateMessage(messageType string) (interface{}, error) {
-    log.Printf("Creating message of type: %s", messageType)
-    
-    // Return a generic struct that can be marshaled
-    return struct {
-        MessageType string                 `json:"messageType"`
-        Fields      map[string]interface{} `json:"fields"`
-    }{
-        MessageType: messageType,
-        Fields:      make(map[string]interface{}),
-    }, nil
+	log.Printf("Creating message of type: %s", messageType)
+
+	// Return a generic struct that can be marshaled
+	return struct {
+		MessageType string                 `json:"messageType"`
+		Fields      map[string]interface{} `json:"fields"`
+	}{
+		MessageType: messageType,
+		Fields:      make(map[string]interface{}),
+	}, nil
 }
 
 // PopulateMessage populates a protobuf message with field values (placeholder)
 func (pre *ProtobufReflectionEngine) PopulateMessage(message interface{}, fieldValues map[string]interface{}) error {
-    log.Printf("Populating message with %d field values", len(fieldValues))
-    
-    // For now, just log the operation
-    if msgMap, ok := message.(map[string]interface{}); ok {
-        if fields, exists := msgMap["fields"]; exists {
-            if fieldMap, ok := fields.(map[string]interface{}); ok {
-                for key, value := range fieldValues {
-                    fieldMap[key] = value
-                }
-            }
-        }
-    }
-    
-    return nil
+	log.Printf("Populating message with %d field values", len(fieldValues))
+
+	// For now, just log the operation
+	if msgMap, ok := message.(map[string]interface{}); ok {
+		if fields, exists := msgMap["fields"]; exists {
+			if fieldMap, ok := fields.(map[string]interface{}); ok {
+				for key, value := range fieldValues {
+					fieldMap[key] = value
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
+// handleHome serves the main web interface
+func (sim *NgaSim) handleHome(w http.ResponseWriter, r *http.Request) {
+    log.Println("🏠 Serving main dashboard")
 
+    devices := sim.getSortedDevices()
 
+    // Debug: Check device count in memory
+    sim.mutex.RLock()
+    deviceCount := len(sim.devices)
+
+    log.Printf("DEBUG: Device count in getSortedDevices: %d", len(devices))
+    log.Printf("DEBUG: Device count in memory: %d", deviceCount)
+    sim.mutex.RUnlock()
+
+    w.Header().Set("Content-Type", "text/html")
+    w.Header().Set("Cache-Control", "no-cache")
+    w.Header().Set("Pragma", "no-cache")
+    w.Header().Set("Expires", "0")
+    w.Header().Set("Content-Encoding", "identity")
+    w.WriteHeader(http.StatusOK)
+
+    if len(devices) == 0 {
+        html := fmt.Sprintf(`<!DOCTYPE html>
+<html>
+<head>
+    <title>NgaSim Pool Controller</title>
+    <meta http-equiv="refresh" content="5">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .status { background: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .waiting { color: orange; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏊‍♂️ NgaSim Pool Controller v2.2.0-clean</h1>
+        <div class="status">
+            <p class="waiting">⏳ No devices in sorted list</p>
+            <p><strong>Devices in memory:</strong> %d</p>
+            <p><strong>MQTT Status:</strong> Connected</p>
+            <p>Waiting for device discovery...</p>
+        </div>
+        <p><a href="/api/devices">📊 View Raw Device Data</a></p>
+    </div>
+</body>
+</html>`, deviceCount)
+        fmt.Fprint(w, html)
+        return
+    }
+
+    // Build device HTML for discovered devices
+    deviceHTML := ""
+    for _, d := range devices {
+        deviceHTML += fmt.Sprintf(`
+        <div class="device">
+            <h3>🔌 %s (%s)</h3>
+            <p><strong>Status:</strong> <span class="status-%s">%s</span></p>
+            <p><strong>Type:</strong> %s</p>
+            <p><strong>Last Seen:</strong> %s</p>
+        </div>`, d.Name, d.Serial, strings.ToLower(d.Status), d.Status, d.Type, d.LastSeen.Format("15:04:05"))
+    }
+
+    // Complete HTML page
+    html := fmt.Sprintf(`<!DOCTYPE html>
+<html>
+<head>
+    <title>NgaSim Pool Controller</title>
+    <meta http-equiv="refresh" content="10">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .device { border: 2px solid #4caf50; margin: 15px 0; padding: 15px; border-radius: 8px; background: #f9f9f9; }
+        .status-online { color: #4caf50; font-weight: bold; }
+        .status-offline { color: #f44336; font-weight: bold; }
+        .header { text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏊‍♂️ NgaSim Pool Controller v2.2.0-clean</h1>
+            <h2>📡 Discovered Pool Devices (%d)</h2>
+        </div>
+        %s
+        <hr>
+        <p><a href="/api/devices">📊 View Raw Device Data (JSON)</a></p>
+        <p><small>Auto-refreshing every 10 seconds</small></p>
+    </div>
+</body>
+</html>`, len(devices), deviceHTML)
+
+    fmt.Fprint(w, html)
+}
+
+// handleDevices serves device data as JSON
+func (sim *NgaSim) handleDevices(w http.ResponseWriter, r *http.Request) {
+    devices := sim.getSortedDevices()
+    
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    
+    json.NewEncoder(w).Encode(map[string]interface{}{
+        "devices": devices,
+        "count":   len(devices),
+        "status":  "success",
+    })
+}
+
+// handleSanitizerCommand handles sanitizer commands
+func (sim *NgaSim) handleSanitizerCommand(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]string{"status": "OK"})
+}
+
+// handleGoodbye serves the goodbye page  
+func (sim *NgaSim) handleGoodbye(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprint(w, "<html><body><h1>Goodbye!</h1></body></html>")
+}
+
+// handleExit handles application exit
+func (sim *NgaSim) handleExit(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]string{"status": "shutting down"})
+    go func() {
+        time.Sleep(1 * time.Second)
+        os.Exit(0)
+    }()
+}

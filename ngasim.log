@@ -1,0 +1,105 @@
+2025/10/21 13:47:42 === NgaSim Pool Controller Simulator ===
+2025/10/21 13:47:42 Version: 2.2.0-clean
+2025/10/21 13:47:42 Starting NgaSim v2.2.0-clean
+2025/10/21 13:47:42 Connecting to MQTT broker...
+2025/10/21 13:47:42 MQTT connected successfully
+2025/10/21 13:47:42 Starting C poller subprocess...
+2025/10/21 13:47:42 Connected to MQTT broker at tcp://169.254.1.1:1883
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   enter Subscribe
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   SUBSCRIBE: dup: false qos: 1 retain: false rLength: 0 MessageID: 1 topics: [async/+/+/anc]
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   sending subscribe message, topic: async/+/+/anc
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   exit Subscribe
+2025/10/21 13:47:42 Started C poller with PID: 55434
+2025/10/21 13:47:42 🚀 NgaSim started successfully!
+2025/10/21 13:47:42 📍 Main Interface: http://localhost:8082
+2025/10/21 13:47:42 Press Ctrl+C to exit
+2025/10/21 13:47:42 Web server starting on :8082
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      obound priority msg to write, type *packets.SubscribePacket
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      outgoing waiting for an outbound message
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncoming Received Message
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: got msg on ibound
+[MQTT-WARN] 2025/10/21 13:47:42 [store]    memorystore del: message 1 not found
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: received suback, id: 1
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: granted qoss [1]
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      logic waiting for msg on ibound
+2025/10/21 13:47:42 Subscribed to topic: async/+/+/anc
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   enter Subscribe
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   SUBSCRIBE: dup: false qos: 1 retain: false rLength: 0 MessageID: 2 topics: [async/+/+/dt]
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   sending subscribe message, topic: async/+/+/dt
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   exit Subscribe
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      obound priority msg to write, type *packets.SubscribePacket
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      outgoing waiting for an outbound message
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncoming Received Message
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: got msg on ibound
+[MQTT-WARN] 2025/10/21 13:47:42 [store]    memorystore del: message 2 not found
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: received suback, id: 2
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: granted qoss [1]
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      logic waiting for msg on ibound
+2025/10/21 13:47:42 Subscribed to topic: async/+/+/dt
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   enter Subscribe
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   SUBSCRIBE: dup: false qos: 1 retain: false rLength: 0 MessageID: 3 topics: [async/+/+/sts]
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   sending subscribe message, topic: async/+/+/sts
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   exit Subscribe
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      obound priority msg to write, type *packets.SubscribePacket
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncoming Received Message
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: got msg on ibound
+[MQTT-WARN] 2025/10/21 13:47:42 [store]    memorystore del: message 3 not found
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: received suback, id: 3
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: granted qoss [1]
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      logic waiting for msg on ibound
+2025/10/21 13:47:42 Subscribed to topic: async/+/+/sts
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   enter Subscribe
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   SUBSCRIBE: dup: false qos: 1 retain: false rLength: 0 MessageID: 4 topics: [async/+/+/error]
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   sending subscribe message, topic: async/+/+/error
+[MQTT-DEBUG] 2025/10/21 13:47:42 [client]   exit Subscribe
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      outgoing waiting for an outbound message
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      obound priority msg to write, type *packets.SubscribePacket
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncoming Received Message
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: got msg on ibound
+[MQTT-WARN] 2025/10/21 13:47:42 [store]    memorystore del: message 4 not found
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: received suback, id: 4
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      startIncomingComms: granted qoss [1]
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      logic waiting for msg on ibound
+2025/10/21 13:47:42 Subscribed to topic: async/+/+/error
+[MQTT-DEBUG] 2025/10/21 13:47:42 [net]      outgoing waiting for an outbound message
+[MQTT-DEBUG] 2025/10/21 13:47:47 [pinger]   ping check 4.987756986
+[MQTT-DEBUG] 2025/10/21 13:47:52 [pinger]   ping check 9.987097755
+[MQTT-DEBUG] 2025/10/21 13:47:57 [pinger]   ping check 14.988183285
+[MQTT-DEBUG] 2025/10/21 13:48:02 [pinger]   ping check 19.987069616
+[MQTT-DEBUG] 2025/10/21 13:48:07 [pinger]   ping check 24.987101139
+[MQTT-DEBUG] 2025/10/21 13:48:12 [pinger]   ping check 29.988277002
+[MQTT-DEBUG] 2025/10/21 13:48:17 [pinger]   ping check 34.987350925
+[MQTT-DEBUG] 2025/10/21 13:48:17 [pinger]   keepalive sending ping
+[MQTT-DEBUG] 2025/10/21 13:48:17 [net]      startIncoming Received Message
+[MQTT-DEBUG] 2025/10/21 13:48:17 [net]      startIncomingComms: got msg on ibound
+[MQTT-DEBUG] 2025/10/21 13:48:17 [net]      startIncomingComms: received pingresp
+[MQTT-DEBUG] 2025/10/21 13:48:17 [net]      logic waiting for msg on ibound
+[MQTT-DEBUG] 2025/10/21 13:48:22 [pinger]   ping check 4.999370901
+[MQTT-DEBUG] 2025/10/21 13:48:27 [pinger]   ping check 9.999328242
+[MQTT-DEBUG] 2025/10/21 13:48:32 [pinger]   ping check 14.999570042
+[MQTT-DEBUG] 2025/10/21 13:48:37 [pinger]   ping check 19.999537402
+[MQTT-DEBUG] 2025/10/21 13:48:42 [pinger]   ping check 24.999589002
+[MQTT-DEBUG] 2025/10/21 13:48:47 [pinger]   ping check 30.00076959
+[MQTT-DEBUG] 2025/10/21 13:48:47 [pinger]   keepalive sending ping
+[MQTT-DEBUG] 2025/10/21 13:48:47 [net]      startIncoming Received Message
+[MQTT-DEBUG] 2025/10/21 13:48:47 [net]      startIncomingComms: got msg on ibound
+[MQTT-DEBUG] 2025/10/21 13:48:47 [net]      startIncomingComms: received pingresp
+[MQTT-DEBUG] 2025/10/21 13:48:47 [net]      logic waiting for msg on ibound
+[MQTT-DEBUG] 2025/10/21 13:48:52 [pinger]   ping check 4.998397136
+[MQTT-DEBUG] 2025/10/21 13:48:57 [pinger]   ping check 9.999521633
+[MQTT-DEBUG] 2025/10/21 13:49:02 [pinger]   ping check 14.999611401
+[MQTT-DEBUG] 2025/10/21 13:49:07 [pinger]   ping check 19.998320554
+[MQTT-DEBUG] 2025/10/21 13:49:12 [pinger]   ping check 24.998381231
+[MQTT-DEBUG] 2025/10/21 13:49:17 [pinger]   ping check 29.998373501
+[MQTT-DEBUG] 2025/10/21 13:49:22 [pinger]   ping check 34.999544406
+[MQTT-DEBUG] 2025/10/21 13:49:22 [pinger]   keepalive sending ping
+[MQTT-DEBUG] 2025/10/21 13:49:22 [net]      startIncoming Received Message
+[MQTT-DEBUG] 2025/10/21 13:49:22 [net]      startIncomingComms: got msg on ibound
+[MQTT-DEBUG] 2025/10/21 13:49:22 [net]      startIncomingComms: received pingresp
+[MQTT-DEBUG] 2025/10/21 13:49:22 [net]      logic waiting for msg on ibound
+[MQTT-DEBUG] 2025/10/21 13:49:27 [pinger]   ping check 4.999358426
+[MQTT-DEBUG] 2025/10/21 13:49:32 [pinger]   ping check 9.999432918
+[MQTT-DEBUG] 2025/10/21 13:49:37 [pinger]   ping check 14.998565699
+[MQTT-DEBUG] 2025/10/21 13:49:42 [pinger]   ping check 19.998591748
+[MQTT-DEBUG] 2025/10/21 13:49:47 [pinger]   ping check 24.998521725
+[MQTT-DEBUG] 2025/10/21 13:49:52 [pinger]   ping check 29.998573071

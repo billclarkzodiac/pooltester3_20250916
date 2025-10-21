@@ -62,6 +62,7 @@ func (n *NgaSim) handleDemo(w http.ResponseWriter, r *http.Request) {
 }
 
 // handleHome serves the main dashboard
+/*
 func (n *NgaSim) handleHome(w http.ResponseWriter, r *http.Request) {
 	log.Println("🏠 Serving main dashboard")
 
@@ -100,10 +101,10 @@ func (n *NgaSim) handleHome(w http.ResponseWriter, r *http.Request) {
     %s
 </body>
 </html>`, "NgaSim Pool Controller", data.Version, len(data.Devices), generateDeviceHTML(data.Devices))
-    
+
     w.Write([]byte(html))
 }
-
+*/
 // handleGoodbye serves the goodbye page
 func (n *NgaSim) handleGoodbye(w http.ResponseWriter, r *http.Request) {
 	log.Println("👋 Serving goodbye page")
@@ -498,23 +499,23 @@ func (n *NgaSim) handleDevices(w http.ResponseWriter, r *http.Request) {
 
 // generateDeviceHTML creates HTML for device list
 func generateDeviceHTML(devices []*Device) string {
-    if len(devices) == 0 {
-        return "<p>No devices discovered yet. Waiting for MQTT messages...</p>"
-    }
-    
-    html := ""
-    for _, device := range devices {
-        status := "offline"
-        if device.Status == "ONLINE" {
-            status = "online"
-        }
-        html += fmt.Sprintf(`
+	if len(devices) == 0 {
+		return "<p>No devices discovered yet. Waiting for MQTT messages...</p>"
+	}
+
+	html := ""
+	for _, device := range devices {
+		status := "offline"
+		if device.Status == "ONLINE" {
+			status = "online"
+		}
+		html += fmt.Sprintf(`
             <div class="device %s">
                 <h3>%s (%s)</h3>
                 <p><strong>Type:</strong> %s</p>
                 <p><strong>Status:</strong> %s</p>
                 <p><strong>Last Seen:</strong> %s</p>
             </div>`, status, device.Name, device.Serial, device.Type, device.Status, device.LastSeen.Format("15:04:05"))
-    }
-    return html
+	}
+	return html
 }
