@@ -1,0 +1,192 @@
+/***************************************************************
+Protobuf Message SpeedSetPlus proto file 
+- command/response definition
+-
+-in SDK Init
+#define NED_CATEGORY 	"speedsetPlusGen2"    
+#define NED_MODEL_ID 	"speedsetPlus-gen2"   
+#define NED_MODEL_NAME 	"TBD"    	//sku
+- 
+****************************************************************/
+syntax = "proto3";
+option go_package = "pooltester3_20250916/ned";
+
+import "commonClientMessages.proto";
+
+package speedsetPlus;
+
+
+/************************************************************
+*** SpeedSetPlus Messages ***
+************************************************************/
+message SpeedsetPlusRequestPayloads {
+    oneof request_type {
+        SetSpeedsetPlusControlCommandRequestPayload set_vsp_control_command = 1;
+
+        GetSpeedsetPlusDeviceInformationRequestPayload get_device_information = 2;
+        GetSpeedsetPlusStatusRequestPayload get_status = 3;
+        GetSpeedsetPlusConfigurationRequestPayload get_configuration = 4;
+        SetSpeedsetPlusConfigurationRequestPayload set_configuration = 5;
+        GetSpeedsetPlusActiveErrorsRequestPayload get_active_errors = 7;
+    }
+}
+
+message SpeedsetPlusResponsePayloads {
+    oneof response_type {
+        GetSpeedsetPlusDeviceInformationResponsePayload get_device_information = 1;
+        GetSpeedsetPlusStatusResponsePayload get_status = 2;
+        GetSpeedsetPlusConfigurationResponsePayload get_configuration = 3;
+        GetSpeedsetPlusActiveErrorsResponsePayload get_active_errors = 4;
+    }
+}
+
+message SpeedsetPlusInfoPayloads { // Placeholder
+    oneof announce_type {
+        SpeedsetPlusStatus status = 1;
+        SpeedsetPlusConfiguration configuration = 2;
+    }
+}
+
+/************************************************************
+*** SpeedsetPlus Wrappers ***
+************************************************************/
+// a command wrapper message with a type field
+// MQTT topic: 'cmd/<category>/<serial number>/req'
+message CommandRequestMessage {
+    string command_uuid = 1;
+
+    oneof payload {
+        ned.CommonRequestPayloads common = 2;
+        SpeedsetPlusRequestPayloads speedsetplus = 3;
+    }
+}
+
+// a response wrapper message with a message type field
+// and the required response code
+// MQTT topic: 'cmd/<category>/<serial number>/res'
+message CommandResponseMessage {
+    string command_uuid = 1;
+
+    //required
+    ned.ResponseCode response_code = 2;
+
+    oneof payload {
+        ned.CommonResponsePayloads common = 3;
+        SpeedsetPlusResponsePayloads speedsetplus = 4;
+    }
+}
+
+// an Info message wrapper
+// MQTT  topic: 'async/<category>/<serial number>/info'
+// Info messages can be a variety of message types
+message InfoMessage {
+    SpeedsetPlusInfoPayloads payload = 1;
+}
+
+// a Telemetry message wrapper
+// MQTT topic: 'async/<category>/<serial number>/dt'
+// Telemetry messages do not need a message 'type'
+message TelemetryMessage {
+    int32 rssi = 1;
+    int32 motor_rpm = 2;            // Current RPM of the motor
+    int32 motor_current = 4;        // Current motor current in rms A
+    int32 demand_rpm = 3;           // RPM set by the user
+    int32 torque = 5;               // Current torque in Nm
+    int32 inverter_input_power = 6; // Inverter input power in W
+    int32 dc_bus_voltage = 7;       // DC bus voltage in V
+    int32 ambient_temperature = 8;  // Ambient temperature in deci-degree Celsius (0.1 Celsius)
+    int32 output_power = 9;         // Inverter output power in W
+    int32 motor_line_voltage = 10;  // Motor line voltage in V
+    int32 motor_input_power = 11;   // Motor input power in W
+    int32 ipm_temperature = 12;     // IPM temperature in deci-degree Celsius (0.1 Celsius)
+    int32 total_faults = 13;        // Total number of faults encountered
+    int32 humidity = 14;            // Humidity in percentage (0 - 100) - optional
+    int32 vibration_x = 15;         // Vibration in X direction in mg - optional
+    int32 vibration_y = 16;         // Vibration in Y direction in mg - optional
+    int32 vibration_z = 17;         // Vibration in Z direction in mg - optional
+}
+
+/***************************************************************
+*** SpeedsetPlus Common structures ***
+****************************************************************/
+
+message SpeedsetPlusStatus {
+    int32 power = 1;        // Motor Control, 0 = off, 1 = on
+    int32 demand_rpm = 2;   // configured RPM
+}
+
+message SpeedsetPlusConfiguration {
+  //  int32 placeholder = 1; // Placeholder for future configuration parameters
+}
+
+
+
+/***************************************************************
+*** SpeedsetPlus Messages Payloads ***
+****************************************************************/
+
+//Command and Response
+//MESSAGE_SET_SPEEDSET_PLUS_OUTPUT_CMD
+message SetSpeedsetPlusControlCommandRequestPayload {
+    int32 power = 1; // Motor Control, 0 = off, 1 = on
+    int32 set_demand_rpm = 2; // RPM
+}
+
+//MESSAGE_GET_DEVICE_INFORMATION_RSP
+message GetSpeedsetPlusDeviceInformationRequestPayload { }
+message GetSpeedsetPlusDeviceInformationResponsePayload {
+    string motor_serial_number = 1;     // Serial number of the motor board
+    string motor_firmware_version = 2;
+}
+
+
+//MESSAGE_GET_STATUS_RSP
+message GetSpeedsetPlusStatusRequestPayload {}
+message GetSpeedsetPlusStatusResponsePayload {
+    SpeedsetPlusStatus status = 1;
+}
+
+
+//Configuration
+message GetSpeedsetPlusConfigurationRequestPayload {}
+message GetSpeedsetPlusConfigurationResponsePayload {
+    SpeedsetPlusConfiguration configuration = 1;
+}
+
+
+message SetSpeedsetPlusConfigurationRequestPayload {
+    SpeedsetPlusConfiguration configuration = 1;
+}
+
+/************************************************************
+*** SpeedsetPlus Errors ***
+************************************************************/
+
+message GetSpeedsetPlusActiveErrorsRequestPayload {}
+message GetSpeedsetPlusActiveErrorsResponsePayload {
+    ActiveErrors active_errors = 1;
+}
+
+// a device Error message 
+// MQTT topic: 'async/<category>/<serial number>/error'
+message DeviceErrorMessage {
+    ActiveErrors active_errors = 1;
+}
+
+enum SpeedsetPlusErrorCode {
+    UNKNOWN_ERROR = 0;
+    SPEEDSET_PLUS_ERROR_SW_IPM_OVERCURRENT = 1;  
+    SPEEDSET_PLUS_ERROR_DC_OVERVOLTAGE = 2;     
+    SPEEDSET_PLUS_ERROR_DC_UNDERVOLTAGE = 3;    
+    //more to be defined as needed
+}
+
+message SpeedsetPlusError {
+    SpeedsetPlusErrorCode error_code = 1;
+    string error_message = 2;           // Human readable error message, provided by the device
+}
+
+message ActiveErrors {
+    // List of active errors (empty if back to normal)
+    repeated SpeedsetPlusError error_list = 1;
+}

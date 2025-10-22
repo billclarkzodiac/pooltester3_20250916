@@ -1,0 +1,14 @@
+/***************************************************************
+Forget Core Message proto file 
+- command/response definition
+****************************************************************/
+syntax = "proto3";
+option go_package = "pooltester3_20250916/ned";
+
+package ned;
+
+
+message ForgetCoreCmdRequestPayload {
+    string core_bssid  = 1;
+}
+

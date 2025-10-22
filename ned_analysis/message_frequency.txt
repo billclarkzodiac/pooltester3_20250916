@@ -1,0 +1,5 @@
+      4 type TelemetryMessage struct {
+      4 type InfoMessage struct {
+      3 type DeviceErrorMessage struct {
+      2 type CommandResponseMessage struct {
+      2 type CommandRequestMessage struct {

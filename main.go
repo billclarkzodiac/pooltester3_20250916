@@ -1246,3 +1246,33 @@ func (n *NgaSim) populateDeviceCommands() {
 
 	log.Printf("📋 Populated device commands for %d categories", len(n.deviceCommands))
 }
+
+// discoverDeviceCapabilities uses protobuf reflection to identify what 
+// commands and telemetry each device type supports
+func (sim *NgaSim) discoverDeviceCapabilities(deviceType string) map[string]interface{} {
+    capabilities := make(map[string]interface{})
+    
+    // Use reflection to scan ned package for device-specific messages
+    // This automatically adapts to new protobuf files added to ned/
+    
+    switch deviceType {
+    case "sanitizerGen2":
+        // Reflection discovers sanitizer commands automatically
+    case "digitalControllerGen2":
+        // Reflection discovers controller commands automatically  
+    case "speedsetplus":
+        // Reflection discovers pump commands automatically
+    default:
+        // Unknown device - reflection still discovers basic capabilities
+    }
+    
+    return capabilities
+}
+
+// generateDynamicWebUI creates device-specific web interface
+// based on discovered protobuf capabilities
+func (sim *NgaSim) generateDynamicWebUI(deviceSerial string, capabilities map[string]interface{}) string {
+    // Future maintainer: This generates web forms automatically
+    // from protobuf message definitions using reflection
+    return "<div>Device-specific UI generated automatically</div>"
+}

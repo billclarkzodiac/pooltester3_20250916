@@ -1,0 +1,67 @@
+/***************************************************************
+Common Gen2 Client Messages Defined  
+****************************************************************/
+syntax = "proto3";
+option go_package = "pooltester3/ned";
+
+import "factory_reset.proto";
+import "find_me.proto";
+import "forget_core.proto";
+import "get_device_configuration.proto";
+import "get_device_information.proto";
+import "pair_to_core.proto";
+import "telemetry_configuration.proto";
+import "service_mode.proto";
+
+
+package ned;
+
+message CommonRequestPayloads {
+    oneof request_type {
+        FactoryResetCmdRequestPayload factory_reset = 1;
+        FindMeCmdRequestPayload find_me = 2;
+        ForgetCoreCmdRequestPayload forget_core = 3;
+        GetDeviceConfigurationRequestPayload get_device_configuration = 4;
+        GetDeviceInformationRequestPayload get_device_information = 5;
+        PairToCoreCmdRequestPayload pair_to_core = 6;
+        SetTelemetryConfigurationRequestPayload set_telemetry_configuration = 7;
+        GetTelemetryConfigurationRequestPayload get_telemetry_configuration = 8;
+        SetServiceModeStatusRequestPayload set_service_mode_status = 9;
+    }
+}
+
+message CommonResponsePayloads {
+    oneof response_type {
+        GetDeviceConfigurationResponsePayload get_device_configuration_response = 1;
+        GetDeviceInformationResponsePayload get_device_information_response = 2;
+        GetTelemetryConfigurationResponsePayload get_telemetry_configuration_response = 3;
+    }
+}
+
+enum ResponseCode {
+    RESPONSE_UNKNOWN = 0;
+    RESPONSE_OK = 1;
+    RESPONSE_COMMAND_ERROR = -1;
+    RESPONSE_BAD_REQUEST = -2;
+}
+
+/************************************************************
+*** Common Device Wrappers ***
+************************************************************/
+// a command wrapper message with a type field
+// MQTT topic: 'cmd/<category>/<serial number>/req'
+message CommandRequestMessage {
+    string command_uuid = 1;
+    ned.CommonRequestPayloads common = 2;
+}
+
+// a response wrapper message with a message type field
+// and the required response code
+// MQTT topic: 'cmd/<category>/<serial number>/res'
+message CommandResponseMessage {
+    string command_uuid = 1;
+
+    //required
+    ned.ResponseCode response_code = 2;
+    ned.CommonResponsePayloads common = 3;
+}
