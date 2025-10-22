@@ -1,0 +1,305 @@
+/***************************************************************
+Protobuf Message InfiniteWaterColorDCT proto file 
+- command/response definition
+****************************************************************/
+syntax = "proto3";
+option go_package = "pooltester3_20250916/ned";
+
+import "commonClientMessages.proto";
+
+package icl;
+
+
+/************************************************************
+*** InfiniteWaterColorDCT Messages ***
+************************************************************/
+message DCTRequests{
+    oneof request_type {
+        SetLightConfigurationRequest set_dct20_lights = 1;
+        GetDctStatusRequest get_dct20_status = 2;
+        GetLightStatusRequest get_dct20_light_status = 3;
+        GetDctInformationRequest get_dct20_all_lights_information = 4;
+        GetLightInformationRequest get_dct20_light_information = 5;
+        RemoveLightRequest remove_light = 6;
+        SetDctConfigurationRequest set_configuration = 7;
+        GetDctConfigurationRequest get_configuration = 8;
+        SetLightMaxBrightnessRequest set_max_brightness = 9;
+        SwapLightAddressesRequest swap_addresses = 10;
+        GetActiveErrorsRequest get_active_errors = 11;
+    }
+}
+
+message InfiniteWaterColorDCTResponsePayloads {
+    oneof response_type {
+        GetDctStatusResponse get_dct20_status = 1;
+        GetLightStatusResponse get_dct20_light_status = 2;
+        GetDctInformationResponse get_dct20_all_lights_information = 3;
+        GetLightInformationResponse get_dct20_light_information = 4;
+        GetDctConfigurationResponse get_configuration = 5;
+        GetActiveErrorsResponse get_active_errors = 6;
+    }
+}
+
+message InfiniteWaterColorDCTInfoPayloads { // Placeholder
+    oneof announce_type {
+        LightAddedInfoPayload light_added = 1;
+        DctStatusChangedInfoPayload dct_status_changed = 2;
+    }
+}
+
+
+/************************************************************
+*** InfiniteWaterColorDCT Wrappers ***
+************************************************************/
+// a command wrapper message with a type field
+// MQTT topic: 'cmd/<category>/<serial number>/req'
+message CommandRequestMessage {
+    string command_uuid = 1;
+    oneof payload {
+        ned.CommonRequestPayloads common = 2;
+        DCTRequests icl = 3;
+    }
+}
+
+// a response wrapper message with a message type field
+// and the required response code
+// MQTT topic: 'cmd/<category>/<serial number>/res'
+message CommandResponseMessage {
+    string command_uuid = 1;
+
+    //required
+    ned.ResponseCode response_code = 2;
+
+    oneof payload {
+        ned.CommonResponsePayloads common = 3;
+        InfiniteWaterColorDCTResponsePayloads icl = 4;
+    }
+}
+
+// an Info message wrapper
+// MQTT  topic: 'async/<category>/<serial number>/info'
+// Info messages can be a variety of message types
+message InfoMessage {
+    InfiniteWaterColorDCTInfoPayloads payload = 1;
+}
+
+// a Telemetry message wrapper
+// MQTT topic: 'async/<category>/<serial number>/dt'
+// Telemetry messages do not need a message 'type'
+message TelemetryMessage {
+    int32 power = 1; // 0 - 330 W
+    int32 current = 2; // 0 - 25000 milliAmpere
+    double voltage = 3; // 11.9 - 16.1 VAC
+    int32 board_temperature = 4; // deci-degree celcius (0.1 celsius)
+    repeated LightTelemetry lights_telemetry = 5;
+    int32 rssi = 6; // Received Signal Strength Indicator
+    int32 dct_power_derating_percentage = 7; // 0 - 100 percent - 100% means no derating
+}
+
+message LightTelemetry {
+    int32 address = 1;
+    int32 light_temperature = 2; // deci-degree celcius (0.1 celsius)
+    int32 light_derating_percentage = 3; // 0 - 100 percent- 100% means no derating
+    }
+
+/************************************************************
+*** InfiniteWaterColorDCT Common structures ***
+************************************************************/
+
+message LightJandyDrive {
+    int32 target_color = 1;
+}
+
+message LightRgbwDrive {
+    int32 red = 1;
+    int32 green = 2;
+    int32 blue = 3;
+    int32 white = 4;
+}
+
+message LightShowDrive {
+    int32 slide_duration_seconds = 1;
+    int32 transition_percent = 2;
+    repeated LightRgbwDrive colors = 3;
+}
+
+message LightDriveMode {
+    oneof light_drive_mode {
+        LightJandyDrive jandy_drive = 1;
+        LightRgbwDrive rgbw_drive = 2;
+        LightShowDrive show_drive = 3;
+    }
+}
+
+enum LightControlType {
+    LIGHT_CONTROL_UKNOWN = 0;
+    LIGHT_CONTROL_ON = 1;
+    LIGHT_CONTROL_OFF = 2;
+    LIGHT_CONTROL_BLINKING = 3;
+}
+
+message DctStatus {
+    int32 dct_wattage_capacity = 1;
+    repeated LightStatus lights_status = 2;
+}
+
+message LightStatus {
+    int32 address = 1;
+    LightControlType control_type = 2;
+    int32 brightness = 3;
+    int32 max_brightness = 4;
+    LightDriveMode drive_mode = 6;
+    bool is_available = 7;
+}
+
+message LightDeviceInformation {
+    int32 address = 1;
+    string model = 2;
+    string firmware_version = 3;
+    string serial_number = 4;
+}
+
+
+enum DctMode {
+    DCT_MODE_UKNOWN = 0;
+    DCT_MODE_INSTALLATION = 1;
+    DCT_MODE_NORMAL = 2;
+}
+
+message LightConfiguration {
+    int32 address = 1;
+    LightControlType control_type = 2;
+    int32 brightness = 3;
+    LightDriveMode drive_mode = 4;
+    int64 time_to_start = 5; // time since epoch in ms
+}
+
+/***************************************************************
+*** InfiniteWaterColorDCT Commands Payloads ***
+****************************************************************/
+
+//MESSAGE_SET_DCT20_LIGHTS_CMD
+message SetLightConfigurationRequest {
+    repeated LightConfigurationPatch light_patch = 1;
+}
+
+message LightConfigurationPatch {
+    message Field {
+        oneof field_type {
+            LightControlType control_type = 1;
+            int32 brightness = 2;
+            LightDriveMode drive_mode = 3;
+        }
+    }
+
+    int32 address = 1;
+    repeated Field fields = 2; // Fields to update
+    int64 time_to_start = 3; // time since epoch in ms
+}
+
+//MESSAGE_GET_DCT20_LIGHTS_RSP
+message GetDctStatusRequest {} // No fields, juste used for identification
+
+message GetDctStatusResponse {
+    DctStatus dct_status = 1;
+}
+
+message GetLightStatusRequest {
+    int32 light_address = 1;
+} 
+
+message GetLightStatusResponse {
+    LightStatus light_status = 1;
+}
+
+// MESSAGE_GET_DCT20_LIGHT_INFORMATION_CMD
+message GetDctInformationRequest {} // No fields, juste used for identification
+
+message GetDctInformationResponse {
+    repeated LightDeviceInformation lights_information = 1;
+}
+
+message GetLightInformationRequest {
+    int32 light_address = 1;
+} 
+
+message GetLightInformationResponse {
+    LightDeviceInformation light_information = 1;
+}
+
+
+//MESSAGE_REMOVE_LIGHT_CMD
+message RemoveLightRequest {
+    int32 light_address = 1;
+}
+
+message SwapLightAddressesRequest {
+    int32 address_a = 1;
+    int32 address_b = 2;
+}
+
+
+//Configuration
+message SetDctConfigurationRequest {
+    DctMode mode = 1;
+}
+
+message GetDctConfigurationRequest {
+}
+
+message GetDctConfigurationResponse {
+    DctMode mode = 1;
+}
+
+message SetLightMaxBrightnessRequest {
+
+    message LightMaximumBrightness {
+        int32 address = 1;
+        int32 max_brightness = 2;
+    }
+
+    repeated LightMaximumBrightness lights_max_brightness = 1;
+}
+
+
+/***************************************************************
+*** InfiniteWaterColorDCT Info Payloads ***
+****************************************************************/
+message LightAddedInfoPayload {
+    LightDeviceInformation light_information = 1;
+}
+
+message DctStatusChangedInfoPayload {
+    DctStatus dct_status = 1;
+}
+
+/************************************************************
+*** InfiniteWaterColorDCT Errors ***
+************************************************************/
+
+enum LightErrorCode {
+    UNKNOWN_ERROR = 0;
+    HIGH_TEMPERATURE_ERROR = 1;
+}
+
+message LightErrorDetails {
+    LightErrorCode error_code = 1;
+    string error_message = 2;
+}
+
+message LightErrors {
+    int32 light_address = 1;
+
+    repeated LightErrorDetails light_errors = 2;
+}
+
+// a device Error message - Sent throught GetActiveErrorsRequest or as an event on mqtt
+// MQTT topic: 'async/<category>/<serial number>/error'
+message ActiveErrors {
+    repeated LightErrors lights_errors = 1;
+}
+
+message GetActiveErrorsRequest {}
+message GetActiveErrorsResponse {
+    ActiveErrors active_errors = 1;
+}

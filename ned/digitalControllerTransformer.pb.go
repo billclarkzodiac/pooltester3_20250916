@@ -1,3 +1,5 @@
+//go:build exclude_duplicates
+
 //**************************************************************
 //Protobuf Message InfiniteWaterColorDCT proto file
 //- command/response definition

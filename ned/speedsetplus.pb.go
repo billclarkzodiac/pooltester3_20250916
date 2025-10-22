@@ -1,3 +1,5 @@
+//go:build exclude_duplicates
+
 //**************************************************************
 //Protobuf Message SpeedSetPlus proto file
 //- command/response definition
