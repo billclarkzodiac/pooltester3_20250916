@@ -100,9 +100,6 @@ mosquitto_pub -h 169.254.1.1 -t "async/sanitizerGen2/TEST001/anc" -m "test
 5. **Push** to branch (git push origin feature/amazing-feature)  
 6. **Create** Pull Request  
 
-**📄 License**
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 **🙏 Acknowledgments**
 - Built for enterprise pool automation
