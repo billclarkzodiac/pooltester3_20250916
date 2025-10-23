@@ -59,7 +59,7 @@ Device sends sensor data every 30 seconds:
 ```
 Topic: "async/sanitizerGen2/1234567890ABCDEF00/dt"
 Protobuf message with:
-- Chlorine level: 2.5 ppm
+- Chlorine level: 2500 ppm
 - pH level: 7.2
 - Water temperature: 78.5°F
 - Flow rate: 45 GPM
