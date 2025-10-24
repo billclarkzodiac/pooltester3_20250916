@@ -145,36 +145,83 @@ const (
 	TopicStatus    = "async/+/+/sts"   ///< Device status topic pattern
 )
 
-// Connects to the MQTT broker and sets up message handlers
-// - Configures MQTT client options (broker, client ID, timeouts)
-// - Sets up connection lost and reconnection handlers
-// - Establishes connection to the MQTT broker
-// - Automatically subscribes to device topics on successful connection
+// connectMQTT establishes connection to the MQTT broker and configures message handling.
+// This function demonstrates several important Go networking and concurrency patterns that
+// are essential for IoT device communication in production environments.
+//
+// Key Go concepts demonstrated:
+//   - Function pointers: Go lets you pass functions as parameters (like C function pointers)
+//   - Method receivers: Functions can be "attached" to struct types (like C++ member functions)
+//   - Error handling: Go's explicit error return pattern (no exceptions like Java/C#)
+//   - Interface satisfaction: mqtt.Client interface is satisfied by the concrete implementation
+//   - Callback pattern: Handler functions are called automatically when events occur
+//
+// MQTT concepts explained:
+//   - Clean session: true = don't remember previous connection state (fresh start each time)
+//   - Auto reconnect: true = automatically reconnect if connection is lost (critical for IoT)
+//   - Keep alive: Send ping every 30 seconds to detect broken connections
+//   - QoS levels: Quality of Service (0=fire and forget, 1=at least once, 2=exactly once) using QoS=1.
+//
+// The function sets up three critical event handlers:
+//  1. Connection lost handler - Called when network connection breaks
+//  2. Connection established handler - Called when connection succeeds (triggers topic subscription)
+//  3. Message handler - Called for every incoming MQTT message (set in subscribeToTopics)
+//
+// Error handling follows Go's explicit pattern: functions return error as last parameter.
+// If error is nil, the operation succeeded. If not nil, something went wrong.
+// This is much more reliable than exception-based error handling in other languages.
+//
+// Returns nil on success, error on failure. Caller must check the error!
 func (sim *NgaSim) connectMQTT() error {
-	opts := mqtt.NewClientOptions()
-	opts.AddBroker(MQTTBroker)
-	opts.SetClientID(MQTTClientID)
-	opts.SetCleanSession(true)
-	opts.SetAutoReconnect(true)
-	opts.SetKeepAlive(30 * time.Second)
+	log.Printf("🔌 Connecting to MQTT broker: %s", MQTTBroker)
 
-	// Set connection lost handler
+	// Create MQTT client options - this is the configuration object
+	// Note: mqtt.NewClientOptions() returns a pointer to ClientOptions struct
+	opts := mqtt.NewClientOptions()
+
+	// Configure connection parameters
+	opts.AddBroker(MQTTBroker)          // Where to connect (tcp://169.254.1.1:1883)
+	opts.SetClientID(MQTTClientID)      // Unique identifier for this client
+	opts.SetCleanSession(true)          // Don't remember state from previous connections
+	opts.SetAutoReconnect(true)         // Automatically reconnect if connection breaks
+	opts.SetKeepAlive(30 * time.Second) // Send ping every 30 seconds to detect dead connections
+
+	// Set up event handlers using function pointers
+	// These functions will be called automatically by the MQTT library when events occur
+
+	// Called when connection is lost (network issues, broker restart, etc.)
 	opts.SetConnectionLostHandler(func(client mqtt.Client, err error) {
-		log.Printf("MQTT connection lost: %v", err)
+		log.Printf("🔥 MQTT connection lost: %v", err)
+		log.Println("   Auto-reconnect will attempt to restore connection...")
+		// Note: No need to manually reconnect due to SetAutoReconnect(true)
 	})
 
-	// Set connection handler
+	// Called when connection is successfully established
+	// This is where we subscribe to device topics since we need an active connection first
 	opts.SetOnConnectHandler(func(client mqtt.Client) {
-		log.Println("Connected to MQTT broker at", MQTTBroker)
+		log.Printf("✅ Connected to MQTT broker: %s", MQTTBroker)
+		log.Println("🔔 Subscribing to device announcement and telemetry topics...")
+
+		// Subscribe to device topics now that we're connected
 		sim.subscribeToTopics()
 	})
 
+	// Create the actual MQTT client using our configuration
+	// This doesn't connect yet - just creates the client object
 	sim.mqtt = mqtt.NewClient(opts)
-	if token := sim.mqtt.Connect(); token.Wait() && token.Error() != nil {
-		return fmt.Errorf("failed to connect to MQTT broker: %v", token.Error())
+
+	// Attempt to establish the connection
+	// Connect() returns a "token" (like a promise/future in other languages)
+	token := sim.mqtt.Connect()
+
+	// Wait for connection attempt to complete and check for errors
+	// This blocks until connection succeeds or fails
+	if token.Wait() && token.Error() != nil {
+		return fmt.Errorf("failed to connect to MQTT broker %s: %v", MQTTBroker, token.Error())
 	}
 
-	return nil
+	log.Printf("🎉 MQTT client initialized successfully")
+	return nil // Success! Return nil error to indicate everything worked
 }
 
 // Starts the C poller subprocess to wake up pool devices
@@ -399,57 +446,149 @@ func (n *NgaSim) handleDeviceTelemetry(topic string, payload []byte) {
 	log.Printf("Could not parse telemetry message: %x", payload)
 }
 
-// messageHandler processes incoming MQTT messages
+// messageHandler processes incoming MQTT messages and routes them to appropriate handlers.
+// This is the central nervous system of NgaSim - every device communication flows through here.
+// This function demonstrates Go's string processing, error handling, and message routing patterns.
+//
+// Key Go concepts demonstrated:
+//   - Method receivers: This function is "attached" to the NgaSim struct
+//   - String manipulation: strings.Split() for parsing structured data
+//   - Switch statements: Go's clean alternative to if/else chains
+//   - Early returns: Go's preferred error handling pattern (abandon bad data, continue processing)
+//   - Interface types: mqtt.Client and mqtt.Message are interfaces (like C++ pure virtual)
+//   - Callback pattern: MQTT library calls this function automatically when messages arrive
+//
+// MQTT message flow architecture:
+//  1. Device publishes message to structured topic (async/deviceType/serial/messageType)
+//  2. MQTT broker delivers message to NgaSim (we're subscribed to async/+/+/+)
+//  3. messageHandler receives message and parses the topic structure
+//  4. Based on message type, routes to specialized handler function
+//  5. Specialized handler updates device state and logs the activity
+//
+// Topic structure parsing:
+//
+//	async/sanitizerGen2/1234567890ABCDEF00/anc
+//	  |        |              |           |
+//	prefix  category      deviceSerial  msgType
+//
+// Message types handled:
+//   - "anc" (announce): Device saying "I exist!" with basic info
+//   - "dt" (data/telemetry): Device sending sensor readings
+//   - "sts" (status): Device reporting operational status
+//   - "error": Device reporting error conditions
+//
+// Error handling philosophy: This is a callback function called by the MQTT library.
+// If we can't parse a message, we log the problem and abandon THAT message, but
+// continue processing other messages. We don't return an error because that would
+// break the entire MQTT message processing pipeline.
 func (sim *NgaSim) messageHandler(client mqtt.Client, msg mqtt.Message) {
 	topic := msg.Topic()
 	payload := msg.Payload()
 
-	log.Printf("Received MQTT message on topic: %s", topic)
+	log.Printf("📡 Received MQTT message on topic: %s", topic)
 
-	// Parse topic to extract device info
+	// Parse topic to extract device information
 	// Topic format: async/category/serial/type
+	// Example: "async/sanitizerGen2/1234567890ABCDEF00/anc"
 	parts := strings.Split(topic, "/")
 	if len(parts) < 4 {
-		log.Printf("Invalid topic format: %s", topic)
-		return
+		log.Printf("❌ Invalid topic format: %s (expected: async/category/serial/type)", topic)
+		return // Fail fast - can't process malformed topics
 	}
 
+	// Extract structured information from topic
+	// parts[0] = "async" (protocol prefix - always the same)
+	// parts[1] = device category (sanitizerGen2, digitalControllerGen2, etc.)
+	// parts[2] = device serial number (unique identifier)
+	// parts[3] = message type (anc, dt, sts, error)
 	category := parts[1]
 	deviceSerial := parts[2]
 	messageType := parts[3]
 
+	log.Printf("   📋 Parsed: category=%s, serial=%s, type=%s, payload=%d bytes",
+		category, deviceSerial, messageType, len(payload))
+
+	// Route message to appropriate handler based on message type
+	// Go's switch statement doesn't need 'break' - each case automatically exits
 	switch messageType {
 	case "anc":
+		// Device announcement - "Hello, I'm here!"
 		sim.handleDeviceAnnounce(topic, payload)
+
 	case "dt":
+		// Device telemetry - sensor readings, status data
 		sim.handleDeviceTelemetry(topic, payload)
+
 	case "sts":
+		// Device status - operational state changes
 		sim.handleDeviceStatus(category, deviceSerial, payload)
+
 	case "error":
+		// Device error - something went wrong
 		sim.handleDeviceError(category, deviceSerial, payload)
+
 	default:
-		log.Printf("Unknown message type: %s", messageType)
+		// Unknown message type - log for debugging but don't crash
+		log.Printf("⚠️  Unknown message type: %s (topic: %s)", messageType, topic)
+		log.Printf("   This might be a new message type we don't support yet")
+		// Note: We continue processing other messages - unknown types don't break the system
 	}
 }
 
-// handleDeviceAnnounce processes device announcement messages
+// handleDeviceAnnounce processes device announcement messages and creates/updates device records.
+// This is the device discovery engine - it's responsible for turning raw MQTT messages into
+// organized device records that the system can track and control.
+//
+// Key Go concepts demonstrated:
+//   - Function composition: This function calls multiple specialized helper functions
+//   - Error handling fallback: Try protobuf first, fall back to JSON if that fails
+//   - Early returns: Abandon processing if we can't parse the topic structure
+//   - Mutex-free operations: Topic parsing happens outside locks for performance
+//   - Multiple data format support: Handles both binary protobuf and text JSON
+//
+// Device announcement flow:
+//  1. Parse MQTT topic to extract device category and serial number
+//  2. Log the raw announcement for debugging and audit trails
+//  3. Try to parse payload as protobuf (preferred format - efficient and typed)
+//  4. If protobuf fails, fall back to JSON parsing (legacy device support)
+//  5. If both fail, log the failure but continue system operation
+//  6. Update device record with discovered information
+//  7. Add entry to device's live terminal for real-time monitoring
+//
+// Topic structure expected:
+//
+//	async/sanitizerGen2/1234567890ABCDEF00/anc
+//	  |        |              |           |
+//	prefix  category      deviceSerial  msgType
+//
+// The function demonstrates Go's "graceful degradation" philosophy - if we can't
+// parse one format, we try another. If we can't parse anything, we log the issue
+// but don't crash the entire system.
 func (n *NgaSim) handleDeviceAnnounce(topic string, payload []byte) {
-	// Parse topic to extract device info
+	// Phase 1: Parse MQTT topic to extract device metadata
+	// This parsing happens outside any locks for better performance
 	parts := strings.Split(topic, "/")
-	if len(parts) < 4 {
-		log.Printf("Invalid topic format: %s", topic)
-		return
+	if len(parts) < 4 { // Magic number 4 = expected parts (async/category/serial/type)
+		log.Printf("❌ Invalid announce topic format: %s (expected: async/category/serial/type)", topic)
+		return // Early return - can't process malformed topics
 	}
 
-	category := parts[1]
-	deviceSerial := parts[2]
+	// Extract device identification from topic structure
+	category := parts[1]     // Device category (sanitizerGen2, digitalControllerGen2, etc.)
+	deviceSerial := parts[2] // Unique device identifier
+	// parts[3] would be "anc" (announce) - we already know this from routing
 
-	log.Printf("Device announce from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
+	log.Printf("📢 Device announce from %s (category: %s): %d bytes", deviceSerial, category, len(payload))
 
-	// Try to parse as protobuf GetDeviceInformationResponsePayload
+	// Phase 2: Try to parse as protobuf GetDeviceInformationResponsePayload (preferred format)
+	// Protobuf is preferred because it's faster, smaller, and type-safe
 	announce := &ned.GetDeviceInformationResponsePayload{}
 	if err := proto.Unmarshal(payload, announce); err == nil {
-		// Log detailed protobuf message like Python reflect_message function
+		// SUCCESS: Protobuf parsing worked
+		log.Printf("✅ Successfully parsed protobuf announcement from %s", deviceSerial)
+
+		// Log detailed protobuf message for debugging and audit
+		// This mirrors the Python reflect_message function behavior
 		log.Printf("=== Device Announcement (Protobuf) ===")
 		log.Printf("product_name: %s", announce.GetProductName())
 		log.Printf("serial_number: %s", announce.GetSerialNumber())
@@ -462,29 +601,52 @@ func (n *NgaSim) handleDeviceAnnounce(topic string, payload []byte) {
 		if activeBus := announce.GetActiveBus(); activeBus != nil {
 			log.Printf("active_bus: %+v", activeBus)
 		}
-		log.Printf("===========================================")
+		log.Printf("==========================================")
 
+		// Update device record with protobuf data
 		n.updateDeviceFromProtobufAnnounce(category, deviceSerial, announce)
 
-		// Add to device terminal
+		// Add entry to device's live terminal for real-time monitoring
+		// This creates a breadcrumb trail of device communications
 		n.addDeviceTerminalEntry(deviceSerial, "ANNOUNCE",
 			fmt.Sprintf("Device announced: %s", announce.GetProductName()), payload)
-		return
+
+		return // Success! We're done processing this announcement
 	} else {
-		log.Printf("Failed to parse as protobuf GetDeviceInformationResponsePayload: %v", err)
+		// Protobuf parsing failed - log the error but continue with fallback
+		log.Printf("⚠️  Failed to parse as protobuf GetDeviceInformationResponsePayload: %v", err)
+		log.Printf("   Attempting JSON fallback for device %s...", deviceSerial)
 	}
 
-	// Fallback: try to parse as JSON
+	// Phase 3: Fallback to JSON parsing (legacy device support)
+	// Some older devices or development tools might send JSON instead of protobuf
 	var announceData map[string]interface{}
 	if err := json.Unmarshal(payload, &announceData); err == nil {
+		// SUCCESS: JSON parsing worked
+		log.Printf("✅ Successfully parsed JSON announcement from %s", deviceSerial)
+		log.Printf("📋 JSON data: %+v", announceData)
+
+		// Update device record with JSON data
 		n.updateDeviceFromJSONAnnounce(deviceSerial, announceData)
 
-		// Add to device terminal
+		// Add entry to device's live terminal
 		n.addDeviceTerminalEntry(deviceSerial, "ANNOUNCE", "Device announced (JSON)", payload)
-		return
+
+		return // Success! JSON fallback worked
+	} else {
+		// Both protobuf AND JSON parsing failed
+		log.Printf("❌ Failed to parse JSON fallback: %v", err)
 	}
 
-	log.Printf("Could not parse announce message from %s: %x", deviceSerial, payload)
+	// Phase 4: Complete parsing failure - log for debugging but continue system operation
+	// This demonstrates Go's "resilient system" philosophy - one bad message doesn't crash everything
+	log.Printf("💥 Could not parse announce message from %s (tried protobuf + JSON)", deviceSerial)
+	log.Printf("   Raw payload (%d bytes): %x", len(payload), payload)
+	log.Printf("   System continues running - this device will remain undiscovered")
+
+	// Note: We don't return an error because this is a callback function
+	// The MQTT system expects us to handle individual message failures gracefully
+	// Bad messages are logged for debugging but don't break the message processing pipeline
 }
 
 // updateDeviceFromAnnounce updates device from announcement data
@@ -728,137 +890,271 @@ func (sim *NgaSim) updateDeviceFromJSONAnnounce(deviceSerial string, data map[st
 	log.Printf("Updated device %s from JSON: type=%s, name=%s", deviceSerial, device.Type, device.Name)
 }
 
-// NewNgaSim creates a new NgaSim instance with all components
+// NewNgaSim creates and initializes a new NgaSim instance with all required components.
+// This is the constructor function that sets up the entire NgaSim system before it starts running.
+//
+// Key Go concepts demonstrated:
+//   - Constructor pattern: Go doesn't have classes, so we use functions that return pointers to structs
+//   - Error handling: Each component initialization can fail, but we handle errors gracefully
+//   - Composition: NgaSim is built by combining multiple smaller components (not inheritance)
+//   - Zero values: Go initializes missing fields to sensible defaults automatically
+//   - make(): Required for initializing maps and slices (they start as nil otherwise)
+//
+// Components initialized:
+//  1. ProtobufReflectionEngine - Automatically discovers what message types each device supports
+//  2. TerminalLogger - Records all device communications to both screen and file
+//  3. DeviceLogger - Tracks device command history and responses
+//  4. ProtobufCommandRegistry - Maps device types to their available commands
+//  5. PopupUIGenerator - Creates web forms automatically from protobuf definitions
+//  6. SanitizerController - Handles sanitizer-specific command processing
+//  7. Device maps - Storage for discovered devices (initially empty)
+//
+// The function uses graceful degradation - if optional components fail to initialize,
+// the system continues with reduced functionality rather than crashing completely.
+// This makes the system more robust in production environments.
+//
+// Returns a fully configured NgaSim instance ready to be started with Start().
 func NewNgaSim() *NgaSim {
-	// Create reflection engine
+	log.Println("🏗️ Initializing NgaSim components...")
+
+	// Create reflection engine for automatic protobuf discovery
+	// This component scans all .pb.go files and builds a map of what each device type can do
 	reflectionEngine := NewProtobufReflectionEngine()
 
 	// Discover all protobuf messages at startup
+	// This happens once at startup rather than every time we receive a message (performance)
 	if err := reflectionEngine.DiscoverMessages(); err != nil {
-		log.Printf("Warning: Protobuf discovery failed: %v", err)
+		log.Printf("⚠️ Warning: Protobuf discovery failed: %v", err)
+		log.Println("   System will continue with reduced protobuf reflection capabilities")
+	} else {
+		messages := reflectionEngine.GetAllMessages()
+		log.Printf("✅ Discovered %d protobuf message types across all device categories", len(messages))
 	}
 
-	// Create terminal logger with file tee
+	// Create terminal logger with file tee (logs to both screen and file)
+	// Buffer size of 1000 means we keep the last 1000 log entries in memory for the web interface
 	terminalLogger, err := NewTerminalLogger("ngasim_terminal.log", 1000)
 	if err != nil {
-		log.Printf("Warning: Terminal logger creation failed: %v", err)
-		terminalLogger = nil
+		log.Printf("⚠️ Warning: Terminal logger creation failed: %v", err)
+		log.Println("   System will continue without terminal logging to file")
+		terminalLogger = nil // Set to nil so other components know it's unavailable
+	} else {
+		log.Println("✅ Terminal logger initialized with file tee to ngasim_terminal.log")
 	}
 
+	// Create the main NgaSim struct
+	// Note: Go's zero values automatically initialize most fields to safe defaults
 	ngaSim := &NgaSim{
-		devices:          make(map[string]*Device),
-		logger:           NewDeviceLogger(1000),
-		commandRegistry:  NewProtobufCommandRegistry(),
-		reflectionEngine: reflectionEngine,
-		terminalLogger:   terminalLogger,
-		deviceCommands:   make(map[string][]string), // Initialize the field
+		devices:          make(map[string]*Device),     // make() required - maps start as nil
+		logger:           NewDeviceLogger(1000),        // Command/response logging
+		commandRegistry:  NewProtobufCommandRegistry(), // Command discovery system
+		reflectionEngine: reflectionEngine,             // Protobuf introspection
+		terminalLogger:   terminalLogger,               // Live terminal feed
+		deviceCommands:   make(map[string][]string),    // Device capability mapping
+		// Other fields (mutex, mqtt, server, etc.) automatically get zero values
+		// which is exactly what we want for uninitialized components
 	}
 
-	// Create popup generator
+	// Create popup generator (depends on terminal logger, so check if it exists)
+	// This demonstrates Go's nil-safe programming pattern
 	if terminalLogger != nil {
 		ngaSim.popupGenerator = NewPopupUIGenerator(reflectionEngine, terminalLogger, ngaSim)
+		log.Println("✅ Popup UI generator initialized for dynamic device interfaces")
+	} else {
+		log.Println("⚠️ Popup UI generator disabled (terminal logger unavailable)")
 	}
 
-	// Initialize sanitizer controller
+	// Initialize sanitizer controller (always needed for sanitizer devices)
 	ngaSim.sanitizerController = NewSanitizerController(ngaSim)
+	log.Println("✅ Sanitizer controller initialized")
 
-	// Discover commands and populate deviceCommands
+	// Discover commands and populate deviceCommands map
+	// This builds the mapping of device types -> available commands
 	ngaSim.commandRegistry.discoverCommands()
-
-	// Populate deviceCommands from discovered protobuf messages
 	ngaSim.populateDeviceCommands()
 
+	log.Printf("✅ Device command registry populated for %d device categories", len(ngaSim.deviceCommands))
+
+	log.Println("🎉 NgaSim initialization complete - ready to start!")
 	return ngaSim
 }
 
-// Starts the NgaSim application and all its components
-// Initializes:
-// - MQTT connection (with fallback to demo mode)
-// - C poller subprocess for device discovery
-// - HTTP web server with all route handlers
-// - Device command registry and logging
+// Start initializes and launches all NgaSim components including the comprehensive web server.
+// This function demonstrates Go's HTTP server patterns and is the main application orchestrator.
+//
+// Key Go concepts demonstrated:
+//   - http.ServeMux: Go's built-in HTTP request router (like Apache mod_rewrite but simpler)
+//   - http.HandleFunc: Registers handler functions for specific URL patterns
+//   - Method receivers: Functions attached to the NgaSim struct can access all its data
+//   - Goroutines for servers: HTTP server runs in background without blocking main thread
+//   - Error handling: Graceful fallback when components fail to initialize
+//
+// Web server architecture:
+//   - Single HTTP server listening on port 8082
+//   - Multiple route categories: main pages, API endpoints, static assets, protobuf interfaces
+//   - RESTful API design: /api/ prefix for programmatic access
+//   - Static asset serving: /static/ prefix for CSS, JS, images, documentation
+//
+// The server provides four main interface categories:
+//  1. Human interfaces: Web pages for operators and technicians
+//  2. API endpoints: JSON endpoints for programmatic control
+//  3. Protobuf interfaces: Dynamic device control based on discovered capabilities
+//  4. Static documentation: Specifications, diagrams, and technical docs
+//
+// Error handling follows the "graceful degradation" pattern - if optional components
+// (like MQTT or protobuf reflection) fail, the system continues with reduced functionality
+// rather than crashing completely.
+//
+// Returns error only on catastrophic failure, nil on successful startup.
 func (n *NgaSim) Start() error {
 	log.Println("Starting NgaSim v" + NgaSimVersion)
 
-	// Connect to MQTT broker
+	// Phase 1: Initialize MQTT communication (with fallback to demo mode)
+	// This is the "device discovery engine" - connects to pool devices
 	log.Println("Connecting to MQTT broker...")
 	if err := n.connectMQTT(); err != nil {
 		log.Printf("MQTT connection failed: %v", err)
 		log.Println("Falling back to demo mode...")
-		n.createDemoDevices()
+		n.createDemoDevices() // Create fake devices for development/testing
 	} else {
 		log.Println("MQTT connected successfully - waiting for device announcements...")
 
-		// Start the C poller to wake up devices
+		// Start the C poller to wake up devices (sends broadcast packets)
+		// Think of this as "knocking on doors" to get devices to announce themselves
 		if err := n.startPoller(); err != nil {
 			log.Printf("Failed to start poller: %v", err)
 			log.Println("Device discovery may not work properly")
+			// Note: We continue anyway - manual device addition might still work
 		}
 	}
 
-	// Start web server with ALL route handlers
+	// Phase 2: Create the HTTP request router
+	// ServeMux is Go's built-in URL router - maps URL patterns to handler functions
+	// Think of it as a telephone switchboard directing calls to the right department
 	mux := http.NewServeMux()
 
-	// Main interface routes
-	mux.HandleFunc("/", n.handleGoDemo)         // Go-centric single driver approach
-	mux.HandleFunc("/js-demo", n.handleDemo)    // JS-centric demo page
-	mux.HandleFunc("/old", n.handleHome)        // Original home page
-	mux.HandleFunc("/demo", n.handleDemo)       // Demo page alias
-	mux.HandleFunc("/goodbye", n.handleGoodbye) // Goodbye page
+	// ==================== HUMAN INTERFACE ROUTES ====================
+	// These serve HTML pages for humans to interact with the system
 
-	// API routes
-	mux.HandleFunc("/api/exit", n.handleExit)                          // Application exit
-	mux.HandleFunc("/api/devices", n.handleAPI)                        // Device list API
-	mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand) // Sanitizer commands
-	mux.HandleFunc("/api/sanitizer/states", n.handleSanitizerStates)   // Sanitizer states
-	mux.HandleFunc("/api/power-levels", n.handlePowerLevels)           // Power level options
-	mux.HandleFunc("/api/emergency-stop", n.handleEmergencyStop)       // Emergency stop all
-	mux.HandleFunc("/api/ui/spec", n.handleUISpecAPI)                  // UI specification
+	mux.HandleFunc("/", n.handleGoDemo)         // Main interface - Go-centric single driver approach
+	mux.HandleFunc("/js-demo", n.handleDemo)    // JavaScript-heavy demo page
+	mux.HandleFunc("/old", n.handleHome)        // Original legacy home page
+	mux.HandleFunc("/demo", n.handleDemo)       // Demo page alias for convenience
+	mux.HandleFunc("/goodbye", n.handleGoodbye) // Shutdown confirmation page
 
-	// Device command API routes
-	mux.HandleFunc("/api/device-commands/", n.handleDeviceCommands)   // Commands by category
-	mux.HandleFunc("/api/device-commands", n.handleAllDeviceCommands) // All commands
+	// ==================== API ROUTES (JSON endpoints) ====================
+	// These return JSON data for programmatic access (mobile apps, scripts, etc.)
 
-	// Static asset routes
-	mux.HandleFunc("/static/wireframe.svg", n.handleWireframeSVG) // SVG wireframe
-	mux.HandleFunc("/static/wireframe.mmd", n.handleWireframeMMD) // Mermaid diagram
-	mux.HandleFunc("/static/ui-spec.toml", n.handleUISpecTOML)    // TOML specification
-	mux.HandleFunc("/static/ui-spec.txt", n.handleUISpecTXT)      // Text specification
+	mux.HandleFunc("/api/exit", n.handleExit)                          // Gracefully shut down application
+	mux.HandleFunc("/api/devices", n.handleAPI)                        // Get list of all discovered devices
+	mux.HandleFunc("/api/sanitizer/command", n.handleSanitizerCommand) // Send commands to sanitizer devices
+	mux.HandleFunc("/api/sanitizer/states", n.handleSanitizerStates)   // Get sanitizer status information
+	mux.HandleFunc("/api/power-levels", n.handlePowerLevels)           // Get available power level options
+	mux.HandleFunc("/api/emergency-stop", n.handleEmergencyStop)       // Emergency stop all pool equipment
+	mux.HandleFunc("/api/ui/spec", n.handleUISpecAPI)                  // Get UI specification for dynamic interfaces
 
-	// Protobuf interface routes
-	mux.HandleFunc("/protobuf", n.handleProtobufMessages) // Protobuf message interface
-	mux.HandleFunc("/terminal", n.handleTerminalView)     // Live terminal view
+	// ==================== DEVICE COMMAND API ROUTES ====================
+	// These provide automatic command discovery based on protobuf reflection
 
-	// Protobuf API routes
+	mux.HandleFunc("/api/device-commands/", n.handleDeviceCommands)   // Get commands for specific device category
+	mux.HandleFunc("/api/device-commands", n.handleAllDeviceCommands) // Get all available commands across all device types
+
+	// ==================== STATIC ASSET ROUTES ====================
+	// These serve documentation, diagrams, and specifications
+
+	mux.HandleFunc("/static/wireframe.svg", n.handleWireframeSVG) // System architecture diagram (SVG format)
+	mux.HandleFunc("/static/wireframe.mmd", n.handleWireframeMMD) // Mermaid diagram source code
+	mux.HandleFunc("/static/ui-spec.toml", n.handleUISpecTOML)    // UI specification in TOML format
+	mux.HandleFunc("/static/ui-spec.txt", n.handleUISpecTXT)      // Human-readable UI specification
+
+	// ==================== PROTOBUF INTERFACE ROUTES ====================
+	// These provide dynamic device control based on discovered protobuf capabilities
+
+	mux.HandleFunc("/protobuf", n.handleProtobufMessages) // Interactive protobuf message browser
+	mux.HandleFunc("/terminal", n.handleTerminalView)     // Live terminal view of device communications
+
+	// ==================== ADVANCED PROTOBUF API ROUTES ====================
+	// These routes are only available if the protobuf reflection system initialized successfully
+	// This demonstrates Go's nil-safe programming pattern
+
 	if n.popupGenerator != nil {
-		mux.HandleFunc("/api/protobuf/popup", n.popupGenerator.handleProtobufPopup)     // Generate popup
-		mux.HandleFunc("/api/protobuf/command", n.popupGenerator.handleProtobufCommand) // Execute command
-		mux.HandleFunc("/api/protobuf/messages", n.popupGenerator.handleMessageTypes)   // List messages
-		mux.HandleFunc("/api/terminal/logs", n.popupGenerator.handleTerminalLogs)       // Get logs
+		// Dynamic popup generation based on protobuf message definitions
+		mux.HandleFunc("/api/protobuf/popup", n.popupGenerator.handleProtobufPopup)     // Generate device-specific popup forms
+		mux.HandleFunc("/api/protobuf/command", n.popupGenerator.handleProtobufCommand) // Execute protobuf commands
+		mux.HandleFunc("/api/protobuf/messages", n.popupGenerator.handleMessageTypes)   // List available message types
+		mux.HandleFunc("/api/terminal/logs", n.popupGenerator.handleTerminalLogs)       // Get formatted terminal logs
+	} else {
+		log.Println("⚠️ Protobuf popup routes disabled (popupGenerator not available)")
 	}
 
-	n.server = &http.Server{Addr: ":8082", Handler: mux}
+	// Phase 3: Create and configure the HTTP server
+	// Server struct contains all the HTTP server configuration
+	n.server = &http.Server{
+		Addr:    ":8082", // Listen on all interfaces, port 8082
+		Handler: mux,     // Use our route multiplexer to handle requests
+		// Note: Go's HTTP server has sensible defaults for timeouts, etc.
+	}
 
-	// Test protobuf system
+	// Phase 4: Test the protobuf reflection system
+	// This validates that our automatic device discovery is working
 	n.testProtobufSystem()
 
+	// Phase 5: Start the HTTP server in a goroutine
+	// The goroutine is CRITICAL - without it, ListenAndServe() would block forever
+	// and the main() function would never reach the "select {}" statement
 	go func() {
 		log.Println("Web server starting on :8082")
+
+		// ListenAndServe() blocks until the server shuts down
+		// It returns http.ErrServerClosed on normal shutdown, or an actual error on failure
 		if err := n.server.ListenAndServe(); err != http.ErrServerClosed {
 			log.Printf("Server error: %v", err)
 		}
+		// When this goroutine exits, the HTTP server has stopped
 	}()
 
-	return nil
+	// Phase 6: Log all available endpoints for the operator
+	// This creates a "menu" of what the system can do
+	log.Println("🚀 NgaSim started successfully!")
+	log.Println("")
+	log.Println("📍 Available Interfaces:")
+	log.Println("   🌐 Main Interface:    http://localhost:8082")
+	log.Println("   🎮 JS Demo:           http://localhost:8082/js-demo")
+	log.Println("   🏠 Original Home:     http://localhost:8082/old")
+	log.Println("   📊 Demo Page:         http://localhost:8082/demo")
+	log.Println("")
+	log.Println("🔗 API Endpoints:")
+	log.Println("   📊 Device List:       http://localhost:8082/api/devices")
+	log.Println("   🧪 Sanitizer Cmd:     http://localhost:8082/api/sanitizer/command")
+	log.Println("   ⚡ Power Levels:      http://localhost:8082/api/power-levels")
+	log.Println("   🛑 Emergency Stop:    http://localhost:8082/api/emergency-stop")
+	log.Println("   🔧 Exit App:          http://localhost:8082/api/exit")
+	log.Println("")
+	log.Println("📋 Documentation:")
+	log.Println("   📄 UI Spec (TOML):    http://localhost:8082/static/ui-spec.toml")
+	log.Println("   🎨 Wireframe (SVG):   http://localhost:8082/static/wireframe.svg")
+
+	return nil // Success! Everything started correctly
 }
 
-/**
- * @brief Application main entry point
- *
- * @details Initializes NgaSim, sets up signal handlers for graceful shutdown,
- * and starts all application components. Provides helpful startup information
- * including available URLs and API endpoints.
- */
+// main is the entry point for the NgaSim Pool Controller application.
+// It performs the complete startup sequence and manages application lifecycle:
+//
+//  1. Creates a new NgaSim instance (the main controller object)
+//  2. Sets up graceful shutdown handling using Go's signal system
+//  3. Connects to the MQTT broker at 169.254.1.1:1883 for device communication
+//  4. Starts the web server on port 8082 for the management dashboard
+//  5. Runs indefinitely until terminated by interrupt signal (Ctrl+C)
+//
+// Key Go concepts demonstrated:
+//   - defer: Ensures cleanup() runs when main() exits (like C++ destructor but better)
+//   - select {}: Blocks forever waiting for channel operations (keeps program alive)
+//   - goroutines: Signal handler runs concurrently without blocking main execution
+//   - channels: Provides safe communication between goroutines for shutdown coordination
+//
+// The defer statement is particularly important - it guarantees cleanup() will run
+// even if the program crashes or is terminated unexpectedly. This ensures MQTT
+// connections are closed and the C poller subprocess is properly killed.
 func main() {
 	log.Println("=== NgaSim Pool Controller Simulator ===")
 	log.Printf("Version: %s", NgaSimVersion)
@@ -867,15 +1163,17 @@ func main() {
 	// Create NgaSim instance
 	nga := NewNgaSim()
 
-	// Set up cleanup on interrupt
+	// CRITICAL: This defer ensures cleanup happens no matter how main() exits
+	// It's like a C++ destructor but more reliable - runs even on crashes
 	defer nga.cleanup()
 
-	// Handle graceful shutdown
+	// Set up graceful shutdown handling
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
+	// Handle shutdown signals in a separate goroutine
 	go func() {
-		<-c
+		<-c // Block until signal received
 		log.Println("\n🛑 Interrupt received, shutting down gracefully...")
 		nga.cleanup()
 		os.Exit(0)
@@ -889,7 +1187,7 @@ func main() {
 	log.Println("🚀 NgaSim started successfully!")
 	log.Println("")
 	log.Println("📍 Available Interfaces:")
-	log.Println("   🌐 Main Interface:     http://localhost:8082")
+	log.Println("   🌐 Main Interface:    http://localhost:8082")
 	log.Println("   🎮 JS Demo:           http://localhost:8082/js-demo")
 	log.Println("   🏠 Original Home:     http://localhost:8082/old")
 	log.Println("   📊 Demo Page:         http://localhost:8082/demo")
@@ -907,7 +1205,9 @@ func main() {
 	log.Println("")
 	log.Println("Press Ctrl+C to exit")
 
-	// Keep the program running
+	// Block forever waiting for shutdown signal
+	// select {} with no cases blocks indefinitely - this keeps the program running
+	// Without this, main() would exit immediately and the program would terminate
 	select {}
 }
 
@@ -1247,32 +1547,32 @@ func (n *NgaSim) populateDeviceCommands() {
 	log.Printf("📋 Populated device commands for %d categories", len(n.deviceCommands))
 }
 
-// discoverDeviceCapabilities uses protobuf reflection to identify what 
+// discoverDeviceCapabilities uses protobuf reflection to identify what
 // commands and telemetry each device type supports
 func (sim *NgaSim) discoverDeviceCapabilities(deviceType string) map[string]interface{} {
-    capabilities := make(map[string]interface{})
-    
-    // Use reflection to scan ned package for device-specific messages
-    // This automatically adapts to new protobuf files added to ned/
-    
-    switch deviceType {
-    case "sanitizerGen2":
-        // Reflection discovers sanitizer commands automatically
-    case "digitalControllerGen2":
-        // Reflection discovers controller commands automatically  
-    case "speedsetplus":
-        // Reflection discovers pump commands automatically
-    default:
-        // Unknown device - reflection still discovers basic capabilities
-    }
-    
-    return capabilities
+	capabilities := make(map[string]interface{})
+
+	// Use reflection to scan ned package for device-specific messages
+	// This automatically adapts to new protobuf files added to ned/
+
+	switch deviceType {
+	case "sanitizerGen2":
+		// Reflection discovers sanitizer commands automatically
+	case "digitalControllerGen2":
+		// Reflection discovers controller commands automatically
+	case "speedsetplus":
+		// Reflection discovers pump commands automatically
+	default:
+		// Unknown device - reflection still discovers basic capabilities
+	}
+
+	return capabilities
 }
 
 // generateDynamicWebUI creates device-specific web interface
 // based on discovered protobuf capabilities
 func (sim *NgaSim) generateDynamicWebUI(deviceSerial string, capabilities map[string]interface{}) string {
-    // Future maintainer: This generates web forms automatically
-    // from protobuf message definitions using reflection
-    return "<div>Device-specific UI generated automatically</div>"
+	// Future maintainer: This generates web forms automatically
+	// from protobuf message definitions using reflection
+	return "<div>Device-specific UI generated automatically</div>"
 }
