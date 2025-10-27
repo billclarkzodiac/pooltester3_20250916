@@ -1,0 +1,27 @@
+TODO_20251027.txt
+
+A short list of fixes and then a bigger request:
+
+1.  Having devices displayed in random positions with devices changing their
+    positions is disturbing to the human observer. It is preferred the
+    devices are sorted by serial number obtained from the Announce message.
+    It's not important what sort method is used but it is standard for us to 
+    compare the 18 byte string starting with MSB (left most byte) followed
+    by the byte to the right and so on. To avoid thrashing the web display I
+    recommend only sorting a list of devices at least as often as the Announce 
+    message is received then set a flag to redraw the display from the current 
+    list when convenient, ei. at a lower priority than the sort.
+
+2.  From the dashboard, selecting a device and clicking on the Device Terminal
+    button opens a 'terminal' that displays data from ALL devices, it should 
+    only display the data coming from the device selected on the dashboard.
+
+3.  The selected device's Live Terminal should display more than just the 
+    ANNOUNCE string, it should display as much information as is available from
+    using protobuf reflection.
+
+===  The bigger request:
+The Protobuf Command sub page Show Available Commands give a list of available
+protobuf requests and responses, very nice. Can you describe how to use these
+commands please.  Also in the commands there are fields that should be 
+pre-filled, for example, the UUID 

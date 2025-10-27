@@ -1,0 +1,237 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ActionResult	job_engine.go	/^type ActionResult struct {$/;"	t
+AddJob	job_engine.go	/^func (je *JobEngine) AddJob(job *Job) error {$/;"	f
+Close	device_logger.go	/^func (dl *DeviceLogger) Close() error {$/;"	f
+Close	terminal_logger.go	/^func (tl *TerminalLogger) Close() error {$/;"	f
+CommandExecutionRequest	popup_generator.go	/^type CommandExecutionRequest struct {$/;"	t
+CommandExecutionResponse	popup_generator.go	/^type CommandExecutionResponse struct {$/;"	t
+CommandField	device.go	/^type CommandField struct {$/;"	t
+CommandInfo	device.go	/^type CommandInfo struct {$/;"	t
+CreateMessage	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) CreateMessage(fullName string) (proto.Message, error) {$/;"	f
+Dashboard	main.go	/^type Dashboard struct {$/;"	t
+DashboardVisual	main.go	/^type DashboardVisual struct {$/;"	t
+Device	device.go	/^type Device struct {$/;"	t
+DeviceCommands	device.go	/^type DeviceCommands struct {$/;"	t
+DeviceCommunicator	job_engine.go	/^type DeviceCommunicator interface {$/;"	t
+DeviceDetailPage	ui_generator.go	/^type DeviceDetailPage struct {$/;"	t
+DeviceInfoField	main.go	/^type DeviceInfoField struct {$/;"	t
+DeviceLogEntry	device_logger.go	/^type DeviceLogEntry struct {$/;"	t
+DeviceLogger	device_logger.go	/^type DeviceLogger struct {$/;"	t
+DeviceType	main.go	/^type DeviceType struct {$/;"	t
+DiscoverMessages	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) DiscoverMessages() error {$/;"	f
+ExecuteJob	job_engine.go	/^func (je *JobEngine) ExecuteJob(jobID string) (*JobExecution, error) {$/;"	f
+ExecuteProtobufCommand	popup_generator.go	/^func (pug *PopupUIGenerator) ExecuteProtobufCommand(req CommandExecutionRequest) (*CommandExecutionResponse, error) {$/;"	f
+FieldDescriptor	protobuf_reflection.go	/^type FieldDescriptor struct {$/;"	t
+FormField	ui_generator.go	/^type FormField struct {$/;"	t
+FormOption	ui_generator.go	/^type FormOption struct {$/;"	t
+FormatFieldForDisplay	protobuf_parser.go	/^func (field ParsedProtobufField) FormatFieldForDisplay() string {$/;"	f
+GenerateDeviceDetailPage	ui_generator.go	/^func (ug *UIGenerator) GenerateDeviceDetailPage(deviceID string) (*DeviceDetailPage, error) {$/;"	f
+GenerateMessageForm	ui_generator.go	/^func (ug *UIGenerator) GenerateMessageForm(messageType string) (*MessageForm, error) {$/;"	f
+GeneratePopupHTML	popup_generator.go	/^func (pug *PopupUIGenerator) GeneratePopupHTML(messageType, deviceSerial, category string) (*PopupResponse, error) {$/;"	f
+GenerateUserFriendlyForm	smart_forms.go	/^func (sfg *SmartFormGenerator) GenerateUserFriendlyForm(messageType, deviceSerial, deviceName string) string {$/;"	f
+GetAllCategories	device.go	/^func (pcr *ProtobufCommandRegistry) GetAllCategories() []string {$/;"	f
+GetAllMessages	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) GetAllMessages() map[string]MessageDescriptor {$/;"	f
+GetAllStates	sanitizer_controller.go	/^func (sc *SanitizerController) GetAllStates() map[string]*SanitizerState {$/;"	f
+GetCommandsForCategory	device.go	/^func (pcr *ProtobufCommandRegistry) GetCommandsForCategory(category string) ([]CommandInfo, bool) {$/;"	f
+GetEntries	device_logger.go	/^func (dl *DeviceLogger) GetEntries(filter LogFilter) []*DeviceLogEntry {$/;"	f
+GetExecutions	job_engine.go	/^func (je *JobEngine) GetExecutions(jobID string, limit int) []*JobExecution {$/;"	f
+GetJobs	job_engine.go	/^func (je *JobEngine) GetJobs() map[string]*Job {$/;"	f
+GetRecentEntries	terminal_logger.go	/^func (tl *TerminalLogger) GetRecentEntries(limit int) []LogEntry {$/;"	f
+GetValidPowerLevels	sanitizer_controller.go	/^func GetValidPowerLevels() []PowerLevel {$/;"	f
+HandleDeviceDetailRequest	ui_generator.go	/^func (ug *UIGenerator) HandleDeviceDetailRequest(w http.ResponseWriter, r *http.Request) {$/;"	f
+Job	job_engine.go	/^type Job struct {$/;"	t
+JobAction	job_engine.go	/^type JobAction struct {$/;"	t
+JobCondition	job_engine.go	/^type JobCondition struct {$/;"	t
+JobEngine	job_engine.go	/^type JobEngine struct {$/;"	t
+JobExecution	job_engine.go	/^type JobExecution struct {$/;"	t
+JobScheduler	job_engine.go	/^type JobScheduler struct {$/;"	t
+LoadJobsFromFile	job_engine.go	/^func (je *JobEngine) LoadJobsFromFile(filename string) error {$/;"	f
+LogEntry	terminal_logger.go	/^type LogEntry struct {$/;"	t
+LogError	device_logger.go	/^func (dl *DeviceLogger) LogError(deviceSerial, command, message, correlationID, category string, tags ...string) {$/;"	f
+LogError	terminal_logger.go	/^func (tl *TerminalLogger) LogError(device, message string, err error) {$/;"	f
+LogFilter	device_logger.go	/^type LogFilter struct {$/;"	t
+LogLevel	device_logger.go	/^type LogLevel int$/;"	t
+LogLevelDebug	device_logger.go	/^	LogLevelDebug LogLevel = iota$/;"	c
+LogLevelError	device_logger.go	/^	LogLevelError$/;"	c
+LogLevelInfo	device_logger.go	/^	LogLevelInfo$/;"	c
+LogLevelWarn	device_logger.go	/^	LogLevelWarn$/;"	c
+LogProtobufMessage	terminal_logger.go	/^func (tl *TerminalLogger) LogProtobufMessage(msgType, device, direction string, msg interface{}, raw []byte) {$/;"	f
+LogRequest	device_logger.go	/^func (dl *DeviceLogger) LogRequest(deviceSerial, command string, data []byte, category string, tags ...string) string {$/;"	f
+LogResponse	device_logger.go	/^func (dl *DeviceLogger) LogResponse(deviceSerial, command string, data []byte, correlationID, category string, tags ...string) {$/;"	f
+MQTTBroker	main.go	/^	MQTTBroker   = "tcp:\/\/169.254.1.1:1883" \/\/\/< MQTT broker address$/;"	c
+MQTTClientID	main.go	/^	MQTTClientID = "NgaSim-WebUI"           \/\/\/< MQTT client identifier$/;"	c
+MessageDescriptor	protobuf_reflection.go	/^type MessageDescriptor struct {$/;"	t
+MessageForm	ui_generator.go	/^type MessageForm struct {$/;"	t
+MetaInfo	main.go	/^type MetaInfo struct {$/;"	t
+NewDeviceLogger	device_logger.go	/^func NewDeviceLogger(maxSize int) *DeviceLogger {$/;"	f
+NewJobEngine	job_engine.go	/^func NewJobEngine(deviceComm *DeviceCommunicator, logger *DeviceLogger, registry *ProtobufCommandRegistry) *JobEngine {$/;"	f
+NewJobScheduler	job_engine.go	/^func NewJobScheduler(engine *JobEngine) *JobScheduler {$/;"	f
+NewNgaSim	main.go	/^func NewNgaSim() *NgaSim {$/;"	f
+NewPopupUIGenerator	popup_generator.go	/^func NewPopupUIGenerator(reflectionEngine *ProtobufReflectionEngine, terminalLogger *TerminalLogger, ngaSim *NgaSim) *PopupUIGenerator {$/;"	f
+NewProtobufCommandRegistry	device.go	/^func NewProtobufCommandRegistry() *ProtobufCommandRegistry {$/;"	f
+NewProtobufMessageParser	protobuf_parser.go	/^func NewProtobufMessageParser(reflectionEngine *ProtobufReflectionEngine) *ProtobufMessageParser {$/;"	f
+NewProtobufReflectionEngine	protobuf_reflection.go	/^func NewProtobufReflectionEngine() *ProtobufReflectionEngine {$/;"	f
+NewSanitizerController	sanitizer_controller.go	/^func NewSanitizerController(ngaSim *NgaSim) *SanitizerController {$/;"	f
+NewSmartFormGenerator	smart_forms.go	/^func NewSmartFormGenerator(popupGenerator *PopupUIGenerator) *SmartFormGenerator {$/;"	f
+NewTerminalLogger	terminal_logger.go	/^func NewTerminalLogger(logFilePath string, maxEntries int) (*TerminalLogger, error) {$/;"	f
+NewUIGenerator	ui_generator.go	/^func NewUIGenerator(registry *ProtobufCommandRegistry, logger *DeviceLogger, jobEngine *JobEngine) *UIGenerator {$/;"	f
+NgaSim	main.go	/^type NgaSim struct {$/;"	t
+NgaSimVersion	main.go	/^const NgaSimVersion = "2.1.3"$/;"	c
+ParseAnnounceMessage	protobuf_parser.go	/^func (p *ProtobufMessageParser) ParseAnnounceMessage(rawData []byte, deviceSerial string) (*ParsedProtobufMessage, error) {$/;"	f
+ParseTelemetryMessage	protobuf_parser.go	/^func (p *ProtobufMessageParser) ParseTelemetryMessage(rawData []byte, deviceSerial string) (*ParsedProtobufMessage, error) {$/;"	f
+ParsedProtobufField	protobuf_parser.go	/^type ParsedProtobufField struct {$/;"	t
+ParsedProtobufMessage	protobuf_parser.go	/^type ParsedProtobufMessage struct {$/;"	t
+PopulateMessage	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) PopulateMessage(msg proto.Message, values map[string]interface{}) error {$/;"	f
+PopupRequest	popup_generator.go	/^type PopupRequest struct {$/;"	t
+PopupResponse	popup_generator.go	/^type PopupResponse struct {$/;"	t
+PopupUIGenerator	popup_generator.go	/^type PopupUIGenerator struct {$/;"	t
+PowerLevel	sanitizer_controller.go	/^type PowerLevel struct {$/;"	t
+ProtobufCommandRegistry	device.go	/^type ProtobufCommandRegistry struct {$/;"	t
+ProtobufMessageParser	protobuf_parser.go	/^type ProtobufMessageParser struct {$/;"	t
+ProtobufReflectionEngine	protobuf_reflection.go	/^type ProtobufReflectionEngine struct {$/;"	t
+QueueCommand	sanitizer_controller.go	/^func (sc *SanitizerController) QueueCommand(cmd SanitizerCommand) error {$/;"	f
+RegisterSanitizer	sanitizer_controller.go	/^func (sc *SanitizerController) RegisterSanitizer(serial string) *SanitizerState {$/;"	f
+RetryConfig	job_engine.go	/^type RetryConfig struct {$/;"	t
+SanitizerCommand	sanitizer_controller.go	/^type SanitizerCommand struct {$/;"	t
+SanitizerController	sanitizer_controller.go	/^type SanitizerController struct {$/;"	t
+SanitizerState	sanitizer_controller.go	/^type SanitizerState struct {$/;"	t
+Schedule	job_engine.go	/^type Schedule struct {$/;"	t
+ScheduleJob	job_engine.go	/^func (js *JobScheduler) ScheduleJob(job *Job) {$/;"	f
+SmartFormGenerator	smart_forms.go	/^type SmartFormGenerator struct {$/;"	t
+Start	main.go	/^func (n *NgaSim) Start() error {$/;"	f
+String	device_logger.go	/^func (l LogLevel) String() string {$/;"	f
+TelemetryConfig	main.go	/^type TelemetryConfig struct {$/;"	t
+TerminalEntry	device.go	/^type TerminalEntry struct {$/;"	t
+TerminalLogger	terminal_logger.go	/^type TerminalLogger struct {$/;"	t
+TopicAnnounce	main.go	/^	TopicAnnounce  = "async\/+\/+\/anc"   \/\/\/< Device announcement topic pattern$/;"	c
+TopicError	main.go	/^	TopicError     = "async\/+\/+\/error" \/\/\/< Device error topic pattern$/;"	c
+TopicInfo	main.go	/^	TopicInfo      = "async\/+\/+\/info"  \/\/\/< Device information topic pattern$/;"	c
+TopicStatus	main.go	/^	TopicStatus    = "async\/+\/+\/sts"   \/\/\/< Device status topic pattern$/;"	c
+TopicTelemetry	main.go	/^	TopicTelemetry = "async\/+\/+\/dt"    \/\/\/< Device telemetry topic pattern$/;"	c
+UIGenerator	ui_generator.go	/^type UIGenerator struct {$/;"	t
+UISpec	main.go	/^type UISpec struct {$/;"	t
+UpdateFromTelemetry	sanitizer_controller.go	/^func (sc *SanitizerController) UpdateFromTelemetry(serial string, actualOutput int32) {$/;"	f
+UserFieldConfig	smart_forms.go	/^type UserFieldConfig struct {$/;"	t
+ValidateCommand	sanitizer_controller.go	/^func (sc *SanitizerController) ValidateCommand(cmd SanitizerCommand) error {$/;"	f
+Widget	main.go	/^type Widget struct {$/;"	t
+activateBoost	sanitizer_controller.go	/^func (sc *SanitizerController) activateBoost(device *SanitizerState, durationMinutes int) {$/;"	f
+addDeviceTerminalEntry	main.go	/^func (n *NgaSim) addDeviceTerminalEntry(deviceSerial, entryType, message string, rawData []byte) {$/;"	f
+addEntry	device_logger.go	/^func (dl *DeviceLogger) addEntry(entry *DeviceLogEntry) {$/;"	f
+addEntry	terminal_logger.go	/^func (tl *TerminalLogger) addEntry(entry LogEntry) {$/;"	f
+analyzeMessageFields	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) analyzeMessageFields(desc protoreflect.MessageDescriptor) []FieldDescriptor {$/;"	f
+cleanup	main.go	/^func (sim *NgaSim) cleanup() {$/;"	f
+connectMQTT	main.go	/^func (sim *NgaSim) connectMQTT() error {$/;"	f
+createDemoDevices	main.go	/^func (n *NgaSim) createDemoDevices() {$/;"	f
+createDeviceDetailTemplate	ui_generator.go	/^func (ug *UIGenerator) createDeviceDetailTemplate() *template.Template {$/;"	f
+discoverCommands	device.go	/^func (pcr *ProtobufCommandRegistry) discoverCommands() {$/;"	f
+discoverDeviceCapabilities	main.go	/^func (sim *NgaSim) discoverDeviceCapabilities(deviceType string) map[string]interface{} {$/;"	f
+discoverSanitizerCommands	device.go	/^func (pcr *ProtobufCommandRegistry) discoverSanitizerCommands() {$/;"	f
+emergencyStop	sanitizer_controller.go	/^func (sc *SanitizerController) emergencyStop(device *SanitizerState) {$/;"	f
+executeAction	job_engine.go	/^func (je *JobEngine) executeAction(action *JobAction, index int, execution *JobExecution) ActionResult {$/;"	f
+executeCommand	sanitizer_controller.go	/^func (sc *SanitizerController) executeCommand(cmd SanitizerCommand) {$/;"	f
+executeCondition	job_engine.go	/^func (je *JobEngine) executeCondition(action *JobAction, execution *JobExecution) error {$/;"	f
+executeJobInternal	job_engine.go	/^func (je *JobEngine) executeJobInternal(job *Job) (*JobExecution, error) {$/;"	f
+executeSendMessage	job_engine.go	/^func (je *JobEngine) executeSendMessage(action *JobAction, execution *JobExecution, result *ActionResult) error {$/;"	f
+executeWait	job_engine.go	/^func (je *JobEngine) executeWait(action *JobAction) error {$/;"	f
+generateDynamicWebUI	main.go	/^func (sim *NgaSim) generateDynamicWebUI(deviceSerial string, capabilities map[string]interface{}) string {$/;"	f
+generateEnumLabel	ui_generator.go	/^func (ug *UIGenerator) generateEnumLabel(enumName string) string {$/;"	f
+generateFieldDescription	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) generateFieldDescription(name, fieldType string) string {$/;"	f
+generateFieldHTML	popup_generator.go	/^func (pug *PopupUIGenerator) generateFieldHTML(field FieldDescriptor) string {$/;"	f
+generateFormHTML	popup_generator.go	/^func (pug *PopupUIGenerator) generateFormHTML(msgDesc MessageDescriptor, deviceSerial, category string) string {$/;"	f
+generateFormTitle	ui_generator.go	/^func (ug *UIGenerator) generateFormTitle(messageName string) string {$/;"	f
+generateUserFieldHTML	smart_forms.go	/^func (sfg *SmartFormGenerator) generateUserFieldHTML(field FieldDescriptor, config UserFieldConfig, deviceSerial string) string {$/;"	f
+getCategoryFromName	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) getCategoryFromName(fullName string) string {$/;"	f
+getDeviceStats	ui_generator.go	/^func (ug *UIGenerator) getDeviceStats(deviceID string) map[string]interface{} {$/;"	f
+getEnumValues	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) getEnumValues(enumDesc protoreflect.EnumDescriptor) []string {$/;"	f
+getMessageTypesForDevice	ui_generator.go	/^func (ug *UIGenerator) getMessageTypesForDevice(deviceID string) []string {$/;"	f
+getSimpleCommandName	smart_forms.go	/^func (sfg *SmartFormGenerator) getSimpleCommandName(messageType string) string {$/;"	f
+getSortedDevices	main.go	/^func (n *NgaSim) getSortedDevices() []*Device {$/;"	f
+getUserFieldConfig	smart_forms.go	/^func (sfg *SmartFormGenerator) getUserFieldConfig(messageType, fieldName, fieldType string) UserFieldConfig {$/;"	f
+goDemoTemplate	templates.go	/^var goDemoTemplate = template.Must(template.New("goDemo").Funcs(templateFuncs).Parse(goDemoTemplateHTML))$/;"	v
+goDemoTemplateHTML	templates.go	/^var goDemoTemplateHTML = `$/;"	v
+goodbyeTemplate	templates.go	/^var goodbyeTemplate = template.Must(template.New("goodbye").Funcs(templateFuncs).Parse(`$/;"	v
+handleAPI	handlers.go	/^func (n *NgaSim) handleAPI(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleAllDeviceCommands	main.go	/^func (n *NgaSim) handleAllDeviceCommands(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleDemo	handlers.go	/^func (n *NgaSim) handleDemo(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleDeviceAnnounce	main.go	/^func (n *NgaSim) handleDeviceAnnounce(topic string, payload []byte) {$/;"	f
+handleDeviceCommands	handlers.go	/^func (n *NgaSim) handleDeviceCommands(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleDeviceError	main.go	/^func (sim *NgaSim) handleDeviceError(category, deviceSerial string, payload []byte) {$/;"	f
+handleDeviceStatus	main.go	/^func (sim *NgaSim) handleDeviceStatus(category, deviceSerial string, payload []byte) {$/;"	f
+handleDeviceTelemetry	main.go	/^func (n *NgaSim) handleDeviceTelemetry(topic string, payload []byte) {$/;"	f
+handleDevices	handlers.go	/^func (n *NgaSim) handleDevices(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleEmergencyStop	handlers.go	/^func (n *NgaSim) handleEmergencyStop(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleExit	handlers.go	/^func (n *NgaSim) handleExit(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleGoDemo	handlers.go	/^func (n *NgaSim) handleGoDemo(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleGoodbye	handlers.go	/^func (n *NgaSim) handleGoodbye(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleHome	handlers.go	/^func (n *NgaSim) handleHome(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleMessageTypes	popup_generator.go	/^func (pug *PopupUIGenerator) handleMessageTypes(w http.ResponseWriter, r *http.Request) {$/;"	f
+handlePowerLevels	handlers.go	/^func (n *NgaSim) handlePowerLevels(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleProtobufCommand	popup_generator.go	/^func (pug *PopupUIGenerator) handleProtobufCommand(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleProtobufMessages	handlers.go	/^func (n *NgaSim) handleProtobufMessages(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleProtobufPopup	popup_generator.go	/^func (pug *PopupUIGenerator) handleProtobufPopup(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleRoot	handlers.go	/^func (n *NgaSim) handleRoot(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleSanitizerCommand	handlers.go	/^func (n *NgaSim) handleSanitizerCommand(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleSanitizerStates	handlers.go	/^func (n *NgaSim) handleSanitizerStates(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleTerminalLogs	popup_generator.go	/^func (pug *PopupUIGenerator) handleTerminalLogs(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleTerminalView	handlers.go	/^func (n *NgaSim) handleTerminalView(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleUISpecAPI	handlers.go	/^func (n *NgaSim) handleUISpecAPI(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleUISpecTOML	handlers.go	/^func (n *NgaSim) handleUISpecTOML(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleUISpecTXT	handlers.go	/^func (n *NgaSim) handleUISpecTXT(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleWireframeMMD	handlers.go	/^func (n *NgaSim) handleWireframeMMD(w http.ResponseWriter, r *http.Request) {$/;"	f
+handleWireframeSVG	handlers.go	/^func (n *NgaSim) handleWireframeSVG(w http.ResponseWriter, r *http.Request) {$/;"	f
+isRequestMessage	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) isRequestMessage(name string) bool {$/;"	f
+isResponseMessage	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) isResponseMessage(name string) bool {$/;"	f
+isTelemetryMessage	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) isTelemetryMessage(name string) bool {$/;"	f
+killOrphanedPollers	main.go	/^func (sim *NgaSim) killOrphanedPollers() {$/;"	f
+main	demo_devices.go	/^package main$/;"	p
+main	device.go	/^package main$/;"	p
+main	device_logger.go	/^package main$/;"	p
+main	handlers.go	/^package main$/;"	p
+main	job_engine.go	/^package main$/;"	p
+main	main.go	/^func main() {$/;"	f
+main	main.go	/^package main$/;"	p
+main	mqtt.go	/^package main$/;"	p
+main	popup_generator.go	/^package main$/;"	p
+main	protobuf_parser.go	/^package main$/;"	p
+main	protobuf_reflection.go	/^package main$/;"	p
+main	sanitizer_controller.go	/^package main$/;"	p
+main	smart_forms.go	/^package main$/;"	p
+main	templates.go	/^package main$/;"	p
+main	terminal_logger.go	/^package main$/;"	p
+main	ui_generator.go	/^package main$/;"	p
+matchesFilter	device_logger.go	/^func (dl *DeviceLogger) matchesFilter(entry *DeviceLogEntry, filter LogFilter) bool {$/;"	f
+messageHandler	main.go	/^func (sim *NgaSim) messageHandler(client mqtt.Client, msg mqtt.Message) {$/;"	f
+min	protobuf_parser.go	/^func min(a, b int) int {$/;"	f
+populateDeviceCommands	main.go	/^func (n *NgaSim) populateDeviceCommands() {$/;"	f
+populateMessage	job_engine.go	/^func (je *JobEngine) populateMessage(msg interface{}, params map[string]interface{}) error {$/;"	f
+printToTerminal	terminal_logger.go	/^func (tl *TerminalLogger) printToTerminal(entry LogEntry) {$/;"	f
+processCommands	sanitizer_controller.go	/^func (sc *SanitizerController) processCommands() {$/;"	f
+protoToMap	job_engine.go	/^func (je *JobEngine) protoToMap(msg interface{}) map[string]interface{} {$/;"	f
+protobufInterfaceTemplate	templates.go	/^var protobufInterfaceTemplate = template.Must(template.New("protobufInterface").Funcs(templateFuncs).Parse(protobufInterfaceTemplateHTML))$/;"	v
+protobufInterfaceTemplateHTML	templates.go	/^var protobufInterfaceTemplateHTML = `$/;"	v
+sendMQTTCommand	popup_generator.go	/^func (pug *PopupUIGenerator) sendMQTTCommand(deviceSerial, category, messageType string, msgBytes []byte, correlationID string) error {$/;"	f
+sendMQTTSanitizerCommand	main.go	/^func (n *NgaSim) sendMQTTSanitizerCommand(serial, category string, percentage int) error {$/;"	f
+sendSanitizerCommand	main.go	/^func (n *NgaSim) sendSanitizerCommand(serial, category string, percentage int) error {$/;"	f
+setFieldValue	protobuf_reflection.go	/^func (pre *ProtobufReflectionEngine) setFieldValue(msg protoreflect.Message, field protoreflect.FieldDescriptor, value interface{}) error {$/;"	f
+setPowerLevel	sanitizer_controller.go	/^func (sc *SanitizerController) setPowerLevel(device *SanitizerState, percentage int32) {$/;"	f
+simulateResponse	popup_generator.go	/^func (pug *PopupUIGenerator) simulateResponse(deviceSerial, messageType, correlationID string) {$/;"	f
+startPoller	main.go	/^func (sim *NgaSim) startPoller() error {$/;"	f
+stopPoller	main.go	/^func (sim *NgaSim) stopPoller() {$/;"	f
+subscribeToTopics	main.go	/^func (sim *NgaSim) subscribeToTopics() {$/;"	f
+templateFuncs	templates.go	/^var templateFuncs = template.FuncMap{$/;"	v
+terminalViewTemplate	templates.go	/^var terminalViewTemplate = template.Must(template.New("terminalView").Funcs(templateFuncs).Parse(terminalViewTemplateHTML))$/;"	v
+terminalViewTemplateHTML	templates.go	/^var terminalViewTemplateHTML = `$/;"	v
+testProtobufSystem	main.go	/^func (n *NgaSim) testProtobufSystem() {$/;"	f
+tmpl	templates.go	/^var tmpl = template.Must(template.New("home").Funcs(templateFuncs).Parse(`$/;"	v
+updateDeviceFromAnnounce	main.go	/^func (sim *NgaSim) updateDeviceFromAnnounce(deviceID string, data map[string]interface{}) {$/;"	f
+updateDeviceFromJSONAnnounce	main.go	/^func (sim *NgaSim) updateDeviceFromJSONAnnounce(deviceSerial string, data map[string]interface{}) {$/;"	f
+updateDeviceFromProtobufAnnounce	main.go	/^func (sim *NgaSim) updateDeviceFromProtobufAnnounce(category, deviceSerial string, announce *ned.GetDeviceInformationResponsePayload) {$/;"	f
+updateDeviceFromSanitizerTelemetry	main.go	/^func (sim *NgaSim) updateDeviceFromSanitizerTelemetry(deviceSerial string, telemetry *ned.TelemetryMessage) {$/;"	f
+updateDeviceFromTelemetry	main.go	/^func (sim *NgaSim) updateDeviceFromTelemetry(deviceID string, data map[string]interface{}) {$/;"	f
+validateAction	job_engine.go	/^func (je *JobEngine) validateAction(action *JobAction) error {$/;"	f
+validateJob	job_engine.go	/^func (je *JobEngine) validateJob(job *Job) error {$/;"	f

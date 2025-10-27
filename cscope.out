@@ -1,0 +1,30801 @@
+cscope 15 $HOME/projects/pooltester3_20250916               0000165655
+	@demo_devices.go
+
+1 
+·ckage
+ 
+	gmaš
+
+
+	@device.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+10 
+ty³
+ 
+Deviû
+ struct {
+
+11 
+ID
+ 
+	m¡ršg
+ `
+	mjsÚ
+:"id"`
+
+12 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"type"`
+
+13 
+Name
+ 
+¡ršg
+ `
+jsÚ
+:"name"`
+
+14 
+S”Ÿl
+ 
+¡ršg
+ `
+jsÚ
+:"serial"`
+
+15 
+Stus
+ 
+¡ršg
+ `
+jsÚ
+:"status"`
+
+16 
+La¡S“n
+ 
+time
+.
+Time
+ `
+jsÚ
+:"last_seen"`
+
+19 
+ProduùName
+ 
+¡ršg
+ `
+jsÚ
+:"product_name,omitempty"`
+
+20 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category,omitempty"`
+
+21 
+Mod–Id
+ 
+¡ršg
+ `
+jsÚ
+:"model_id,omitempty"`
+
+22 
+Mod–V”siÚ
+ 
+¡ršg
+ `
+jsÚ
+:"model_version,omitempty"`
+
+23 
+Fœmw¬eV”siÚ
+ 
+¡ršg
+ `
+jsÚ
+:"firmware_version,omitempty"`
+
+24 
+OV”siÚ
+ 
+¡ršg
+ `
+jsÚ
+:"ota_version,omitempty"`
+
+27 
+RPM
+ `
+jsÚ
+:"rpm,omitempty"`
+
+28 
+Temp
+ 
+æßt64
+ `
+jsÚ
+:"temperature,omitempty"`
+
+29 
+Pow”
+ `
+jsÚ
+:"power,omitempty"`
+
+32 
+Pow”Lev–
+ `
+jsÚ
+:"power_level,omitempty"`
+
+33 
+S®š™y
+ `
+jsÚ
+:"salinity,omitempty"`
+
+34 
+C–lTemp
+ 
+æßt64
+ `
+jsÚ
+:"cell_temp,omitempty"`
+
+35 
+C–lVŞge
+ 
+æßt64
+ `
+jsÚ
+:"cell_voltage,omitempty"`
+
+36 
+C–lCu¼’t
+ 
+æßt64
+ `
+jsÚ
+:"cell_current,omitempty"`
+
+39 
+Red
+ `
+jsÚ
+:"red,omitempty"`
+
+40 
+G»’
+ `
+jsÚ
+:"green,omitempty"`
+
+41 
+Blue
+ `
+jsÚ
+:"blue,omitempty"`
+
+42 
+Wh™e
+ `
+jsÚ
+:"white,omitempty"`
+
+45 
+PH
+ 
+æßt64
+ `
+jsÚ
+:"ph,omitempty"`
+
+46 
+ORP
+ `
+jsÚ
+:"orp,omitempty"`
+
+49 
+S‘Temp
+ 
+æßt64
+ `
+jsÚ
+:"set_temp,omitempty"`
+
+50 
+W©”Temp
+ 
+æßt64
+ `
+jsÚ
+:"water_temp,omitempty"`
+
+51 
+H—tšgMode
+ 
+¡ršg
+ `
+jsÚ
+:"heating_mode,omitempty"`
+
+54 
+RSSI
+ 
+št32
+ `
+jsÚ
+:"rssi,omitempty"`
+
+55 
+PPMS®t
+ 
+št32
+ `
+jsÚ
+:"ppm_salt,omitempty"`
+
+56 
+P”ûÁageOuut
+ 
+št32
+ `
+jsÚ
+:"percentage_output"`
+
+57 
+AcûËrom‘”X
+ 
+št32
+ `
+jsÚ
+:"accelerometer_x,omitempty"`
+
+58 
+AcûËrom‘”Y
+ 
+št32
+ `
+jsÚ
+:"accelerometer_y,omitempty"`
+
+59 
+AcûËrom‘”Z
+ 
+št32
+ `
+jsÚ
+:"accelerometer_z,omitempty"`
+
+60 
+LšeIÅutVŞge
+ 
+št32
+ `
+jsÚ
+:"line_input_voltage,omitempty"`
+
+61 
+IsC–lFlowRev”£d
+ 
+boŞ
+ `
+jsÚ
+:"is_cell_flow_reversed,omitempty"`
+
+64 
+P’dšgP”ûÁage
+ 
+št32
+ `
+jsÚ
+:"pending_percentage"`
+
+65 
+La¡CommªdTime
+ 
+time
+.
+Time
+ `
+jsÚ
+:"last_command_time,omitempty"`
+
+66 
+Aùu®P”ûÁage
+ 
+št32
+ `
+jsÚ
+:"actual_percentage"`
+
+69 
+LiveT”mš®
+ []
+T”mš®EÁry
+ `
+jsÚ
+:"live_terminal"`
+
+70 
+La¡Commªd
+ 
+¡ršg
+ `
+jsÚ
+:"last_command"`
+
+71 
+CommªdStus
+ 
+¡ršg
+ `
+jsÚ
+:"command_status"`
+
+72 
+HumªName
+ 
+¡ršg
+ `
+jsÚ
+:"human_name"`
+
+73 
+CÚÃùiÚTime
+ 
+time
+.
+Time
+ `
+jsÚ
+:"connection_time"`
+
+77 
+ty³
+ 
+T”mš®EÁry
+ struct {
+
+78 
+Time¡amp
+ 
+time
+.
+Time
+ `
+jsÚ
+:"timestamp"`
+
+79 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"type"`
+
+80 
+Mes§ge
+ 
+¡ršg
+ `
+jsÚ
+:"message"`
+
+81 
+D©a
+ 
+¡ršg
+ `
+jsÚ
+:"data"`
+
+82 
+P¬£dPrÙobuf
+ *
+P¬£dPrÙobufMes§ge
+ `
+jsÚ
+:"parsed_protobuf,omitempty"`
+
+86 
+ty³
+ 
+CommªdF›ld
+ struct {
+
+87 
+Name
+ 
+¡ršg
+ `
+jsÚ
+:"name"`
+
+88 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"type"`
+
+89 
+DesütiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"description"`
+
+90 
+Requœed
+ 
+boŞ
+ `
+jsÚ
+:"required"`
+
+91 
+DeçuÉ
+ 
+š‹rçû
+{} `
+jsÚ
+:"default,omitempty"`
+
+92 
+EnumV®ues
+ []
+¡ršg
+ `
+jsÚ
+:"enum_values,omitempty"`
+
+93 
+Mš
+ 
+š‹rçû
+{} `
+jsÚ
+:"min,omitempty"`
+
+94 
+Max
+ 
+š‹rçû
+{} `
+jsÚ
+:"max,omitempty"`
+
+97 
+ty³
+ 
+CommªdInfo
+ struct {
+
+98 
+Name
+ 
+¡ršg
+ `
+jsÚ
+:"name"`
+
+99 
+Di¥ÏyName
+ 
+¡ršg
+ `
+jsÚ
+:"display_name"`
+
+100 
+DesütiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"description"`
+
+101 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category"`
+
+102 
+F›lds
+ []
+CommªdF›ld
+ `
+jsÚ
+:"fields"`
+
+103 
+IsQu”y
+ 
+boŞ
+ `
+jsÚ
+:"is_query"`
+
+106 
+ty³
+ 
+DeviûCommªds
+ struct {
+
+107 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category"`
+
+108 
+Commªds
+ []
+CommªdInfo
+ `
+jsÚ
+:"commands"`
+
+112 
+ty³
+ 
+PrÙobufCommªdRegi¡ry
+ struct {
+
+113 
+commªdsByC©egÜy
+ 
+m­
+[
+¡ršg
+][]
+CommªdInfo
+
+
+114 
+mu‹x
+ 
+sync
+.
+RWMu‹x
+
+
+117 
+func
+ 
+NewPrÙobufCommªdRegi¡ry
+(è*
+PrÙobufCommªdRegi¡ry
+ {
+
+118  &
+PrÙobufCommªdRegi¡ry
+{
+
+119 
+commªdsByC©egÜy
+: 
+make
+(
+m­
+[
+¡ršg
+][]
+CommªdInfo
+),
+
+124 
+	$func
+ (
+pü
+ *
+PrÙobufCommªdRegi¡ry
+è
+	$discov”Commªds
+() {
+
+125 
+pü
+.
+mu‹x
+.
+	`Lock
+()
+
+126 
+deãr
+ 
+pü
+.
+mu‹x
+.
+	`UÆock
+()
+
+128 
+log
+.
+	`Pršn
+("Discovering device commands via…rotobuf„eflection...")
+
+131 
+pü
+.
+	`discov”Sª™iz”Commªds
+()
+
+135 
+log
+.
+	`Prštf
+("Commªd discov”y com¶‘e. Found commªd fÜ %d deviû c©egÜ›s", 
+	`Ën
+(
+pü
+.
+commªdsByC©egÜy
+))
+
+136 
+	}
+}
+
+139 
+	$func
+ (
+pü
+ *
+PrÙobufCommªdRegi¡ry
+è
+	$discov”Sª™iz”Commªds
+() {
+
+140 
+§n™iz”Commªds
+ :ğ[]
+CommªdInfo
+{}
+
+143 
+§n™iz”Commªds
+ = 
+	`­³nd
+(§n™iz”Commªds, 
+CommªdInfo
+{
+
+144 
+Name
+: "set_sanitizer_output_percentage",
+
+145 
+Di¥ÏyName
+: "Set Output Percentage",
+
+146 
+DesütiÚ
+: "Sethe sanitizer output…ercentage (0-100%)",
+
+147 
+C©egÜy
+: "sanitizerGen2",
+
+148 
+IsQu”y
+: 
+çl£
+,
+
+149 
+F›lds
+: []
+CommªdF›ld
+{
+
+151 
+Name
+: "target_percentage",
+
+152 
+Ty³
+: "int32",
+
+153 
+DesütiÚ
+: "Target output…ercentage (0-100)",
+
+154 
+Requœed
+: 
+Œue
+,
+
+155 
+Mš
+: 0,
+
+156 
+Max
+: 100,
+
+162 
+§n™iz”Commªds
+ = 
+	`­³nd
+(§n™iz”Commªds, 
+CommªdInfo
+{
+
+163 
+Name
+: "get_status",
+
+164 
+Di¥ÏyName
+: "Get Device Status",
+
+165 
+DesütiÚ
+: "Retrieve current device status‡ndelemetry",
+
+166 
+C©egÜy
+: "sanitizerGen2",
+
+167 
+IsQu”y
+: 
+Œue
+,
+
+168 
+F›lds
+: []
+CommªdF›ld
+{},
+
+171 
+pü
+.
+commªdsByC©egÜy
+["§n™iz”G’2"] = 
+§n™iz”Commªds
+
+
+172 
+log
+.
+	`Prštf
+("Discov”ed %d commªd fÜ sª™iz”G’2 deviûs", 
+	`Ën
+(
+§n™iz”Commªds
+))
+
+173 
+	}
+}
+
+176 
+	$func
+ (
+pü
+ *
+PrÙobufCommªdRegi¡ry
+è
+	`G‘CommªdsFÜC©egÜy
+(
+ÿ‹gÜy
+ 
+¡ršg
+è([]
+CommªdInfo
+, 
+boŞ
+) {
+
+177 
+pü
+.
+mu‹x
+.
+	`RLock
+()
+
+178 
+deãr
+ 
+pü
+.
+mu‹x
+.
+	`RUÆock
+()
+
+180 
+commªds
+, 
+exi¡s
+ :ğ
+pü
+.
+commªdsByC©egÜy
+[
+ÿ‹gÜy
+]
+
+181  
+commªds
+, 
+exi¡s
+
+
+182 
+	}
+}
+
+185 
+	$func
+ (
+pü
+ *
+PrÙobufCommªdRegi¡ry
+è
+	`G‘AÎC©egÜ›s
+(è[]
+¡ršg
+ {
+
+186 
+pü
+.
+mu‹x
+.
+	`RLock
+()
+
+187 
+deãr
+ 
+pü
+.
+mu‹x
+.
+	`RUÆock
+()
+
+189 
+ÿ‹gÜ›s
+ :ğ
+	`make
+([]
+¡ršg
+, 0, 
+	`Ën
+(
+pü
+.
+commªdsByC©egÜy
+))
+
+190 
+ÿ‹gÜy
+ :ğ
+¿nge
+ 
+pü
+.
+commªdsByC©egÜy
+ {
+
+191 
+ÿ‹gÜ›s
+ = 
+	`­³nd
+(ÿ‹gÜ›s, 
+ÿ‹gÜy
+)
+
+193  
+ÿ‹gÜ›s
+
+
+194 
+	}
+}
+
+	@device_logger.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+11 
+ty³
+ 
+LogLev–
+ 
+
+14 
+LogLev–Debug
+ 
+LogLev–
+ = 
+iÙa
+
+
+15 
+LogLev–Info
+
+
+16 
+LogLev–W¬n
+
+
+17 
+LogLev–E¼Ü
+
+
+20 
+	$func
+ (
+l
+ 
+LogLev–
+è
+	$SŒšg
+(è
+¡ršg
+ {
+
+21 
+l
+ {
+
+22 
+LogLev–Debug
+:
+
+24 
+LogLev–Info
+:
+
+26 
+LogLev–W¬n
+:
+
+28 
+LogLev–E¼Ü
+:
+
+33 
+	}
+}
+
+36 
+ty³
+ 
+DeviûLogEÁry
+ struct {
+
+37 
+ID
+ 
+¡ršg
+ `
+jsÚ
+:"id"`
+
+38 
+Time¡amp
+ 
+time
+.
+Time
+ `
+jsÚ
+:"timestamp"`
+
+39 
+DeviûID
+ 
+¡ršg
+ `
+jsÚ
+:"device_id"`
+
+40 
+DeviûS”Ÿl
+ 
+¡ršg
+ `
+jsÚ
+:"device_serial"`
+
+41 
+Commªd
+ 
+¡ršg
+ `
+jsÚ
+:"command"`
+
+42 
+DœeùiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"direction"`
+
+43 
+D©a
+ []
+by‹
+ `
+jsÚ
+:"data,omitempty"`
+
+44 
+D©aHex
+ 
+¡ršg
+ `
+jsÚ
+:"data_hex,omitempty"`
+
+45 
+Lev–
+ 
+LogLev–
+ `
+jsÚ
+:"level"`
+
+46 
+Mes§ge
+ 
+¡ršg
+ `
+jsÚ
+:"message"`
+
+47 
+CÜ»ÏtiÚID
+ 
+¡ršg
+ `
+jsÚ
+:"correlation_id,omitempty"`
+
+48 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category,omitempty"`
+
+49 
+Tags
+ []
+¡ršg
+ `
+jsÚ
+:"tags,omitempty"`
+
+50 
+M‘ad©a
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+jsÚ
+:"metadata,omitempty"`
+
+51 
+Sucûss
+ 
+boŞ
+ `
+jsÚ
+:"success"`
+
+52 
+Mes§geTy³
+ 
+¡ršg
+ `
+jsÚ
+:"message_type"`
+
+56 
+ty³
+ 
+DeviûLogg”
+ struct {
+
+57 
+’Œ›s
+ []*
+DeviûLogEÁry
+
+
+58 
+maxEÁr›s
+ 
+
+59 
+mu‹x
+ 
+sync
+.
+RWMu‹x
+
+
+60 
+f’ame
+ 
+¡ršg
+
+
+61 
+»gi¡ry
+ *
+PrÙobufCommªdRegi¡ry
+
+
+65 
+ty³
+ 
+LogF‹r
+ struct {
+
+66 
+DeviûID
+ 
+¡ršg
+ `
+jsÚ
+:"device_id,omitempty"`
+
+67 
+DeviûS”Ÿl
+ 
+¡ršg
+ `
+jsÚ
+:"device_serial,omitempty"`
+
+68 
+Commªd
+ 
+¡ršg
+ `
+jsÚ
+:"command,omitempty"`
+
+69 
+Lev–
+ *
+LogLev–
+ `
+jsÚ
+:"level,omitempty"`
+
+70 
+Sšû
+ 
+time
+.
+Time
+ `
+jsÚ
+:"since,omitempty"`
+
+71 
+UÁ
+ 
+time
+.
+Time
+ `
+jsÚ
+:"until,omitempty"`
+
+72 
+CÜ»ÏtiÚID
+ 
+¡ršg
+ `
+jsÚ
+:"correlation_id,omitempty"`
+
+73 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category,omitempty"`
+
+74 
+Tags
+ []
+¡ršg
+ `
+jsÚ
+:"tags,omitempty"`
+
+78 
+func
+ 
+NewDeviûLogg”
+(
+maxSize
+ è*
+DeviûLogg”
+ {
+
+79  &
+DeviûLogg”
+{
+
+80 
+’Œ›s
+: 
+make
+([]*
+DeviûLogEÁry
+, 0),
+
+81 
+maxEÁr›s
+: 
+maxSize
+,
+
+86 
+	$func
+ (
+dl
+ *
+DeviûLogg”
+è
+	$LogReque¡
+(
+deviûS”Ÿl
+, 
+commªd
+ 
+¡ršg
+, 
+d©a
+ []
+by‹
+, 
+ÿ‹gÜy
+ sŒšg, 
+gs
+ ...string) string {
+
+87 
+cÜ»ÏtiÚID
+ :ğ
+fmt
+.
+	`S´štf
+("»q_%d", 
+time
+.
+	`Now
+().
+	`UnixNªo
+())
+
+89 
+’Œy
+ :ğ&
+DeviûLogEÁry
+{
+
+90 
+ID
+: 
+fmt
+.
+	`S´štf
+("log_%d", 
+time
+.
+	`Now
+().
+	`UnixNªo
+()),
+
+91 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+92 
+DeviûID
+: 
+deviûS”Ÿl
+,
+
+93 
+DeviûS”Ÿl
+: 
+deviûS”Ÿl
+,
+
+94 
+Commªd
+: 
+commªd
+,
+
+95 
+DœeùiÚ
+: "REQUEST",
+
+96 
+D©a
+: 
+d©a
+,
+
+97 
+D©aHex
+: 
+fmt
+.
+	`S´štf
+("%x", 
+d©a
+),
+
+98 
+Lev–
+: 
+LogLev–Info
+,
+
+99 
+Mes§ge
+: 
+fmt
+.
+	`S´štf
+("S’ˆ% commªdØ%s", 
+commªd
+, 
+deviûS”Ÿl
+),
+
+100 
+CÜ»ÏtiÚID
+: 
+cÜ»ÏtiÚID
+,
+
+101 
+C©egÜy
+: 
+ÿ‹gÜy
+,
+
+102 
+Tags
+: 
+gs
+,
+
+103 
+Sucûss
+: 
+Œue
+,
+
+104 
+Mes§geTy³
+: "REQUEST",
+
+107 
+dl
+.
+	`addEÁry
+(
+’Œy
+)
+
+108  
+cÜ»ÏtiÚID
+
+
+109 
+	}
+}
+
+112 
+	$func
+ (
+dl
+ *
+DeviûLogg”
+è
+	$LogRe¥Ú£
+(
+deviûS”Ÿl
+, 
+commªd
+ 
+¡ršg
+, 
+d©a
+ []
+by‹
+, 
+cÜ»ÏtiÚID
+, 
+ÿ‹gÜy
+ sŒšg, 
+gs
+ ...string) {
+
+113 
+’Œy
+ :ğ&
+DeviûLogEÁry
+{
+
+114 
+ID
+: 
+fmt
+.
+	`S´štf
+("log_%d", 
+time
+.
+	`Now
+().
+	`UnixNªo
+()),
+
+115 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+116 
+DeviûID
+: 
+deviûS”Ÿl
+,
+
+117 
+DeviûS”Ÿl
+: 
+deviûS”Ÿl
+,
+
+118 
+Commªd
+: 
+commªd
+,
+
+119 
+DœeùiÚ
+: "RESPONSE",
+
+120 
+D©a
+: 
+d©a
+,
+
+121 
+D©aHex
+: 
+fmt
+.
+	`S´štf
+("%x", 
+d©a
+),
+
+122 
+Lev–
+: 
+LogLev–Info
+,
+
+123 
+Mes§ge
+: 
+fmt
+.
+	`S´štf
+("Reûived % »¥Ú£ from %s", 
+commªd
+, 
+deviûS”Ÿl
+),
+
+124 
+CÜ»ÏtiÚID
+: 
+cÜ»ÏtiÚID
+,
+
+125 
+C©egÜy
+: 
+ÿ‹gÜy
+,
+
+126 
+Tags
+: 
+gs
+,
+
+127 
+Sucûss
+: 
+Œue
+,
+
+128 
+Mes§geTy³
+: "RESPONSE",
+
+131 
+dl
+.
+	`addEÁry
+(
+’Œy
+)
+
+132 
+	}
+}
+
+135 
+	$func
+ (
+dl
+ *
+DeviûLogg”
+è
+	$LogE¼Ü
+(
+deviûS”Ÿl
+, 
+commªd
+, 
+mes§ge
+, 
+cÜ»ÏtiÚID
+, 
+ÿ‹gÜy
+ 
+¡ršg
+, 
+gs
+ ...string) {
+
+136 
+’Œy
+ :ğ&
+DeviûLogEÁry
+{
+
+137 
+ID
+: 
+fmt
+.
+	`S´štf
+("log_%d", 
+time
+.
+	`Now
+().
+	`UnixNªo
+()),
+
+138 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+139 
+DeviûID
+: 
+deviûS”Ÿl
+,
+
+140 
+DeviûS”Ÿl
+: 
+deviûS”Ÿl
+,
+
+141 
+Commªd
+: 
+commªd
+,
+
+142 
+DœeùiÚ
+: "ERROR",
+
+143 
+Lev–
+: 
+LogLev–E¼Ü
+,
+
+144 
+Mes§ge
+: 
+mes§ge
+,
+
+145 
+CÜ»ÏtiÚID
+: 
+cÜ»ÏtiÚID
+,
+
+146 
+C©egÜy
+: 
+ÿ‹gÜy
+,
+
+147 
+Tags
+: 
+gs
+,
+
+148 
+Sucûss
+: 
+çl£
+,
+
+149 
+Mes§geTy³
+: "ERROR",
+
+152 
+dl
+.
+	`addEÁry
+(
+’Œy
+)
+
+153 
+	}
+}
+
+156 
+	$func
+ (
+dl
+ *
+DeviûLogg”
+è
+	$addEÁry
+(
+’Œy
+ *
+DeviûLogEÁry
+) {
+
+157 
+dl
+.
+mu‹x
+.
+	`Lock
+()
+
+158 
+deãr
+ 
+dl
+.
+mu‹x
+.
+	`UÆock
+()
+
+160 
+dl
+.
+’Œ›s
+ = 
+	`­³nd
+(dl.’Œ›s, 
+’Œy
+)
+
+163 
+	`Ën
+(
+dl
+.
+’Œ›s
+è> dl.
+maxEÁr›s
+ {
+
+164 
+dl
+.
+’Œ›s
+ = dl.’Œ›s[
+	`Ën
+(dl.’Œ›s)-dl.
+maxEÁr›s
+:]
+
+166 
+	}
+}
+
+169 
+	$func
+ (
+dl
+ *
+DeviûLogg”
+è
+	`G‘EÁr›s
+(
+f‹r
+ 
+LogF‹r
+è[]*
+DeviûLogEÁry
+ {
+
+170 
+dl
+.
+mu‹x
+.
+	`RLock
+()
+
+171 
+deãr
+ 
+dl
+.
+mu‹x
+.
+	`RUÆock
+()
+
+173 
+v¬
+ 
+f‹»d
+ []*
+DeviûLogEÁry
+
+
+174 
+_
+, 
+’Œy
+ :ğ
+¿nge
+ 
+dl
+.
+’Œ›s
+ {
+
+175 
+dl
+.
+	`m©chesF‹r
+(
+’Œy
+, 
+f‹r
+) {
+
+176 
+f‹»d
+ = 
+	`­³nd
+(f‹»d, 
+’Œy
+)
+
+179  
+f‹»d
+
+
+180 
+	}
+}
+
+183 
+	$func
+ (
+dl
+ *
+DeviûLogg”
+è
+	$m©chesF‹r
+(
+’Œy
+ *
+DeviûLogEÁry
+, 
+f‹r
+ 
+LogF‹r
+è
+boŞ
+ {
+
+184 
+f‹r
+.
+DeviûID
+ !ğ"" && 
+’Œy
+.DeviceID != filter.DeviceID {
+
+185  
+çl£
+
+
+187 
+f‹r
+.
+DeviûS”Ÿl
+ !ğ"" && 
+’Œy
+.DeviceSerial != filter.DeviceSerial {
+
+188  
+çl£
+
+
+190 
+f‹r
+.
+Commªd
+ !ğ"" && 
+’Œy
+.Command != filter.Command {
+
+191  
+çl£
+
+
+193 
+f‹r
+.
+Lev–
+ !ğ
+n
+ && 
+’Œy
+.Level != *filter.Level {
+
+194  
+çl£
+
+
+196 !
+f‹r
+.
+Sšû
+.
+	`IsZ”o
+(è&& 
+’Œy
+.
+Time¡amp
+.
+	`BefÜe
+(filter.Since) {
+
+197  
+çl£
+
+
+199 
+f‹r
+.
+CÜ»ÏtiÚID
+ !ğ"" && 
+’Œy
+.CorrelationID != filter.CorrelationID {
+
+200  
+çl£
+
+
+202  
+Œue
+
+
+203 
+	}
+}
+
+206 
+	$func
+ (
+dl
+ *
+DeviûLogg”
+è
+	$Clo£
+(è
+”rÜ
+ {
+
+207 
+dl
+.
+mu‹x
+.
+	`Lock
+()
+
+208 
+deãr
+ 
+dl
+.
+mu‹x
+.
+	`UÆock
+()
+
+210 
+log
+.
+	`Pršn
+("DeviceLogger: Cleanup complete")
+
+211  
+n
+
+
+212 
+	}
+}
+
+	@handlers.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+15 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËGoDemo
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+16 
+log
+.
+	`Pršn
+("ğŸ¯ Serving Go-centric demo…age")
+
+19 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+20 
+deviûs
+ :ğ
+	`make
+([]*
+Deviû
+, 0, 
+	`Ën
+(
+n
+.devices))
+
+21 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+n
+.
+deviûs
+ {
+
+22 
+deviûs
+ = 
+	`­³nd
+(deviûs, 
+deviû
+)
+
+24 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+27 
+deviûCommªds
+ :ğ
+	`make
+(
+m­
+[
+¡ršg
+]
+DeviûCommªds
+)
+
+28 
+ÿ‹gÜ›s
+ :ğ
+n
+.
+commªdRegi¡ry
+.
+	`G‘AÎC©egÜ›s
+()
+
+29 
+_
+, 
+ÿ‹gÜy
+ :ğ
+¿nge
+ 
+ÿ‹gÜ›s
+ {
+
+30 
+commªds
+, 
+exi¡s
+ :ğ
+n
+.
+commªdRegi¡ry
+.
+	`G‘CommªdsFÜC©egÜy
+(
+ÿ‹gÜy
+)
+
+31 
+exi¡s
+ {
+
+32 
+deviûCommªds
+[
+ÿ‹gÜy
+] = 
+DeviûCommªds
+{
+
+33 
+C©egÜy
+: 
+ÿ‹gÜy
+,
+
+34 
+Commªds
+: 
+commªds
+,
+
+39 
+d©a
+ := struct {
+
+40 
+T™Ë
+ 
+¡ršg
+
+
+41 
+V”siÚ
+ 
+¡ršg
+
+
+42 
+Deviûs
+ []*
+Deviû
+
+
+43 
+DeviûCommªds
+ 
+m­
+[
+¡ršg
+]DeviceCommands
+
+45 
+T™Ë
+: "NgaSim Pool Controller - Go Demo",
+
+46 
+V”siÚ
+: 
+NgaSimV”siÚ
+,
+
+47 
+Deviûs
+: 
+deviûs
+,
+
+48 
+DeviûCommªds
+: 
+deviûCommªds
+,
+
+51 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/html")
+
+52 
+”r
+ :ğ
+goDemoTem¶©e
+.
+	`Execu‹
+(
+w
+, 
+d©a
+);ƒ¼ !ğ
+n
+ {
+
+53 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Tem¶©”rÜ: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+56 
+	}
+}
+
+59 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËDemo
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+60 
+log
+.
+	`Pršn
+("ğŸ¯ Serving JS-centric demo…age")
+
+61 
+n
+.
+	`hªdËHome
+(
+w
+, 
+r
+)
+
+62 
+	}
+}
+
+65 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËHome
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+66 
+log
+.
+	`Pršn
+("ğŸ  Serving main dashboard")
+
+69 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+70 
+deviûs
+ :ğ
+	`make
+([]*
+Deviû
+, 0, 
+	`Ën
+(
+n
+.devices))
+
+71 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+n
+.
+deviûs
+ {
+
+72 
+deviûs
+ = 
+	`­³nd
+(deviûs, 
+deviû
+)
+
+74 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+76 
+d©a
+ := struct {
+
+77 
+V”siÚ
+ 
+¡ršg
+
+
+78 
+Deviûs
+ []*
+Deviû
+
+
+80 
+V”siÚ
+: 
+NgaSimV”siÚ
+,
+
+81 
+Deviûs
+: 
+deviûs
+,
+
+84 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/html")
+
+85 
+”r
+ :ğ
+tm¶
+.
+	`Execu‹
+(
+w
+, 
+d©a
+);ƒ¼ !ğ
+n
+ {
+
+86 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Tem¶©”rÜ: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+89 
+	}
+}
+
+92 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËGoodbye
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+93 
+log
+.
+	`Pršn
+("ğŸ‘‹ Serving goodbye…age")
+
+95 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/html")
+
+96 
+”r
+ :ğ
+goodbyeTem¶©e
+.
+	`Execu‹
+(
+w
+, 
+n
+);ƒrr !=‚il {
+
+97 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Tem¶©”rÜ: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+100 
+	}
+}
+
+103 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËEx™
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+104 
+r
+.
+M‘hod
+ !ğ
+h‰p
+.
+M‘hodPo¡
+ {
+
+105 
+h‰p
+.
+	`E¼Ü
+(
+w
+, "M‘hod‚Ù‡Îowed", h‰p.
+StusM‘hodNÙAÎowed
+)
+
+109 
+log
+.
+	`Pršn
+("ğŸšª Exit„equest„eceived")
+
+112 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+113 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+114 
+»¥Ú£
+ :ğ
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+115 "sucûss": 
+Œue
+,
+
+118 
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+»¥Ú£
+)
+
+121 
+go
+ 
+	`func
+() {
+
+122 
+time
+.
+	`SË•
+(100 *ime.
+Mli£cÚd
+)
+
+123 
+log
+.
+	`Pršn
+("ğŸ§¹ Starting graceful shutdown...")
+
+124 
+n
+.
+	`ş—nup
+()
+
+125 
+os
+.
+	`Ex™
+(0)
+
+127 
+	}
+}
+
+130 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËAPI
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+131 
+log
+.
+	`Pršn
+("ğŸ“¡ API„equest: /api/devices")
+
+133 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+134 
+deviûs
+ :ğ
+	`make
+([]*
+Deviû
+, 0, 
+	`Ën
+(
+n
+.devices))
+
+135 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+n
+.
+deviûs
+ {
+
+136 
+deviûs
+ = 
+	`­³nd
+(deviûs, 
+deviû
+)
+
+138 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+140 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+141 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+143 
+”r
+ :ğ
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+deviûs
+);ƒ¼ !ğ
+n
+ {
+
+144 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("E¼Üƒncodšg JSON: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+148 
+log
+.
+	`Prštf
+("ğŸ“¤ S’ˆ%d deviû tØAPI cl›Á", 
+	`Ën
+(
+deviûs
+))
+
+149 
+	}
+}
+
+152 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËSª™iz”Commªd
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+153 
+r
+.
+M‘hod
+ !ğ
+h‰p
+.
+M‘hodPo¡
+ {
+
+154 
+h‰p
+.
+	`E¼Ü
+(
+w
+, "M‘hod‚Ù‡Îowed", h‰p.
+StusM‘hodNÙAÎowed
+)
+
+158 
+log
+.
+	`Pršn
+("ğŸ§ª Sanitizer command„equest„eceived")
+
+160 
+v¬
+ 
+»que¡
+ struct {
+
+161 
+S”Ÿl
+ 
+¡ršg
+ `
+jsÚ
+:"serial"`
+
+162 
+P”ûÁage
+ `
+jsÚ
+:"percentage"`
+
+165 
+”r
+ :ğ
+jsÚ
+.
+	`NewDecod”
+(
+r
+.
+Body
+).
+	`Decode
+(&
+»que¡
+);ƒ¼ !ğ
+n
+ {
+
+166 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Inv®id JSON: %v", 
+”r
+), h‰p.
+StusBadReque¡
+)
+
+170 
+log
+.
+	`Prštf
+("ğŸ¯ Commªd: S‘ % tØ%d%%", 
+»que¡
+.
+S”Ÿl
+,„eque¡.
+P”ûÁage
+)
+
+173 
+»que¡
+.
+P”ûÁage
+ < 0 ||„equest.Percentage > 101 {
+
+174 
+h‰p
+.
+	`E¼Ü
+(
+w
+, "P”ûÁagmu¡ b0-101", h‰p.
+StusBadReque¡
+)
+
+179 
+”r
+ :ğ
+n
+.
+	`£ndSª™iz”Commªd
+(
+»que¡
+.
+S”Ÿl
+, "§n™iz”G’2",„eque¡.
+P”ûÁage
+)
+
+181 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+182 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+184 
+»¥Ú£
+ :ğ
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+185 "sucûss": 
+”r
+ =ğ
+n
+,
+
+186 "£rŸl": 
+»que¡
+.
+S”Ÿl
+,
+
+187 "³rûÁage": 
+»que¡
+.
+P”ûÁage
+,
+
+190 
+”r
+ !ğ
+n
+ {
+
+191 
+»¥Ú£
+["”rÜ"] = 
+”r
+.
+	`E¼Ü
+()
+
+192 
+log
+.
+	`Prštf
+("âŒ Commªd faed: %v", 
+”r
+)
+
+194 
+log
+.
+	`Prštf
+("âœ… Commªd s’ˆsucûssfuÎy: % -> %d%%", 
+»que¡
+.
+S”Ÿl
+,„eque¡.
+P”ûÁage
+)
+
+197 
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+»¥Ú£
+)
+
+198 
+	}
+}
+
+201 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËSª™iz”S‹s
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+202 
+log
+.
+	`Pršn
+("ğŸ“Š Sanitizer states„equest„eceived")
+
+204 
+¡©es
+ :ğ
+n
+.
+§n™iz”CÚŒŞËr
+.
+	`G‘AÎS‹s
+()
+
+206 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+207 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+209 
+”r
+ :ğ
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+¡©es
+);ƒ¼ !ğ
+n
+ {
+
+210 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("E¼Üƒncodšg JSON: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+213 
+	}
+}
+
+216 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËPow”Lev–s
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+217 
+log
+.
+	`Pršn
+("âš¡ Power†evels„equest„eceived")
+
+219 
+Ëv–s
+ :ğ
+	`G‘V®idPow”Lev–s
+()
+
+221 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+222 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+224 
+”r
+ :ğ
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+Ëv–s
+);ƒ¼ !ğ
+n
+ {
+
+225 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("E¼Üƒncodšg JSON: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+228 
+	}
+}
+
+231 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËEm”g’cyStİ
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+232 
+r
+.
+M‘hod
+ !ğ
+h‰p
+.
+M‘hodPo¡
+ {
+
+233 
+h‰p
+.
+	`E¼Ü
+(
+w
+, "M‘hod‚Ù‡Îowed", h‰p.
+StusM‘hodNÙAÎowed
+)
+
+237 
+log
+.
+	`Pršn
+("ğŸ›‘ Emergency stop„equest„eceived")
+
+240 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+241 
+§n™iz”s
+ :ğ
+	`make
+([]*
+Deviû
+, 0)
+
+242 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+n
+.
+deviûs
+ {
+
+243 
+deviû
+.
+Ty³
+ == "sanitizerGen2" || device.Type == "Sanitizer" {
+
+244 
+§n™iz”s
+ = 
+	`­³nd
+(§n™iz”s, 
+deviû
+)
+
+247 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+249 
+»suÉs
+ :ğ
+	`make
+(
+m­
+[
+¡ršg
+]
+š‹rçû
+{})
+
+250 
+_
+, 
+§n™iz”
+ :ğ
+¿nge
+ 
+§n™iz”s
+ {
+
+251 
+”r
+ :ğ
+n
+.
+	`£ndSª™iz”Commªd
+(
+§n™iz”
+.
+S”Ÿl
+, "sanitizerGen2", 0)
+
+252 
+»suÉs
+[
+§n™iz”
+.
+S”Ÿl
+] = 
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+253 "sucûss": 
+”r
+ =ğ
+n
+,
+
+254 "”rÜ": 
+”r
+,
+
+258 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+259 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+261 
+»¥Ú£
+ :ğ
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+262 "sucûss": 
+Œue
+,
+
+264 "»suÉs": 
+»suÉs
+,
+
+267 
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+»¥Ú£
+)
+
+268 
+log
+.
+	`Prštf
+("ğŸ›‘ Em”g’cy stİ com¶‘ed fÜ %d sª™iz”s", 
+	`Ën
+(
+§n™iz”s
+))
+
+269 
+	}
+}
+
+272 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËUIS³cAPI
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+273 
+log
+.
+	`Pršn
+("ğŸ“‹ UI Spec API„equest„eceived")
+
+276 
+¥ec
+ :ğ
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+277 "v”siÚ": 
+NgaSimV”siÚ
+,
+
+279 "deviûs": []
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+284 "cÚŒŞs": []
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+291 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+292 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+294 
+”r
+ :ğ
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+¥ec
+);ƒ¼ !ğ
+n
+ {
+
+295 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("E¼Üƒncodšg JSON: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+298 
+	}
+}
+
+301 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËDeviûCommªds
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+302 
+log
+.
+	`Pršn
+("ğŸ”§ Device commands„equest„eceived")
+
+305 
+·th
+ :ğ
+¡ršgs
+.
+	`TrimP»fix
+(
+r
+.
+URL
+.
+P©h
+, "/api/device-commands/")
+
+306 
+ÿ‹gÜy
+ :ğ
+¡ršgs
+.
+	`TrimSuffix
+(
+·th
+, "/")
+
+308 
+ÿ‹gÜy
+ == "" {
+
+309 
+h‰p
+.
+	`E¼Ü
+(
+w
+, "C©egÜy„equœed", h‰p.
+StusBadReque¡
+)
+
+313 
+commªds
+, 
+exi¡s
+ :ğ
+n
+.
+commªdRegi¡ry
+.
+	`G‘CommªdsFÜC©egÜy
+(
+ÿ‹gÜy
+)
+
+314 !
+exi¡s
+ {
+
+315 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("C©egÜy '%s'‚Ù found", 
+ÿ‹gÜy
+), h‰p.
+StusNÙFound
+)
+
+319 
+»suÉ
+ :ğ
+DeviûCommªds
+{
+
+320 
+C©egÜy
+: 
+ÿ‹gÜy
+,
+
+321 
+Commªds
+: 
+commªds
+,
+
+324 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+325 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+327 
+”r
+ :ğ
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+»suÉ
+);ƒ¼ !ğ
+n
+ {
+
+328 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("E¼Üƒncodšg JSON: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+332 
+log
+.
+	`Prštf
+("ğŸ“¤ S’ˆ%d commªd fÜ c©egÜy '%s'", 
+	`Ën
+(
+commªds
+), 
+ÿ‹gÜy
+)
+
+333 
+	}
+}
+
+336 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËPrÙobufMes§ges
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+337 
+log
+.
+	`Pršn
+("ğŸ§¬ Serving…rotobuf messages…age")
+
+340 
+mes§ges
+ :ğ
+m­
+[
+¡ršg
+]
+Mes§geDesütÜ
+{}
+
+341 
+n
+.
+»æeùiÚEngše
+ !ğ
+n
+ {
+
+342 
+mes§ges
+ = 
+n
+.
+»æeùiÚEngše
+.
+	`G‘AÎMes§ges
+()
+
+346 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+347 
+deviûs
+ :ğ
+	`make
+([]*
+Deviû
+, 0, 
+	`Ën
+(
+n
+.devices))
+
+348 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+n
+.
+deviûs
+ {
+
+349 
+deviûs
+ = 
+	`­³nd
+(deviûs, 
+deviû
+)
+
+351 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+353 
+d©a
+ := struct {
+
+354 
+T™Ë
+ 
+¡ršg
+
+
+355 
+V”siÚ
+ 
+¡ršg
+
+
+356 
+Mes§ges
+ 
+m­
+[
+¡ršg
+]
+Mes§geDesütÜ
+
+
+357 
+Deviûs
+ []*
+Deviû
+
+
+359 
+T™Ë
+: "NgaSim - Protobuf Message Interface",
+
+360 
+V”siÚ
+: 
+NgaSimV”siÚ
+,
+
+361 
+Mes§ges
+: 
+mes§ges
+,
+
+362 
+Deviûs
+: 
+deviûs
+,
+
+365 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/html")
+
+366 
+”r
+ :ğ
+´ÙobufIÁ”çûTem¶©e
+.
+	`Execu‹
+(
+w
+, 
+d©a
+);ƒ¼ !ğ
+n
+ {
+
+367 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Tem¶©”rÜ: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+370 
+	}
+}
+
+373 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËT”mš®V›w
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+374 
+log
+.
+	`Pršn
+("ğŸ“º Servingerminal view…age")
+
+376 
+d©a
+ := struct {
+
+377 
+T™Ë
+ 
+¡ršg
+
+
+378 
+V”siÚ
+ 
+¡ršg
+
+
+380 
+T™Ë
+: "NgaSim - Live Terminal",
+
+381 
+V”siÚ
+: 
+NgaSimV”siÚ
+,
+
+384 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/html")
+
+385 
+”r
+ :ğ
+‹rmš®V›wTem¶©e
+.
+	`Execu‹
+(
+w
+, 
+d©a
+);ƒ¼ !ğ
+n
+ {
+
+386 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Tem¶©”rÜ: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+389 
+	}
+}
+
+392 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËWœeäameSVG
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+393 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "image/svg+xml")
+
+394 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+395 
+w
+.
+	`Wr™e
+([]
+	`by‹
+(`<
+svg
+ 
+xmÊs
+="h‰p://www.w3.Üg/2000/svg" 
+v›wBox
+="0 0 800 600">
+
+396 <
+‹xt
+ 
+x
+="400" 
+y
+="300"ext-
+ªchÜ
+="middË" 
+fÚt
+-
+size
+="24">
+NgaSim
+ 
+Wœeäame
+</text>
+
+397 </
+svg
+>`))
+
+398 
+	}
+}
+
+400 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËWœeäameMMD
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+401 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/plain")
+
+402 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+403 
+w
+.
+	`Wr™e
+([]
+	`by‹
+(`
+g¿ph
+ 
+TD
+
+
+404 
+A
+[
+NgaSim
+] --> 
+B
+[
+MQTT
+ 
+Brok”
+]
+
+405 
+B
+ --> 
+C
+[
+PoŞ
+ 
+Deviûs
+]
+
+406 
+A
+ --> 
+D
+[
+Web
+ 
+IÁ”çû
+]
+
+408 
+	}
+}
+
+410 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËUIS³cTOML
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+411 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/plain")
+
+412 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+413 
+w
+.
+	`Wr™e
+([]
+	`by‹
+(`[
+m‘a
+]
+
+414 
+t™Ë
+ = "NgaSim Pool Controller"
+
+415 
+v”siÚ
+ = "` + NgaSimVersion + `"
+
+417 
+	}
+}
+
+419 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËUIS³cTXT
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+420 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/plain")
+
+421 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+422 
+w
+.
+	`Wr™e
+([]
+	`by‹
+(`
+NgaSim
+ 
+PoŞ
+ 
+CÚŒŞËr
+ 
+UI
+ 
+S³cifiÿtiÚ
+
+
+423 
+V”siÚ
+: ` + 
+NgaSimV”siÚ
+ + `
+
+424 
+Deviû
+ 
+Ty³s
+: 
+Sª™iz”
+, 
+VSP
+, 
+ICL
+, 
+TruS’£
+, 
+H—‹r
+, 
+H—tPump
+
+
+426 
+	}
+}
+
+429 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËRoÙ
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+430 
+log
+.
+	`Pršn
+("ğŸ  Serving main interface")
+
+432 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+434 
+deviûs
+ :ğ
+	`make
+([]*
+Deviû
+, 0, 
+	`Ën
+(
+n
+.devices))
+
+435 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+n
+.
+deviûs
+ {
+
+436 
+deviûs
+ = 
+	`­³nd
+(deviûs, 
+deviû
+)
+
+438 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+441 
+sÜt
+.
+	`Sliû
+(
+deviûs
+, 
+	`func
+(
+i
+, 
+j
+ è
+boŞ
+ {
+
+442  
+deviûs
+[
+i
+].
+S”Ÿl
+ < deviûs[
+j
+].Serial
+
+445 
+d©a
+ := struct {
+
+446 
+T™Ë
+ 
+¡ršg
+
+
+447 
+V”siÚ
+ 
+¡ršg
+
+
+448 
+Deviûs
+ []*
+Deviû
+
+
+449 
+Commªds
+ 
+m­
+[
+¡ršg
+][]string
+
+451 
+T™Ë
+: "NgaSim Pool Controller",
+
+452 
+V”siÚ
+: 
+NgaSimV”siÚ
+,
+
+453 
+Deviûs
+: 
+deviûs
+,
+
+454 
+Commªds
+: 
+n
+.
+deviûCommªds
+,
+
+457 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/html")
+
+458 
+”r
+ :ğ
+goDemoTem¶©e
+.
+	`Execu‹
+(
+w
+, 
+d©a
+);ƒ¼ !ğ
+n
+ {
+
+459 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Tem¶©”rÜ: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+462 
+	}
+}
+
+465 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËDeviûs
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+466 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+467 
+deviûs
+ :ğ
+	`make
+([]*
+Deviû
+, 0, 
+	`Ën
+(
+n
+.devices))
+
+468 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+n
+.
+deviûs
+ {
+
+469 
+deviûs
+ = 
+	`­³nd
+(deviûs, 
+deviû
+)
+
+471 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+474 
+sÜt
+.
+	`Sliû
+(
+deviûs
+, 
+	`func
+(
+i
+, 
+j
+ è
+boŞ
+ {
+
+475  
+deviûs
+[
+i
+].
+S”Ÿl
+ < deviûs[
+j
+].Serial
+
+478 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+479 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+480 
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+deviûs
+)
+
+481 
+	}
+}
+
+	@job_engine.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+14 
+ty³
+ 
+JobAùiÚ
+ struct {
+
+15 
+Ty³
+ 
+	m¡ršg
+ `
+	mjsÚ
+:"ty³" 
+yaml
+:"type"`
+
+16 
+DeviûID
+ 
+¡ršg
+ `
+jsÚ
+:"deviû_id" 
+yaml
+:"device_id"`
+
+17 
+Mes§geTy³
+ 
+¡ršg
+ `
+jsÚ
+:"mes§ge_ty³" 
+yaml
+:"message_type"`
+
+18 
+P¬am‘”s
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+jsÚ
+:"·¿m‘”s" 
+yaml
+:"parameters"`
+
+19 
+Wa™Du¿tiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"wa™_du¿tiÚ" 
+yaml
+:"wait_duration"`
+
+20 
+CÚd™iÚ
+ *
+JobCÚd™iÚ
+ `
+jsÚ
+:"cÚd™iÚ" 
+yaml
+:"condition"`
+
+21 
+OnSucûss
+ []
+JobAùiÚ
+ `
+jsÚ
+:"Ú_sucûss" 
+yaml
+:"on_success"`
+
+22 
+OnFau»
+ []
+JobAùiÚ
+ `
+jsÚ
+:"Ú_çu»" 
+yaml
+:"on_failure"`
+
+23 
+R‘ry
+ *
+R‘ryCÚfig
+ `
+jsÚ
+:"»Œy" 
+yaml
+:"retry"`
+
+24 
+Tags
+ []
+¡ršg
+ `
+jsÚ
+:"gs" 
+yaml
+:"tags"`
+
+28 
+ty³
+ 
+JobCÚd™iÚ
+ struct {
+
+29 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"ty³" 
+yaml
+:"type"`
+
+30 
+DeviûID
+ 
+¡ršg
+ `
+jsÚ
+:"deviû_id" 
+yaml
+:"device_id"`
+
+31 
+F›ldP©h
+ 
+¡ršg
+ `
+jsÚ
+:"f›ld_·th" 
+yaml
+:"field_path"`
+
+32 
+O³¿tÜ
+ 
+¡ršg
+ `
+jsÚ
+:"İ”©Ü" 
+yaml
+:"operator"`
+
+33 
+V®ue
+ 
+š‹rçû
+{} `
+jsÚ
+:"v®ue" 
+yaml
+:"value"`
+
+34 
+Timeout
+ 
+¡ršg
+ `
+jsÚ
+:"timeout" 
+yaml
+:"timeout"`
+
+38 
+ty³
+ 
+R‘ryCÚfig
+ struct {
+
+39 
+MaxA‰em±s
+ `
+jsÚ
+:"max_©‹m±s" 
+yaml
+:"max_attempts"`
+
+40 
+IÁ”v®
+ 
+¡ršg
+ `
+jsÚ
+:"š‹rv®" 
+yaml
+:"interval"`
+
+41 
+Backoff
+ 
+¡ršg
+ `
+jsÚ
+:"backoff" 
+yaml
+:"backoff"`
+
+45 
+ty³
+ 
+Job
+ struct {
+
+46 
+ID
+ 
+¡ršg
+ `
+jsÚ
+:"id" 
+yaml
+:"id"`
+
+47 
+Name
+ 
+¡ršg
+ `
+jsÚ
+:"Çme" 
+yaml
+:"name"`
+
+48 
+DesütiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"desütiÚ" 
+yaml
+:"description"`
+
+49 
+ScheduË
+ *ScheduË `
+jsÚ
+:"scheduË" 
+yaml
+:"schedule"`
+
+50 
+AùiÚs
+ []
+JobAùiÚ
+ `
+jsÚ
+:"aùiÚs" 
+yaml
+:"actions"`
+
+51 
+EÇbËd
+ 
+boŞ
+ `
+jsÚ
+:"’abËd" 
+yaml
+:"enabled"`
+
+52 
+Tags
+ []
+¡ršg
+ `
+jsÚ
+:"gs" 
+yaml
+:"tags"`
+
+53 
+C»©edAt
+ 
+time
+.
+Time
+ `
+jsÚ
+:"ü—‹d_©" 
+yaml
+:"created_at"`
+
+54 
+Upd©edAt
+ 
+time
+.
+Time
+ `
+jsÚ
+:"upd©ed_©" 
+yaml
+:"updated_at"`
+
+58 
+ty³
+ 
+ScheduË
+ struct {
+
+59 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"ty³" 
+yaml
+:"type"`
+
+60 
+IÁ”v®
+ 
+¡ršg
+ `
+jsÚ
+:"š‹rv®" 
+yaml
+:"interval"`
+
+61 
+CrÚ
+ 
+¡ršg
+ `
+jsÚ
+:"üÚ" 
+yaml
+:"cron"`
+
+62 
+S¹At
+ 
+¡ršg
+ `
+jsÚ
+:"¡¬t_©" 
+yaml
+:"start_at"`
+
+66 
+ty³
+ 
+JobExecutiÚ
+ struct {
+
+67 
+ID
+ 
+¡ršg
+ `
+jsÚ
+:"id"`
+
+68 
+JobID
+ 
+¡ršg
+ `
+jsÚ
+:"job_id"`
+
+69 
+S¹Time
+ 
+time
+.
+Time
+ `
+jsÚ
+:"start_time"`
+
+70 
+EndTime
+ 
+time
+.
+Time
+ `
+jsÚ
+:"end_time"`
+
+71 
+Stus
+ 
+¡ršg
+ `
+jsÚ
+:"status"`
+
+72 
+ResuÉs
+ []
+AùiÚResuÉ
+ `
+jsÚ
+:"results"`
+
+73 
+E¼Ü
+ 
+¡ršg
+ `
+jsÚ
+:"error,omitempty"`
+
+74 
+CÚ‹xt
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+jsÚ
+:"context"`
+
+78 
+ty³
+ 
+AùiÚResuÉ
+ struct {
+
+79 
+AùiÚIndex
+ `
+jsÚ
+:"action_index"`
+
+80 
+AùiÚTy³
+ 
+¡ršg
+ `
+jsÚ
+:"action_type"`
+
+81 
+S¹Time
+ 
+time
+.
+Time
+ `
+jsÚ
+:"start_time"`
+
+82 
+EndTime
+ 
+time
+.
+Time
+ `
+jsÚ
+:"end_time"`
+
+83 
+Sucûss
+ 
+boŞ
+ `
+jsÚ
+:"success"`
+
+84 
+E¼Ü
+ 
+¡ršg
+ `
+jsÚ
+:"error,omitempty"`
+
+85 
+Re¥Ú£
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+jsÚ
+:"response,omitempty"`
+
+86 
+R‘ryA‰em±s
+ `
+jsÚ
+:"retry_attempts"`
+
+90 
+ty³
+ 
+JobEngše
+ struct {
+
+91 
+jobs
+ 
+m­
+[
+¡ršg
+]*
+Job
+
+
+92 
+executiÚs
+ 
+m­
+[
+¡ršg
+]*
+JobExecutiÚ
+
+
+93 
+mu‹x
+ 
+sync
+.
+RWMu‹x
+
+
+94 
+scheduËr
+ *
+JobScheduËr
+
+
+95 
+deviûComm
+ *
+DeviûCommuniÿtÜ
+
+
+96 
+logg”
+ *
+DeviûLogg”
+
+
+97 
+»gi¡ry
+ *
+PrÙobufCommªdRegi¡ry
+
+
+98 
+¡İChª
+ 
+chª
+ struct{}
+
+99 
+ruÂšg
+ 
+boŞ
+
+
+103 
+func
+ 
+NewJobEngše
+(
+deviûComm
+ *
+DeviûCommuniÿtÜ
+, 
+logg”
+ *
+DeviûLogg”
+, 
+»gi¡ry
+ *
+PrÙobufCommªdRegi¡ry
+è*
+	gJobEngše
+ {
+
+104 
+	g’gše
+ :ğ&
+JobEngše
+{
+
+105 
+jobs
+: 
+make
+(
+m­
+[
+¡ršg
+]*
+Job
+),
+
+106 
+executiÚs
+: 
+make
+(
+m­
+[
+¡ršg
+]*
+JobExecutiÚ
+),
+
+107 
+deviûComm
+: deviceComm,
+
+108 
+logg”
+:†ogger,
+
+109 
+»gi¡ry
+:„egistry,
+
+110 
+¡İChª
+: 
+make
+(
+chª
+ struct{}),
+
+113 
+’gše
+.
+scheduËr
+ = 
+NewJobScheduËr
+(engine)
+
+114  
+’gše
+
+
+118 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$LßdJobsFromFe
+(
+f’ame
+ 
+¡ršg
+è
+”rÜ
+ {
+
+119 
+d©a
+, 
+”r
+ :ğ
+os
+.
+	`R—dFe
+(
+f’ame
+)
+
+120 
+”r
+ !ğ
+n
+ {
+
+121  
+fmt
+.
+	`E¼Üf
+("”rÜ„—dšg job fe: %v", 
+”r
+)
+
+124 
+v¬
+ 
+jobs
+ []
+Job
+
+
+127 
+”r
+ :ğ
+jsÚ
+.
+	`Unm¬sh®
+(
+d©a
+, &
+jobs
+);ƒ¼ !ğ
+n
+ {
+
+128 
+”r
+ :ğ
+yaml
+.
+	`Unm¬sh®
+(
+d©a
+, &
+jobs
+);ƒ¼ !ğ
+n
+ {
+
+129  
+fmt
+.
+	`E¼Üf
+("”rÜ…¬sšg job fÑr›d JSON‡nd YAML): %v", 
+”r
+)
+
+134 
+_
+, 
+job
+ :ğ
+¿nge
+ 
+jobs
+ {
+
+135 
+”r
+ :ğ
+je
+.
+	`AddJob
+(&
+job
+);ƒ¼ !ğ
+n
+ {
+
+136  
+fmt
+.
+	`E¼Üf
+("”rÜ‡ddšg job %s: %v", 
+job
+.
+ID
+, 
+”r
+)
+
+140  
+n
+
+
+141 
+	}
+}
+
+144 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$AddJob
+(
+job
+ *
+Job
+è
+”rÜ
+ {
+
+145 
+je
+.
+mu‹x
+.
+	`Lock
+()
+
+146 
+deãr
+ 
+je
+.
+mu‹x
+.
+	`UÆock
+()
+
+149 
+”r
+ :ğ
+je
+.
+	`v®id©eJob
+(
+job
+);ƒ¼ !ğ
+n
+ {
+
+150  
+”r
+
+
+154 
+now
+ :ğ
+time
+.
+	`Now
+()
+
+155 
+job
+.
+C»©edAt
+.
+	`IsZ”o
+() {
+
+156 
+job
+.
+C»©edAt
+ = 
+now
+
+
+158 
+job
+.
+Upd©edAt
+ = 
+now
+
+
+160 
+je
+.
+jobs
+[
+job
+.
+ID
+] = job
+
+163 
+job
+.
+EÇbËd
+ && job.
+ScheduË
+ !ğ
+n
+ {
+
+164 
+je
+.
+scheduËr
+.
+	`ScheduËJob
+(
+job
+)
+
+167  
+n
+
+
+168 
+	}
+}
+
+171 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$v®id©eJob
+(
+job
+ *
+Job
+è
+”rÜ
+ {
+
+172 
+job
+.
+ID
+ == "" {
+
+173  
+fmt
+.
+	`E¼Üf
+("job ID is„equired")
+
+176 
+job
+.
+Name
+ == "" {
+
+177  
+fmt
+.
+	`E¼Üf
+("job‚ame is„equired")
+
+180 
+	`Ën
+(
+job
+.
+AùiÚs
+) == 0 {
+
+181  
+fmt
+.
+	`E¼Üf
+("job must have‡t†east one‡ction")
+
+185 
+i
+, 
+aùiÚ
+ :ğ
+¿nge
+ 
+job
+.
+AùiÚs
+ {
+
+186 
+”r
+ :ğ
+je
+.
+	`v®id©eAùiÚ
+(&
+aùiÚ
+);ƒ¼ !ğ
+n
+ {
+
+187  
+fmt
+.
+	`E¼Üf
+("aùiÚ %d: %v", 
+i
+, 
+”r
+)
+
+191  
+n
+
+
+192 
+	}
+}
+
+195 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$v®id©eAùiÚ
+(
+aùiÚ
+ *
+JobAùiÚ
+è
+”rÜ
+ {
+
+196 
+aùiÚ
+.
+Ty³
+ {
+
+198 
+aùiÚ
+.
+DeviûID
+ == "" {
+
+199  
+fmt
+.
+	`E¼Üf
+("device_id is„equired for send_message‡ction")
+
+201 
+aùiÚ
+.
+Mes§geTy³
+ == "" {
+
+202  
+fmt
+.
+	`E¼Üf
+("message_type is„equired for send_message‡ction")
+
+205 
+aùiÚ
+.
+Wa™Du¿tiÚ
+ == "" {
+
+206  
+fmt
+.
+	`E¼Üf
+("wait_duration is„equired for wait‡ction")
+
+208 
+_
+, 
+”r
+ :ğ
+time
+.
+	`P¬£Du¿tiÚ
+(
+aùiÚ
+.
+Wa™Du¿tiÚ
+);ƒ¼ !ğ
+n
+ {
+
+209  
+fmt
+.
+	`E¼Üf
+("šv®id wa™_du¿tiÚ: %v", 
+”r
+)
+
+212 
+aùiÚ
+.
+CÚd™iÚ
+ =ğ
+n
+ {
+
+213  
+fmt
+.
+	`E¼Üf
+("condition is„equired for condition‡ction")
+
+216  
+fmt
+.
+	`E¼Üf
+("unknowÀaùiÚy³: %s", 
+aùiÚ
+.
+Ty³
+)
+
+219  
+n
+
+
+220 
+	}
+}
+
+223 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	`Execu‹Job
+(
+jobID
+ 
+¡ršg
+è(*
+JobExecutiÚ
+, 
+”rÜ
+) {
+
+224 
+je
+.
+mu‹x
+.
+	`RLock
+()
+
+225 
+job
+, 
+exi¡s
+ :ğ
+je
+.
+jobs
+[
+jobID
+]
+
+226 
+je
+.
+mu‹x
+.
+	`RUÆock
+()
+
+228 !
+exi¡s
+ {
+
+229  
+n
+, 
+fmt
+.
+	`E¼Üf
+("job % nÙ found", 
+jobID
+)
+
+232 !
+job
+.
+EÇbËd
+ {
+
+233  
+n
+, 
+fmt
+.
+	`E¼Üf
+("job % i di§bËd", 
+jobID
+)
+
+236  
+je
+.
+	`execu‹JobIÁ”Çl
+(
+job
+)
+
+237 
+	}
+}
+
+240 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	`execu‹JobIÁ”Çl
+(
+job
+ *
+Job
+è(*
+JobExecutiÚ
+, 
+”rÜ
+) {
+
+241 
+executiÚ
+ :ğ&
+JobExecutiÚ
+{
+
+242 
+ID
+: 
+fmt
+.
+	`S´štf
+("exec_%d", 
+time
+.
+	`Now
+().
+	`UnixNªo
+()),
+
+243 
+JobID
+: 
+job
+.
+ID
+,
+
+244 
+S¹Time
+: 
+time
+.
+	`Now
+(),
+
+245 
+Stus
+: "running",
+
+246 
+ResuÉs
+: 
+	`make
+([]
+AùiÚResuÉ
+, 0),
+
+247 
+CÚ‹xt
+: 
+	`make
+(
+m­
+[
+¡ršg
+]
+š‹rçû
+{}),
+
+251 
+je
+.
+mu‹x
+.
+	`Lock
+()
+
+252 
+je
+.
+executiÚs
+[
+executiÚ
+.
+ID
+] =ƒxecution
+
+253 
+je
+.
+mu‹x
+.
+	`UÆock
+()
+
+256 
+i
+, 
+aùiÚ
+ :ğ
+¿nge
+ 
+job
+.
+AùiÚs
+ {
+
+257 
+»suÉ
+ :ğ
+je
+.
+	`execu‹AùiÚ
+(&
+aùiÚ
+, 
+i
+, 
+executiÚ
+)
+
+258 
+executiÚ
+.
+ResuÉs
+ = 
+	`­³nd
+ÓxecutiÚ.ResuÉs, 
+»suÉ
+)
+
+260 !
+»suÉ
+.
+Sucûss
+ {
+
+261 
+executiÚ
+.
+Stus
+ = "failed"
+
+262 
+executiÚ
+.
+E¼Ü
+ = 
+»suÉ
+.Error
+
+267 
+executiÚ
+.
+EndTime
+ = 
+time
+.
+	`Now
+()
+
+268 
+executiÚ
+.
+Stus
+ == "running" {
+
+269 
+executiÚ
+.
+Stus
+ = "completed"
+
+272  
+executiÚ
+, 
+n
+
+
+273 
+	}
+}
+
+276 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$execu‹AùiÚ
+(
+aùiÚ
+ *
+JobAùiÚ
+, 
+šdex
+ , 
+executiÚ
+ *
+JobExecutiÚ
+è
+AùiÚResuÉ
+ {
+
+277 
+»suÉ
+ :ğ
+AùiÚResuÉ
+{
+
+278 
+AùiÚIndex
+: 
+šdex
+,
+
+279 
+AùiÚTy³
+: 
+aùiÚ
+.
+Ty³
+,
+
+280 
+S¹Time
+: 
+time
+.
+	`Now
+(),
+
+283 
+v¬
+ 
+”r
+ 
+”rÜ
+
+
+284 
+maxA‰em±s
+ := 1
+
+285 
+š‹rv®
+ :ğ
+time
+.
+SecÚd
+
+
+287 
+aùiÚ
+.
+R‘ry
+ !ğ
+n
+ {
+
+288 
+maxA‰em±s
+ = 
+aùiÚ
+.
+R‘ry
+.
+MaxA‰em±s
+
+
+289 
+aùiÚ
+.
+R‘ry
+.
+IÁ”v®
+ != "" {
+
+290 
+d
+, 
+·r£E¼
+ :ğ
+time
+.
+	`P¬£Du¿tiÚ
+(
+aùiÚ
+.
+R‘ry
+.
+IÁ”v®
+);…¬£E¼ =ğ
+n
+ {
+
+291 
+š‹rv®
+ = 
+d
+
+
+297 
+©‹m±
+ :ğ1;‡‰em± <ğ
+maxA‰em±s
+;‡ttempt++ {
+
+298 
+»suÉ
+.
+R‘ryA‰em±s
+ = 
+©‹m±
+ - 1
+
+300 
+aùiÚ
+.
+Ty³
+ {
+
+302 
+”r
+ = 
+je
+.
+	`execu‹S’dMes§ge
+(
+aùiÚ
+, 
+executiÚ
+, &
+»suÉ
+)
+
+304 
+”r
+ = 
+je
+.
+	`execu‹Wa™
+(
+aùiÚ
+)
+
+306 
+”r
+ = 
+je
+.
+	`execu‹CÚd™iÚ
+(
+aùiÚ
+, 
+executiÚ
+)
+
+308 
+”r
+ = 
+fmt
+.
+	`E¼Üf
+("unknowÀaùiÚy³: %s", 
+aùiÚ
+.
+Ty³
+)
+
+311 
+”r
+ =ğ
+n
+ {
+
+312 
+»suÉ
+.
+Sucûss
+ = 
+Œue
+
+
+316 
+©‹m±
+ < 
+maxA‰em±s
+ {
+
+317 
+time
+.
+	`SË•
+(
+š‹rv®
+)
+
+319 
+aùiÚ
+.
+R‘ry
+ !ğ
+n
+ &&‡ùiÚ.R‘ry.
+Backoff
+ == "exponential" {
+
+320 
+š‹rv®
+ *= 2
+
+325 
+»suÉ
+.
+EndTime
+ = 
+time
+.
+	`Now
+()
+
+326 
+”r
+ !ğ
+n
+ {
+
+327 
+»suÉ
+.
+E¼Ü
+ = 
+”r
+.
+	`E¼Ü
+()
+
+330  
+»suÉ
+
+
+331 
+	}
+}
+
+334 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$execu‹S’dMes§ge
+(
+aùiÚ
+ *
+JobAùiÚ
+, 
+executiÚ
+ *
+JobExecutiÚ
+, 
+»suÉ
+ *
+AùiÚResuÉ
+è
+”rÜ
+ {
+
+361 
+fmt
+.
+	`Prštf
+("ğŸ“¤ Would s’d mes§ge: % tØdeviû: %s\n", 
+aùiÚ
+.
+Mes§geTy³
+,‡ùiÚ.
+DeviûID
+)
+
+364 
+»suÉ
+.
+Re¥Ú£
+ = 
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+365 "mes§ge_ty³": 
+aùiÚ
+.
+Mes§geTy³
+,
+
+366 "deviû_id": 
+aùiÚ
+.
+DeviûID
+,
+
+369  
+n
+
+
+370 
+	}
+}
+
+373 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$execu‹Wa™
+(
+aùiÚ
+ *
+JobAùiÚ
+è
+”rÜ
+ {
+
+374 
+du¿tiÚ
+, 
+”r
+ :ğ
+time
+.
+	`P¬£Du¿tiÚ
+(
+aùiÚ
+.
+Wa™Du¿tiÚ
+)
+
+375 
+”r
+ !ğ
+n
+ {
+
+376  
+”r
+
+
+379 
+time
+.
+	`SË•
+(
+du¿tiÚ
+)
+
+380  
+n
+
+
+381 
+	}
+}
+
+384 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$execu‹CÚd™iÚ
+(
+aùiÚ
+ *
+JobAùiÚ
+, 
+executiÚ
+ *
+JobExecutiÚ
+è
+”rÜ
+ {
+
+387  
+n
+
+
+388 
+	}
+}
+
+391 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	`pİuÏ‹Mes§ge
+(
+msg
+ 
+š‹rçû
+{
+	}
+}, 
+·¿ms
+ 
+	gm­
+[
+¡ršg
+]
+	gš‹rçû
+{}è
+	g”rÜ
+ {
+
+394  
+	gn
+
+
+398 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	`´ÙoToM­
+(
+msg
+ 
+š‹rçû
+{
+	}
+}è
+	gm­
+[
+¡ršg
+]
+	gš‹rçû
+{} {
+
+400  
+make
+(
+m­
+[
+¡ršg
+]
+š‹rçû
+{})
+
+404 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	$G‘Jobs
+(è
+m­
+[
+¡ršg
+]*
+Job
+ {
+
+405 
+je
+.
+mu‹x
+.
+	`RLock
+()
+
+406 
+deãr
+ 
+je
+.
+mu‹x
+.
+	`RUÆock
+()
+
+408 
+»suÉ
+ :ğ
+	`make
+(
+m­
+[
+¡ršg
+]*
+Job
+)
+
+409 
+k
+, 
+v
+ :ğ
+¿nge
+ 
+je
+.
+jobs
+ {
+
+410 
+»suÉ
+[
+k
+] = 
+v
+
+
+412  
+»suÉ
+
+
+413 
+	}
+}
+
+416 
+	$func
+ (
+je
+ *
+JobEngše
+è
+	`G‘ExecutiÚs
+(
+jobID
+ 
+¡ršg
+, 
+lim™
+ è[]*
+JobExecutiÚ
+ {
+
+417 
+je
+.
+mu‹x
+.
+	`RLock
+()
+
+418 
+deãr
+ 
+je
+.
+mu‹x
+.
+	`RUÆock
+()
+
+420 
+v¬
+ 
+executiÚs
+ []*
+JobExecutiÚ
+
+
+421 
+_
+, 
+exec
+ :ğ
+¿nge
+ 
+je
+.
+executiÚs
+ {
+
+422 
+jobID
+ =ğ"" || 
+exec
+.
+JobID
+ == jobID {
+
+423 
+executiÚs
+ = 
+	`­³nd
+ÓxecutiÚs, 
+exec
+)
+
+430  
+executiÚs
+
+
+431 
+	}
+}
+
+434 
+ty³
+ 
+JobScheduËr
+ struct {
+
+435 
+’gše
+ *
+	mJobEngše
+
+
+439 
+func
+ 
+NewJobScheduËr
+(
+’gše
+ *
+JobEngše
+è*
+	gJobScheduËr
+ {
+
+440  &
+	gJobScheduËr
+{
+	g’gše
+: 
+’gše
+}
+
+444 
+	$func
+ (
+js
+ *
+JobScheduËr
+è
+	$ScheduËJob
+(
+job
+ *
+Job
+) {
+
+447 
+	}
+}
+
+450 
+ty³
+ 
+DeviûCommuniÿtÜ
+ 
+š‹rçû
+ {
+
+451 
+S’dMes§ge
+(
+deviûID
+ 
+¡ršg
+, 
+mes§ge
+ 
+š‹rçû
+{}è(
+	gš‹rçû
+{}, 
+	g”rÜ
+)
+
+	@main.go
+
+10 
+·ckage
+ 
+maš
+
+
+12 
+impÜt
+ (
+
+28 
+mq‰
+ "github.com/eclipse/paho.mqtt.golang"
+
+34 cÚ¡ 
+	gNgaSimV”siÚ
+ = "2.1.3"
+
+38 
+ty³
+ 
+UIS³c
+ struct {
+
+39 
+M‘a
+ 
+M‘aInfo
+ `
+toml
+:"meta"`
+
+40 
+Dashbßrd
+ Dashbßrd `
+toml
+:"dashboard"`
+
+41 
+DeviûTy³s
+ []
+DeviûTy³
+ `
+toml
+:"device_type"`
+
+42 
+T–em‘ryCÚfig
+ T–em‘ryCÚfig `
+toml
+:"telemetry_config"`
+
+43 
+DeviûInfoF›lds
+ []
+DeviûInfoF›ld
+ `
+toml
+:"device_info_fields"`
+
+47 
+ty³
+ 
+M‘aInfo
+ struct {
+
+48 
+T™Ë
+ 
+¡ršg
+ `
+toml
+:"title"`
+
+49 
+V”siÚ
+ 
+¡ršg
+ `
+toml
+:"version"`
+
+50 
+AuthÜ
+ 
+¡ršg
+ `
+toml
+:"author"`
+
+54 
+ty³
+ 
+Dashbßrd
+ struct {
+
+55 
+Name
+ 
+¡ršg
+ `
+toml
+:"name"`
+
+56 
+ShowOÆše
+ 
+boŞ
+ `
+toml
+:"show_online"`
+
+57 
+ShowOfæše
+ 
+boŞ
+ `
+toml
+:"show_offline"`
+
+58 
+DashbßrdF›lds
+ []
+¡ršg
+ `
+toml
+:"dashboard_fields"`
+
+59 
+Visu®
+ 
+DashbßrdVisu®
+ `
+toml
+:"visual"`
+
+63 
+ty³
+ 
+DashbßrdVisu®
+ struct {
+
+64 
+V›w
+ 
+¡ršg
+ `
+toml
+:"view"`
+
+65 
+OÆšeCŞÜ
+ 
+¡ršg
+ `
+toml
+:"online_color"`
+
+66 
+OfæšeCŞÜ
+ 
+¡ršg
+ `
+toml
+:"offline_color"`
+
+67 
+E¼ÜFÏshCŞÜ
+ 
+¡ršg
+ `
+toml
+:"error_flash_color"`
+
+71 
+ty³
+ 
+DeviûTy³
+ struct {
+
+72 
+Name
+ 
+¡ršg
+ `
+toml
+:"name"`
+
+73 
+ShÜt
+ 
+¡ršg
+ `
+toml
+:"short"`
+
+74 
+C©egÜy
+ 
+¡ršg
+ `
+toml
+:"category"`
+
+75 
+Widg‘s
+ []
+Widg‘
+ `
+toml
+:"widget"`
+
+79 
+ty³
+ 
+Widg‘
+ struct {
+
+80 
+ID
+ 
+¡ršg
+ `
+toml
+:"id"`
+
+81 
+Ty³
+ 
+¡ršg
+ `
+toml
+:"type"`
+
+82 
+Lab–
+ 
+¡ršg
+ `
+toml
+:"label"`
+
+83 
+DesütiÚ
+ 
+¡ršg
+ `
+toml
+:"description,omitempty"`
+
+84 
+Prİ”t›s
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+toml
+:"properties,omitempty"`
+
+85 
+Dig™s
+ `
+toml
+:"digits,omitempty"`
+
+86 
+S‹s
+ []
+¡ršg
+ `
+toml
+:"states,omitempty"`
+
+87 
+Visu®
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+toml
+:"visual,omitempty"`
+
+88 
+ChªÃls
+ []
+¡ršg
+ `
+toml
+:"channels,omitempty"`
+
+89 
+Rªge
+ []`
+toml
+:"range,omitempty"`
+
+91 
+F®lbackWh’Wa™šg
+ 
+¡ršg
+ `
+toml
+:"fallback_when_waiting,omitempty"`
+
+92 
+F®lbackWh’Off
+ 
+¡ršg
+ `
+toml
+:"fallback_when_off,omitempty"`
+
+93 
+F®lbackWh’Missšg
+ 
+¡ršg
+ `
+toml
+:"fallback_when_missing,omitempty"`
+
+94 
+FÏshšgWh’Rampšg
+ 
+boŞ
+ `
+toml
+:"flashing_when_ramping,omitempty"`
+
+95 
+PossibËV®ues
+ []
+¡ršg
+ `
+toml
+:"possible_values,omitempty"`
+
+99 
+ty³
+ 
+T–em‘ryCÚfig
+ struct {
+
+100 
+Lab–
+ 
+¡ršg
+ `
+toml
+:"label"`
+
+101 
+Widg‘
+ 
+¡ršg
+ `
+toml
+:"widget"`
+
+102 
+NÙes
+ 
+¡ršg
+ `
+toml
+:"notes"`
+
+106 
+ty³
+ 
+DeviûInfoF›ld
+ struct {
+
+107 
+Name
+ 
+¡ršg
+ `
+toml
+:"name"`
+
+108 
+Ty³
+ 
+¡ršg
+ `
+toml
+:"type"`
+
+109 
+I‹mTy³
+ 
+¡ršg
+ `
+toml
+:"item_type,omitempty"`
+
+114 
+ty³
+ 
+NgaSim
+ struct {
+
+115 
+deviûs
+ 
+m­
+[
+¡ršg
+]*
+Deviû
+
+
+116 
+mu‹x
+ 
+sync
+.
+RWMu‹x
+
+
+117 
+mq‰
+ mq‰.
+Cl›Á
+
+
+118 
+£rv”
+ *
+h‰p
+.
+S”v”
+
+
+119 
+pŞËrCmd
+ *
+exec
+.
+Cmd
+
+
+120 
+logg”
+ *
+DeviûLogg”
+
+
+121 
+commªdRegi¡ry
+ *
+PrÙobufCommªdRegi¡ry
+
+
+122 
+§n™iz”CÚŒŞËr
+ *
+Sª™iz”CÚŒŞËr
+
+
+125 
+»æeùiÚEngše
+ *
+PrÙobufReæeùiÚEngše
+
+
+126 
+‹rmš®Logg”
+ *
+T”mš®Logg”
+
+
+127 
+pİupG’”©Ü
+ *
+PİupUIG’”©Ü
+
+
+130 
+deviûCommªds
+ 
+m­
+[
+¡ršg
+][]string
+
+135 
+MQTTBrok”
+ = "tcp://169.254.1.1:1883"
+
+136 
+MQTTCl›ÁID
+ = "NgaSim-WebUI"
+
+141 
+TİicAÂounû
+ = "async/+/+/anc"
+
+142 
+TİicInfo
+ = "async/+/+/info"
+
+143 
+TİicT–em‘ry
+ = "async/+/+/dt"
+
+144 
+TİicE¼Ü
+ = "async/+/+/error"
+
+145 
+TİicStus
+ = "async/+/+/sts"
+
+175 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$cÚÃùMQTT
+(è
+”rÜ
+ {
+
+176 
+log
+.
+	`Prštf
+("ğŸ”Œ CÚÃùšgØMQTT brok”: %s", 
+MQTTBrok”
+)
+
+180 
+İts
+ :ğ
+mq‰
+.
+	`NewCl›ÁO±iÚs
+()
+
+183 
+İts
+.
+	`AddBrok”
+(
+MQTTBrok”
+)
+
+184 
+İts
+.
+	`S‘Cl›ÁID
+(
+MQTTCl›ÁID
+)
+
+185 
+İts
+.
+	`S‘CËªSessiÚ
+(
+Œue
+)
+
+186 
+İts
+.
+	`S‘AutoRecÚÃù
+(
+Œue
+)
+
+187 
+İts
+.
+	`S‘K“pAlive
+(30 * 
+time
+.
+SecÚd
+)
+
+193 
+İts
+.
+	`S‘CÚÃùiÚLo¡HªdËr
+(
+	`func
+(
+ş›Á
+ 
+mq‰
+.
+Cl›Á
+, 
+”r
+ 
+”rÜ
+) {
+
+194 
+log
+.
+	`Prštf
+("ğŸ”¥ MQTT cÚÃùiÚ†o¡: %v", 
+”r
+)
+
+195 
+log
+.
+	`Pršn
+(" Auto-reconnect will‡ttempto„estore connection...")
+
+201 
+İts
+.
+	`S‘OnCÚÃùHªdËr
+(
+	`func
+(
+ş›Á
+ 
+mq‰
+.
+Cl›Á
+) {
+
+202 
+log
+.
+	`Prštf
+("âœ… CÚÃùedØMQTT brok”: %s", 
+MQTTBrok”
+)
+
+203 
+log
+.
+	`Pršn
+("ğŸ”” Subscribingo device‡nnouncement‡ndelemetryopics...")
+
+206 
+sim
+.
+	`subsüibeToTİics
+()
+
+211 
+sim
+.
+mq‰
+ = mq‰.
+	`NewCl›Á
+(
+İts
+)
+
+215 
+tok’
+ :ğ
+sim
+.
+mq‰
+.
+	`CÚÃù
+()
+
+219 
+tok’
+.
+	`Wa™
+(è&&ok’.
+	`E¼Ü
+(è!ğ
+n
+ {
+
+220  
+fmt
+.
+	`E¼Üf
+("çedØcÚÃùØMQTT brok” %s: %v", 
+MQTTBrok”
+, 
+tok’
+.
+	`E¼Ü
+())
+
+223 
+log
+.
+	`Prštf
+("ğŸ‰ MQTT client initialized successfully")
+
+224  
+n
+
+
+225 
+	}
+}
+
+231 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$¡¬tPŞËr
+(è
+”rÜ
+ {
+
+232 
+log
+.
+	`Pršn
+("Starting C…oller subprocess...")
+
+234 
+sim
+.
+pŞËrCmd
+ = 
+exec
+.
+	`Commªd
+("sudo", "./poller")
+
+237 
+”r
+ :ğ
+sim
+.
+pŞËrCmd
+.
+	`S¹
+();ƒ¼ !ğ
+n
+ {
+
+238  
+fmt
+.
+	`E¼Üf
+("çedØ¡¬ˆpŞËr: %v", 
+”r
+)
+
+241 
+log
+.
+	`Prštf
+("S¹ed C…ŞË¸w™h PID: %d", 
+sim
+.
+pŞËrCmd
+.
+Proûss
+.
+Pid
+)
+
+244 
+go
+ 
+	`func
+() {
+
+245 
+”r
+ :ğ
+sim
+.
+pŞËrCmd
+.
+	`Wa™
+();ƒ¼ !ğ
+n
+ {
+
+246 
+log
+.
+	`Prštf
+("PŞË¸´oûs ex™ed w™hƒ¼Ü: %v", 
+”r
+)
+
+248 
+log
+.
+	`Pršn
+("Poller…rocessƒxited cleanly")
+
+252  
+n
+
+
+253 
+	}
+}
+
+259 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$¡İPŞËr
+() {
+
+260 
+sim
+.
+pŞËrCmd
+ !ğ
+n
+ && sim.pŞËrCmd.
+Proûss
+ !=‚il {
+
+261 
+log
+.
+	`Prštf
+("Stİpšg…ŞË¸´oûs (PID: %d)...", 
+sim
+.
+pŞËrCmd
+.
+Proûss
+.
+Pid
+)
+
+264 
+”r
+ :ğ
+sim
+.
+pŞËrCmd
+.
+Proûss
+.
+	`SigÇl
+(
+sysÿÎ
+.
+SIGTERM
+);ƒ¼ !ğ
+n
+ {
+
+265 
+log
+.
+	`Prštf
+("FaedØ£nd SIGTERMØpŞËr: %v", 
+”r
+)
+
+267 
+log
+.
+	`Pršn
+("Sent SIGTERMo…oller, waiting 2 seconds...")
+
+270 
+dÚe
+ :ğ
+	`make
+(
+chª
+ 
+”rÜ
+, 1)
+
+271 
+go
+ 
+	`func
+() {
+
+272 
+dÚe
+ <- 
+sim
+.
+pŞËrCmd
+.
+	`Wa™
+()
+
+275 
+£Ëù
+ {
+
+276 
+”r
+ :ğ<-
+dÚe
+:
+
+277 
+”r
+ !ğ
+n
+ {
+
+278 
+log
+.
+	`Prštf
+("PŞË¸ex™ed w™hƒ¼Ü: %v", 
+”r
+)
+
+280 
+log
+.
+	`Pršn
+("Pollerƒxited gracefully")
+
+282 
+sim
+.
+pŞËrCmd
+ = 
+n
+
+
+284 <-
+time
+.
+	`Aá”
+(2 *ime.
+SecÚd
+):
+
+285 
+log
+.
+	`Pršn
+("Poller didn't„espondo SIGTERM, using SIGKILL...")
+
+290 
+”r
+ :ğ
+sim
+.
+pŞËrCmd
+.
+Proûss
+.
+	`Kl
+();ƒ¼ !ğ
+n
+ {
+
+291 
+log
+.
+	`Prštf
+("FaedØkÈpŞË¸´oûss: %v", 
+”r
+)
+
+293 
+log
+.
+	`Pršn
+("Force killed…oller…rocess")
+
+297 
+sim
+.
+pŞËrCmd
+.
+	`Wa™
+()
+
+298 
+sim
+.
+pŞËrCmd
+ = 
+n
+
+
+302 
+sim
+.
+	`klO½hªedPŞËrs
+()
+
+303 
+	}
+}
+
+311 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$ş—nup
+() {
+
+312 
+log
+.
+	`Pršn
+("Performing cleanup...")
+
+315 
+sim
+.
+	`¡İPŞËr
+()
+
+318 
+sim
+.
+	`klO½hªedPŞËrs
+()
+
+321 
+sim
+.
+mq‰
+ !ğ
+n
+ && sim.mq‰.
+	`IsCÚÃùed
+() {
+
+322 
+log
+.
+	`Pršn
+("Disconnecting from MQTT...")
+
+323 
+sim
+.
+mq‰
+.
+	`DiscÚÃù
+(1000)
+
+327 
+sim
+.
+logg”
+ !ğ
+n
+ {
+
+328 
+log
+.
+	`Pršn
+("Closing device†ogger...")
+
+329 
+”r
+ :ğ
+sim
+.
+logg”
+.
+	`Clo£
+();ƒ¼ !ğ
+n
+ {
+
+330 
+log
+.
+	`Prštf
+("E¼Ü closšg deviû†ogg”: %v", 
+”r
+)
+
+332 
+log
+.
+	`Prštf
+("Device†ogger closed successfully")
+
+336 
+log
+.
+	`Pršn
+("Cleanup completed")
+
+337 
+	}
+}
+
+342 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$klO½hªedPŞËrs
+() {
+
+343 
+log
+.
+	`Pršn
+("Cleaning up‡ny orphaned…oller…rocesses...")
+
+346 
+commªds
+ :ğ[][]
+¡ršg
+{
+
+353 
+_
+, 
+cmd
+ :ğ
+¿nge
+ 
+commªds
+ {
+
+354 
+log
+.
+	`Prštf
+("RuÂšg: %s", 
+¡ršgs
+.
+	`Još
+(
+cmd
+, " "))
+
+355 
+execCmd
+ :ğ
+exec
+.
+	`Commªd
+(
+cmd
+[0], cmd[1:]...)
+
+356 
+”r
+ :ğ
+execCmd
+.
+	`Run
+();ƒ¼ !ğ
+n
+ {
+
+357 
+ex™E¼Ü
+, 
+ok
+ :ğ
+”r
+.(*
+exec
+.
+Ex™E¼Ü
+); ok {
+
+358 
+ex™E¼Ü
+.
+	`Ex™Code
+() == 1 {
+
+360 
+log
+.
+	`Prštf
+("NØ% ´oûs£ found (good)", 
+cmd
+[
+	`Ën
+(cmd)-1])
+
+364 
+log
+.
+	`Prštf
+("Commªd faed: %v", 
+”r
+)
+
+366 
+log
+.
+	`Prštf
+("SucûssfuÎy kËd…ŞË¸´oûs£ w™h: %s", 
+¡ršgs
+.
+	`Još
+(
+cmd
+, " "))
+
+371 
+time
+.
+	`SË•
+(500 *ime.
+Mli£cÚd
+)
+
+375 
+checkCmd
+ :ğ
+exec
+.
+	`Commªd
+("pgrep", "-f", "poller")
+
+376 
+ouut
+, 
+”r
+ :ğ
+checkCmd
+.
+	`Ouut
+();ƒ¼ !ğ
+n
+ {
+
+378 
+log
+.
+	`Pršn
+("âœ… No…oller…rocesses„emain")
+
+380 
+log
+.
+	`Prštf
+("âš ï¸ W¬nšg: SompŞË¸´oûs£ may stÈbruÂšg: %s", 
+	`¡ršg
+(
+ouut
+))
+
+382 
+	}
+}
+
+385 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$subsüibeToTİics
+() {
+
+386 
+tİics
+ :ğ[]
+¡ršg
+{
+TİicAÂounû
+, 
+TİicT–em‘ry
+, 
+TİicStus
+, 
+TİicE¼Ü
+}
+
+388 
+_
+, 
+tİic
+ :ğ
+¿nge
+ 
+tİics
+ {
+
+389 
+tok’
+ :ğ
+sim
+.
+mq‰
+.
+	`Subsüibe
+(
+tİic
+, 1, sim.
+mes§geHªdËr
+);ok’.
+	`Wa™
+(è&&ok’.
+	`E¼Ü
+(è!ğ
+n
+ {
+
+390 
+log
+.
+	`Prštf
+("FaedØsubsüibtØtİiø%s: %v", 
+tİic
+, 
+tok’
+.
+	`E¼Ü
+())
+
+392 
+log
+.
+	`Prštf
+("SubsüibedØtİic: %s", 
+tİic
+)
+
+395 
+	}
+}
+
+398 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËDeviûT–em‘ry
+(
+tİic
+ 
+¡ršg
+, 
+·ylßd
+ []
+by‹
+) {
+
+400 
+·¹s
+ :ğ
+¡ršgs
+.
+	`S¶™
+(
+tİic
+, "/")
+
+401 
+	`Ën
+(
+·¹s
+) < 4 {
+
+402 
+log
+.
+	`Prštf
+("Inv®idİiøfÜm©: %s", 
+tİic
+)
+
+406 
+ÿ‹gÜy
+ :ğ
+·¹s
+[1]
+
+407 
+deviûS”Ÿl
+ :ğ
+·¹s
+[2]
+
+409 
+log
+.
+	`Prštf
+("Deviû–em‘ry from % (ÿ‹gÜy: %s): %d by‹s", 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+, 
+	`Ën
+(
+·ylßd
+))
+
+412 
+ÿ‹gÜy
+ == "sanitizerGen2" {
+
+413 
+‹Ëm‘ry
+ :ğ&
+Ãd
+.
+T–em‘ryMes§ge
+{}
+
+414 
+”r
+ :ğ
+´Ùo
+.
+	`Unm¬sh®
+(
+·ylßd
+, 
+‹Ëm‘ry
+);ƒ¼ =ğ
+n
+ {
+
+415 
+log
+.
+	`Prštf
+("======== Sanitizer Telemetry ========")
+
+416 
+log
+.
+	`Prštf
+("£rŸl: %s", 
+deviûS”Ÿl
+)
+
+417 
+log
+.
+	`Prštf
+("rssi: %d dBm", 
+‹Ëm‘ry
+.
+	`G‘Rssi
+())
+
+418 
+log
+.
+	`Prštf
+("µm_§É: %d…pm", 
+‹Ëm‘ry
+.
+	`G‘PpmS®t
+())
+
+419 
+log
+.
+	`Prštf
+("³rûÁage_ouut: %d%%", 
+‹Ëm‘ry
+.
+	`G‘P”ûÁageOuut
+())
+
+420 
+log
+.
+	`Prštf
+("acûËrom‘”: x=%d, y=%d, z=%d", 
+‹Ëm‘ry
+.
+	`G‘AcûËrom‘”X
+(),–em‘ry.
+	`G‘AcûËrom‘”Y
+(),–em‘ry.
+	`G‘AcûËrom‘”Z
+())
+
+421 
+log
+.
+	`Prštf
+("lše_šput_vŞge: %d V", 
+‹Ëm‘ry
+.
+	`G‘LšeIÅutVŞge
+())
+
+422 
+log
+.
+	`Prštf
+("is_ûÎ_æow_»v”£d: %t", 
+‹Ëm‘ry
+.
+	`G‘IsC–lFlowRev”£d
+())
+
+423 
+log
+.
+	`Prštf
+("========================================")
+
+425 
+n
+.
+	`upd©eDeviûFromSª™iz”T–em‘ry
+(
+deviûS”Ÿl
+, 
+‹Ëm‘ry
+)
+
+428 
+n
+.
+	`addDeviûT”mš®EÁry
+(
+deviûS”Ÿl
+, "TELEMETRY",
+
+429 
+fmt
+.
+	`S´štf
+("T–em‘ry„eûived - Ouut: %d%%", 
+‹Ëm‘ry
+.
+	`G‘P”ûÁageOuut
+()), 
+·ylßd
+)
+
+432 
+log
+.
+	`Prštf
+("FaedØ·r£‡ §n™iz” T–em‘ryMes§ge: %v", 
+”r
+)
+
+437 
+v¬
+ 
+‹Ëm‘ryD©a
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{}
+
+438 
+”r
+ :ğ
+jsÚ
+.
+	`Unm¬sh®
+(
+·ylßd
+, &
+‹Ëm‘ryD©a
+);ƒ¼ =ğ
+n
+ {
+
+439 
+n
+.
+	`upd©eDeviûFromT–em‘ry
+(
+deviûS”Ÿl
+, 
+‹Ëm‘ryD©a
+)
+
+442 
+n
+.
+	`addDeviûT”mš®EÁry
+(
+deviûS”Ÿl
+, "TELEMETRY", "T–em‘ry„eûived (JSON)", 
+·ylßd
+)
+
+446 
+log
+.
+	`Prštf
+("Could‚Ù…¬£–em‘ry mes§ge: %x", 
+·ylßd
+)
+
+447 
+	}
+}
+
+484 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$mes§geHªdËr
+(
+ş›Á
+ 
+mq‰
+.
+Cl›Á
+, 
+msg
+ mq‰.
+Mes§ge
+) {
+
+485 
+tİic
+ :ğ
+msg
+.
+	`Tİic
+()
+
+486 
+·ylßd
+ :ğ
+msg
+.
+	`Paylßd
+()
+
+488 
+log
+.
+	`Prštf
+("ğŸ“¡ Reûived MQTT mes§gÚİic: %s", 
+tİic
+)
+
+493 
+·¹s
+ :ğ
+¡ršgs
+.
+	`S¶™
+(
+tİic
+, "/")
+
+494 
+	`Ën
+(
+·¹s
+) < 4 {
+
+495 
+log
+.
+	`Prštf
+("âŒ Inv®idİiøfÜm©: % Óx³ùed:‡sync/ÿ‹gÜy/£rŸl/ty³)", 
+tİic
+)
+
+504 
+ÿ‹gÜy
+ :ğ
+·¹s
+[1]
+
+505 
+deviûS”Ÿl
+ :ğ
+·¹s
+[2]
+
+506 
+mes§geTy³
+ :ğ
+·¹s
+[3]
+
+508 
+log
+.
+	`Prštf
+(" ğŸ“‹ Parsed: category=%s, serial=%s,ype=%s,…ayload=%d bytes",
+
+509 
+ÿ‹gÜy
+, 
+deviûS”Ÿl
+, 
+mes§geTy³
+, 
+	`Ën
+(
+·ylßd
+))
+
+513 
+mes§geTy³
+ {
+
+516 
+sim
+.
+	`hªdËDeviûAÂounû
+(
+tİic
+, 
+·ylßd
+)
+
+520 
+sim
+.
+	`hªdËDeviûT–em‘ry
+(
+tİic
+, 
+·ylßd
+)
+
+524 
+sim
+.
+	`hªdËDeviûStus
+(
+ÿ‹gÜy
+, 
+deviûS”Ÿl
+, 
+·ylßd
+)
+
+528 
+sim
+.
+	`hªdËDeviûE¼Ü
+(
+ÿ‹gÜy
+, 
+deviûS”Ÿl
+, 
+·ylßd
+)
+
+532 
+log
+.
+	`Prštf
+("âš ï¸ UnknowÀmes§gty³: % Ñİic: %s)", 
+mes§geTy³
+, 
+tİic
+)
+
+533 
+log
+.
+	`Prštf
+(" This might be‡‚ew messageype we don't support yet")
+
+536 
+	}
+}
+
+567 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËDeviûAÂounû
+(
+tİic
+ 
+¡ršg
+, 
+·ylßd
+ []
+by‹
+) {
+
+570 
+·¹s
+ :ğ
+¡ršgs
+.
+	`S¶™
+(
+tİic
+, "/")
+
+571 
+	`Ën
+(
+·¹s
+) < 4 {
+
+572 
+log
+.
+	`Prštf
+("âŒ Inv®id‡ÂounûİiøfÜm©: % Óx³ùed:‡sync/ÿ‹gÜy/£rŸl/ty³)", 
+tİic
+)
+
+577 
+ÿ‹gÜy
+ :ğ
+·¹s
+[1]
+
+578 
+deviûS”Ÿl
+ :ğ
+·¹s
+[2]
+
+581 
+log
+.
+	`Prštf
+("ğŸ“¢ Deviû‡Âounû from % (ÿ‹gÜy: %s): %d by‹s", 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+, 
+	`Ën
+(
+·ylßd
+))
+
+585 
+ªnounû
+ :ğ&
+Ãd
+.
+G‘DeviûInfÜm©iÚRe¥Ú£Paylßd
+{}
+
+586 
+”r
+ :ğ
+´Ùo
+.
+	`Unm¬sh®
+(
+·ylßd
+, 
+ªnounû
+);ƒ¼ =ğ
+n
+ {
+
+588 
+log
+.
+	`Prštf
+("âœ… SucûssfuÎy…¬£d…rÙobuàªnounûm’ˆäom %s", 
+deviûS”Ÿl
+)
+
+592 
+log
+.
+	`Prštf
+("=== Device Announcement (Protobuf) ===")
+
+593 
+log
+.
+	`Prštf
+("´oduù_Çme: %s", 
+ªnounû
+.
+	`G‘ProduùName
+())
+
+594 
+log
+.
+	`Prštf
+("£rŸl_numb”: %s", 
+ªnounû
+.
+	`G‘S”ŸlNumb”
+())
+
+595 
+log
+.
+	`Prštf
+("ÿ‹gÜy: %s", 
+ªnounû
+.
+	`G‘C©egÜy
+())
+
+596 
+log
+.
+	`Prštf
+("mod–_id: %s", 
+ªnounû
+.
+	`G‘Mod–Id
+())
+
+597 
+log
+.
+	`Prštf
+("mod–_v”siÚ: %s", 
+ªnounû
+.
+	`G‘Mod–V”siÚ
+())
+
+598 
+log
+.
+	`Prštf
+("fœmw¬e_v”siÚ: %s", 
+ªnounû
+.
+	`G‘Fœmw¬eV”siÚ
+())
+
+599 
+log
+.
+	`Prštf
+("Ùa_v”siÚ: %s", 
+ªnounû
+.
+	`G‘OV”siÚ
+())
+
+600 
+log
+.
+	`Prštf
+("avaabË_bus_ty³s: %v", 
+ªnounû
+.
+	`G‘AvaabËBusTy³s
+())
+
+601 
+aùiveBus
+ :ğ
+ªnounû
+.
+	`G‘AùiveBus
+();‡ùiveBu !ğ
+n
+ {
+
+602 
+log
+.
+	`Prštf
+("aùive_bus: %+v", 
+aùiveBus
+)
+
+604 
+log
+.
+	`Prštf
+("==========================================")
+
+607 
+n
+.
+	`upd©eDeviûFromPrÙobufAÂounû
+(
+ÿ‹gÜy
+, 
+deviûS”Ÿl
+, 
+ªnounû
+)
+
+611 
+n
+.
+	`addDeviûT”mš®EÁry
+(
+deviûS”Ÿl
+, "ANNOUNCE",
+
+612 
+fmt
+.
+	`S´štf
+("Deviû‡Âounûd: %s", 
+ªnounû
+.
+	`G‘ProduùName
+()), 
+·ylßd
+)
+
+617 
+log
+.
+	`Prštf
+("âš ï¸ FaedØ·r£‡ ´ÙobuàG‘DeviûInfÜm©iÚRe¥Ú£Paylßd: %v", 
+”r
+)
+
+618 
+log
+.
+	`Prštf
+(" A‰em±šg JSON f®lback fÜ deviû %s...", 
+deviûS”Ÿl
+)
+
+623 
+v¬
+ 
+ªnounûD©a
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{}
+
+624 
+”r
+ :ğ
+jsÚ
+.
+	`Unm¬sh®
+(
+·ylßd
+, &
+ªnounûD©a
+);ƒ¼ =ğ
+n
+ {
+
+626 
+log
+.
+	`Prštf
+("âœ… SucûssfuÎy…¬£d JSON‡Âounûm’ˆäom %s", 
+deviûS”Ÿl
+)
+
+627 
+log
+.
+	`Prštf
+("ğŸ“‹ JSON d©a: %+v", 
+ªnounûD©a
+)
+
+630 
+n
+.
+	`upd©eDeviûFromJSONAÂounû
+(
+deviûS”Ÿl
+, 
+ªnounûD©a
+)
+
+633 
+n
+.
+	`addDeviûT”mš®EÁry
+(
+deviûS”Ÿl
+, "ANNOUNCE", "Deviû‡Âounûd (JSON)", 
+·ylßd
+)
+
+638 
+log
+.
+	`Prštf
+("âŒ FaedØ·r£ JSON f®lback: %v", 
+”r
+)
+
+643 
+log
+.
+	`Prštf
+("ğŸ’¥ Could‚Ù…¬£‡Âounû mes§gäom % Ñr›d…rÙobuà+ JSON)", 
+deviûS”Ÿl
+)
+
+644 
+log
+.
+	`Prštf
+(" Raw…aylßd (%d by‹s): %x", 
+	`Ën
+(
+·ylßd
+),…ayload)
+
+645 
+log
+.
+	`Prštf
+(" System continues„unning -his device will„emain undiscovered")
+
+650 
+	}
+}
+
+653 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	`upd©eDeviûFromAÂounû
+(
+deviûID
+ 
+¡ršg
+, 
+d©a
+ 
+m­
+[¡ršg]
+š‹rçû
+{
+	}
+}) {
+
+654 
+	gsim
+.
+	gmu‹x
+.
+Lock
+()
+
+655 
+deãr
+ 
+	gsim
+.
+	gmu‹x
+.
+UÆock
+()
+
+657 
+	gdeviû
+, 
+	gexi¡s
+ :ğ
+sim
+.
+deviûs
+[
+deviûID
+]
+
+658 !
+exi¡s
+ {
+
+659 
+deviû
+ = &
+Deviû
+{
+
+660 
+ID
+: 
+deviûID
+,
+
+661 
+Name
+: 
+fmt
+.
+S´štf
+("Deviû-%s", 
+deviûID
+),
+
+662 
+Stus
+: "DISCOVERED",
+
+663 
+La¡S“n
+: 
+time
+.
+Now
+(),
+
+665 
+sim
+.
+deviûs
+[
+deviûID
+] = 
+deviû
+
+
+666 
+log
+.
+Prštf
+("New deviû discov”ed: %s", 
+deviûID
+)
+
+670 
+	gdeviûTy³
+, 
+	gok
+ :ğ
+d©a
+["ty³"].(
+¡ršg
+); ok {
+
+671 
+	gdeviû
+.
+	gTy³
+ = 
+deviûTy³
+
+
+673 
+	gÇme
+, 
+	gok
+ :ğ
+d©a
+["Çme"].(
+¡ršg
+); ok {
+
+674 
+	gdeviû
+.
+	gName
+ = 
+Çme
+
+
+676 
+	g£rŸl
+, 
+	gok
+ :ğ
+d©a
+["£rŸl"].(
+¡ršg
+); ok {
+
+677 
+	gdeviû
+.
+	gS”Ÿl
+ = 
+£rŸl
+
+
+680 
+	gdeviû
+.
+	gStus
+ = "ONLINE"
+
+681 
+deviû
+.
+La¡S“n
+ = 
+time
+.
+Now
+()
+
+683 
+log
+.
+Prštf
+("Upd©ed deviû %s:y³=%s,‚ame=%s", 
+deviûID
+, 
+deviû
+.
+Ty³
+, deviû.
+Name
+)
+
+687 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$hªdËDeviûStus
+(
+ÿ‹gÜy
+, 
+deviûS”Ÿl
+ 
+¡ršg
+, 
+·ylßd
+ []
+by‹
+) {
+
+688 
+log
+.
+	`Prštf
+("Deviû stu äom % (ÿ‹gÜy: %s): %d by‹s", 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+, 
+	`Ën
+(
+·ylßd
+))
+
+690 
+	}
+}
+
+693 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$hªdËDeviûE¼Ü
+(
+ÿ‹gÜy
+, 
+deviûS”Ÿl
+ 
+¡ršg
+, 
+·ylßd
+ []
+by‹
+) {
+
+694 
+log
+.
+	`Prštf
+("Deviûƒ¼Ü from % (ÿ‹gÜy: %s): %d by‹ - %s", 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+, 
+	`Ën
+(
+·ylßd
+), 
+	`¡ršg
+(payload))
+
+696 
+	}
+}
+
+699 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$upd©eDeviûFromSª™iz”T–em‘ry
+(
+deviûS”Ÿl
+ 
+¡ršg
+, 
+‹Ëm‘ry
+ *
+Ãd
+.
+T–em‘ryMes§ge
+) {
+
+700 
+sim
+.
+mu‹x
+.
+	`Lock
+()
+
+701 
+deãr
+ 
+sim
+.
+mu‹x
+.
+	`UÆock
+()
+
+703 
+deviû
+, 
+exi¡s
+ :ğ
+sim
+.
+deviûs
+[
+deviûS”Ÿl
+]
+
+704 !
+exi¡s
+ {
+
+706 
+deviû
+ = &
+Deviû
+{
+
+707 
+ID
+: 
+deviûS”Ÿl
+,
+
+708 
+S”Ÿl
+: 
+deviûS”Ÿl
+,
+
+709 
+Name
+: 
+fmt
+.
+	`S´štf
+("Sª™iz”-%s", 
+deviûS”Ÿl
+),
+
+710 
+Ty³
+: "sanitizerGen2",
+
+711 
+C©egÜy
+: "sanitizerGen2",
+
+712 
+Stus
+: "ONLINE",
+
+713 
+La¡S“n
+: 
+time
+.
+	`Now
+(),
+
+715 
+sim
+.
+deviûs
+[
+deviûS”Ÿl
+] = 
+deviû
+
+
+716 
+log
+.
+	`Prštf
+("âœ… Auto-ü—‹d sª™iz” deviû from–em‘ry: %s", 
+deviûS”Ÿl
+)
+
+720 
+deviû
+.
+RSSI
+ = 
+‹Ëm‘ry
+.
+	`G‘Rssi
+()
+
+721 
+deviû
+.
+PPMS®t
+ = 
+‹Ëm‘ry
+.
+	`G‘PpmS®t
+()
+
+722 
+deviû
+.
+P”ûÁageOuut
+ = 
+‹Ëm‘ry
+.
+	`G‘P”ûÁageOuut
+()
+
+723 
+deviû
+.
+Aùu®P”ûÁage
+ = 
+‹Ëm‘ry
+.
+	`G‘P”ûÁageOuut
+()
+
+724 
+deviû
+.
+AcûËrom‘”X
+ = 
+‹Ëm‘ry
+.
+	`G‘AcûËrom‘”X
+()
+
+725 
+deviû
+.
+AcûËrom‘”Y
+ = 
+‹Ëm‘ry
+.
+	`G‘AcûËrom‘”Y
+()
+
+726 
+deviû
+.
+AcûËrom‘”Z
+ = 
+‹Ëm‘ry
+.
+	`G‘AcûËrom‘”Z
+()
+
+727 
+deviû
+.
+LšeIÅutVŞge
+ = 
+‹Ëm‘ry
+.
+	`G‘LšeIÅutVŞge
+()
+
+728 
+deviû
+.
+IsC–lFlowRev”£d
+ = 
+‹Ëm‘ry
+.
+	`G‘IsC–lFlowRev”£d
+()
+
+731 
+deviû
+.
+P’dšgP”ûÁage
+ !ğ0 && deviû.
+Aùu®P”ûÁage
+ == device.PendingPercentage {
+
+732 
+log
+.
+	`Prštf
+("âœ… Command‡chieved! %s: Pending %d%% = Actual %d%% (clearing…ending state)",
+
+733 
+deviûS”Ÿl
+, 
+deviû
+.
+P’dšgP”ûÁage
+, deviû.
+Aùu®P”ûÁage
+)
+
+734 
+deviû
+.
+P’dšgP”ûÁage
+ = 0
+
+735 
+deviû
+.
+La¡CommªdTime
+ = 
+time
+.
+Time
+{}
+
+736 } 
+deviû
+.
+P’dšgP”ûÁage
+ != 0 {
+
+737 
+timeSšûCommªd
+ :ğ
+time
+.
+	`Sšû
+(
+deviû
+.
+La¡CommªdTime
+)
+
+738 
+timeSšûCommªd
+ > 30*
+time
+.
+SecÚd
+ {
+
+739 
+log
+.
+	`Prštf
+("â° Commandimeout: %s: Pending %d%% != Actual %d%%‡fter %v (clearing…ending)",
+
+740 
+deviûS”Ÿl
+, 
+deviû
+.
+P’dšgP”ûÁage
+, deviû.
+Aùu®P”ûÁage
+, 
+timeSšûCommªd
+)
+
+741 
+deviû
+.
+P’dšgP”ûÁage
+ = 0
+
+742 
+deviû
+.
+La¡CommªdTime
+ = 
+time
+.
+Time
+{}
+
+746 
+deviû
+.
+Stus
+ = "ONLINE"
+
+747 
+deviû
+.
+La¡S“n
+ = 
+time
+.
+	`Now
+()
+
+748 
+	}
+}
+
+751 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	`upd©eDeviûFromT–em‘ry
+(
+deviûID
+ 
+¡ršg
+, 
+d©a
+ 
+m­
+[¡ršg]
+š‹rçû
+{
+	}
+}) {
+
+752 
+	gsim
+.
+	gmu‹x
+.
+Lock
+()
+
+753 
+deãr
+ 
+	gsim
+.
+	gmu‹x
+.
+UÆock
+()
+
+755 
+	gdeviû
+, 
+	gexi¡s
+ :ğ
+sim
+.
+deviûs
+[
+deviûID
+]
+
+756 !
+exi¡s
+ {
+
+757 
+log
+.
+Prštf
+("Reûived–em‘ry fÜ unknowÀdeviû: %s", 
+deviûID
+)
+
+762 
+‹mp
+, 
+	gok
+ :ğ
+d©a
+["‹m³¿tu»"].(
+æßt64
+); ok {
+
+763 
+	gdeviû
+.
+	gTemp
+ = 
+‹mp
+
+
+765 
+	gpow”
+, 
+	gok
+ :ğ
+d©a
+["pow”"].(
+æßt64
+); ok {
+
+766 
+	gdeviû
+.
+	gPow”
+ = (
+pow”
+)
+
+770 
+	gdeviû
+.
+	gTy³
+ {
+
+772 
+½m
+, 
+	gok
+ :ğ
+d©a
+["½m"].(
+æßt64
+); ok {
+
+773 
+	gdeviû
+.
+	gRPM
+ = (
+½m
+)
+
+776 
+§lš™y
+, 
+	gok
+ :ğ
+d©a
+["§lš™y"].(
+æßt64
+); ok {
+
+777 
+	gdeviû
+.
+	gS®š™y
+ = (
+§lš™y
+)
+
+779 
+	gouut
+, 
+	gok
+ :ğ
+d©a
+["ouut"].(
+æßt64
+); ok {
+
+780 
+	gdeviû
+.
+	gPow”Lev–
+ = (
+ouut
+)
+
+783 
+ph
+, 
+	gok
+ :ğ
+d©a
+["ph"].(
+æßt64
+); ok {
+
+784 
+	gdeviû
+.
+	gPH
+ = 
+ph
+
+
+786 
+	gÜp
+, 
+	gok
+ :ğ
+d©a
+["Üp"].(
+æßt64
+); ok {
+
+787 
+	gdeviû
+.
+	gORP
+ = (
+Üp
+)
+
+790 
+»d
+, 
+	gok
+ :ğ
+d©a
+["»d"].(
+æßt64
+); ok {
+
+791 
+	gdeviû
+.
+	gRed
+ = (
+»d
+)
+
+793 
+	gg»’
+, 
+	gok
+ :ğ
+d©a
+["g»’"].(
+æßt64
+); ok {
+
+794 
+	gdeviû
+.
+	gG»’
+ = (
+g»’
+)
+
+796 
+	gblue
+, 
+	gok
+ :ğ
+d©a
+["blue"].(
+æßt64
+); ok {
+
+797 
+	gdeviû
+.
+	gBlue
+ = (
+blue
+)
+
+799 
+	gwh™e
+, 
+	gok
+ :ğ
+d©a
+["wh™e"].(
+æßt64
+); ok {
+
+800 
+	gdeviû
+.
+	gWh™e
+ = (
+wh™e
+)
+
+804 
+	gdeviû
+.
+	gLa¡S“n
+ = 
+time
+.
+Now
+()
+
+805 
+log
+.
+Prštf
+("Upd©ed–em‘ry fÜ deviû %s", 
+deviûID
+)
+
+809 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$upd©eDeviûFromPrÙobufAÂounû
+(
+ÿ‹gÜy
+, 
+deviûS”Ÿl
+ 
+¡ršg
+, 
+ªnounû
+ *
+Ãd
+.
+G‘DeviûInfÜm©iÚRe¥Ú£Paylßd
+) {
+
+810 
+sim
+.
+mu‹x
+.
+	`Lock
+()
+
+811 
+deãr
+ 
+sim
+.
+mu‹x
+.
+	`UÆock
+()
+
+814 
+£rŸlFromMsg
+ :ğ
+ªnounû
+.
+	`G‘S”ŸlNumb”
+()
+
+815 
+£rŸlFromMsg
+ != "" {
+
+816 
+deviûS”Ÿl
+ = 
+£rŸlFromMsg
+
+
+819 
+deviû
+, 
+exi¡s
+ :ğ
+sim
+.
+deviûs
+[
+deviûS”Ÿl
+]
+
+820 !
+exi¡s
+ {
+
+821 
+deviû
+ = &
+Deviû
+{
+
+822 
+ID
+: 
+deviûS”Ÿl
+,
+
+823 
+S”Ÿl
+: 
+deviûS”Ÿl
+,
+
+824 
+Name
+: 
+fmt
+.
+	`S´štf
+("Deviû-%s", 
+deviûS”Ÿl
+),
+
+825 
+Stus
+: "DISCOVERED",
+
+826 
+La¡S“n
+: 
+time
+.
+	`Now
+(),
+
+828 
+sim
+.
+deviûs
+[
+deviûS”Ÿl
+] = 
+deviû
+
+
+829 
+log
+.
+	`Prštf
+("New deviû discov”ed vŸ…rÙobuf: %s", 
+deviûS”Ÿl
+)
+
+833 
+deviû
+.
+ProduùName
+ = 
+ªnounû
+.
+	`G‘ProduùName
+()
+
+834 
+deviû
+.
+C©egÜy
+ = 
+ªnounû
+.
+	`G‘C©egÜy
+()
+
+835 
+deviû
+.
+Mod–Id
+ = 
+ªnounû
+.
+	`G‘Mod–Id
+()
+
+836 
+deviû
+.
+Mod–V”siÚ
+ = 
+ªnounû
+.
+	`G‘Mod–V”siÚ
+()
+
+837 
+deviû
+.
+Fœmw¬eV”siÚ
+ = 
+ªnounû
+.
+	`G‘Fœmw¬eV”siÚ
+()
+
+838 
+deviû
+.
+OV”siÚ
+ = 
+ªnounû
+.
+	`G‘OV”siÚ
+()
+
+841 
+deviû
+.
+ProduùName
+ != "" {
+
+842 
+deviû
+.
+Name
+ = deviû.
+ProduùName
+
+
+844 
+deviû
+.
+C©egÜy
+ != "" {
+
+845 
+deviû
+.
+Ty³
+ = deviû.
+C©egÜy
+
+
+847 
+deviû
+.
+Ty³
+ = 
+ÿ‹gÜy
+
+
+849 
+deviû
+.
+S”Ÿl
+ = 
+deviûS”Ÿl
+
+
+851 
+deviû
+.
+Stus
+ = "ONLINE"
+
+852 
+deviû
+.
+La¡S“n
+ = 
+time
+.
+	`Now
+()
+
+854 
+log
+.
+	`Prštf
+("Device %s fully updated: ProductName='%s', Category='%s', Model='%s', FirmwareVer='%s'",
+
+855 
+deviûS”Ÿl
+, 
+deviû
+.
+ProduùName
+, deviû.
+C©egÜy
+, deviû.
+Mod–Id
+, deviû.
+Fœmw¬eV”siÚ
+)
+
+856 
+	}
+}
+
+859 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	`upd©eDeviûFromJSONAÂounû
+(
+deviûS”Ÿl
+ 
+¡ršg
+, 
+d©a
+ 
+m­
+[¡ršg]
+š‹rçû
+{
+	}
+}) {
+
+860 
+	gsim
+.
+	gmu‹x
+.
+Lock
+()
+
+861 
+deãr
+ 
+	gsim
+.
+	gmu‹x
+.
+UÆock
+()
+
+863 
+	gdeviû
+, 
+	gexi¡s
+ :ğ
+sim
+.
+deviûs
+[
+deviûS”Ÿl
+]
+
+864 !
+exi¡s
+ {
+
+865 
+deviû
+ = &
+Deviû
+{
+
+866 
+ID
+: 
+deviûS”Ÿl
+,
+
+867 
+S”Ÿl
+: 
+deviûS”Ÿl
+,
+
+868 
+Name
+: 
+fmt
+.
+S´štf
+("Deviû-%s", 
+deviûS”Ÿl
+),
+
+869 
+Stus
+: "DISCOVERED",
+
+870 
+La¡S“n
+: 
+time
+.
+Now
+(),
+
+872 
+sim
+.
+deviûs
+[
+deviûS”Ÿl
+] = 
+deviû
+
+
+873 
+log
+.
+Prštf
+("New deviû discov”ed vŸ JSON: %s", 
+deviûS”Ÿl
+)
+
+877 
+	gdeviûTy³
+, 
+	gok
+ :ğ
+d©a
+["ty³"].(
+¡ršg
+); ok {
+
+878 
+	gdeviû
+.
+	gTy³
+ = 
+deviûTy³
+
+
+880 
+	gÇme
+, 
+	gok
+ :ğ
+d©a
+["Çme"].(
+¡ršg
+); ok {
+
+881 
+	gdeviû
+.
+	gName
+ = 
+Çme
+
+
+883 
+	g£rŸl
+, 
+	gok
+ :ğ
+d©a
+["£rŸl"].(
+¡ršg
+); ok {
+
+884 
+	gdeviû
+.
+	gS”Ÿl
+ = 
+£rŸl
+
+
+887 
+	gdeviû
+.
+	gStus
+ = "ONLINE"
+
+888 
+deviû
+.
+La¡S“n
+ = 
+time
+.
+Now
+()
+
+890 
+log
+.
+Prštf
+("Upd©ed deviû % äom JSON:y³=%s,‚ame=%s", 
+deviûS”Ÿl
+, 
+deviû
+.
+Ty³
+, deviû.
+Name
+)
+
+917 
+func
+ 
+NewNgaSim
+(è*
+	gNgaSim
+ {
+
+918 
+	glog
+.
+Pršn
+("ğŸ—ï¸ Initializing NgaSim components...")
+
+922 
+	g»æeùiÚEngše
+ :ğ
+NewPrÙobufReæeùiÚEngše
+()
+
+926 
+”r
+ :ğ
+»æeùiÚEngše
+.
+Discov”Mes§ges
+(); 
+	g”r
+ !ğ
+n
+ {
+
+927 
+log
+.
+Prštf
+("âš ï¸ W¬nšg: PrÙobuàdiscov”y faed: %v", 
+”r
+)
+
+928 
+log
+.
+Pršn
+(" System will continue with„educed…rotobuf„eflection capabilities")
+
+930 
+mes§ges
+ :ğ
+»æeùiÚEngše
+.
+G‘AÎMes§ges
+()
+
+931 
+log
+.
+Prštf
+("âœ… Discov”ed %d…rÙobuàmes§gty³ aüos ®Èdeviû c©egÜ›s", 
+Ën
+(
+mes§ges
+))
+
+936 
+	g‹rmš®Logg”
+, 
+	g”r
+ :ğ
+NewT”mš®Logg”
+("ngasim_terminal.log", 1000)
+
+937 
+	g”r
+ !ğ
+n
+ {
+
+938 
+log
+.
+Prštf
+("âš ï¸ W¬nšg: T”mš®†ogg” c»©iÚ faed: %v", 
+”r
+)
+
+939 
+log
+.
+Pršn
+(" System will continue withouterminal†oggingo file")
+
+940 
+‹rmš®Logg”
+ = 
+n
+
+
+942 
+	glog
+.
+Pršn
+("âœ… Terminal†ogger initialized with fileeeo‚gasim_terminal.log")
+
+947 
+	gngaSim
+ :ğ&
+NgaSim
+{
+
+948 
+deviûs
+: 
+make
+(
+m­
+[
+¡ršg
+]*
+Deviû
+),
+
+949 
+logg”
+: 
+NewDeviûLogg”
+(1000),
+
+950 
+commªdRegi¡ry
+: 
+NewPrÙobufCommªdRegi¡ry
+(),
+
+951 
+»æeùiÚEngše
+:„eflectionEngine,
+
+952 
+‹rmš®Logg”
+:erminalLogger,
+
+953 
+deviûCommªds
+: 
+make
+(
+m­
+[
+¡ršg
+][]string),
+
+960 
+‹rmš®Logg”
+ !ğ
+n
+ {
+
+961 
+ngaSim
+.
+pİupG’”©Ü
+ = 
+NewPİupUIG’”©Ü
+(
+»æeùiÚEngše
+, 
+‹rmš®Logg”
+,‚gaSim)
+
+962 
+	glog
+.
+Pršn
+("âœ… Popup UI generator initialized for dynamic device interfaces")
+
+964 
+	glog
+.
+Pršn
+("âš ï¸ Popup UI generator disabled (terminal†ogger unavailable)")
+
+968 
+	gngaSim
+.
+	g§n™iz”CÚŒŞËr
+ = 
+NewSª™iz”CÚŒŞËr
+(
+ngaSim
+)
+
+969 
+log
+.
+Pršn
+("âœ… Sanitizer controller initialized")
+
+973 
+ngaSim
+.
+commªdRegi¡ry
+.
+discov”Commªds
+()
+
+974 
+ngaSim
+.
+pİuÏ‹DeviûCommªds
+()
+
+976 
+log
+.
+Prštf
+("âœ… Deviû commªd„egi¡ry…İuÏ‹d fÜ %d deviû c©egÜ›s", 
+Ën
+(
+ngaSim
+.
+deviûCommªds
+))
+
+978 
+	glog
+.
+Pršn
+("ğŸ‰ NgaSim initialization complete -„eadyo start!")
+
+979  
+	gngaSim
+
+
+1009 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$S¹
+(è
+”rÜ
+ {
+
+1010 
+log
+.
+	`Pršn
+("S¹šg NgaSim v" + 
+NgaSimV”siÚ
+)
+
+1014 
+log
+.
+	`Pršn
+("Connectingo MQTT broker...")
+
+1015 
+”r
+ :ğ
+n
+.
+	`cÚÃùMQTT
+();ƒ¼ !ğ
+n
+ {
+
+1016 
+log
+.
+	`Prštf
+("MQTT cÚÃùiÚ faed: %v", 
+”r
+)
+
+1017 
+log
+.
+	`Pršn
+("Falling backo demo mode...")
+
+1018 
+n
+.
+	`ü—‹DemoDeviûs
+()
+
+1020 
+log
+.
+	`Pršn
+("MQTT connected successfully - waiting for device‡nnouncements...")
+
+1024 
+”r
+ :ğ
+n
+.
+	`¡¬tPŞËr
+();ƒ¼ !ğ
+n
+ {
+
+1025 
+log
+.
+	`Prštf
+("FaedØ¡¬ˆpŞËr: %v", 
+”r
+)
+
+1026 
+log
+.
+	`Pršn
+("Device discovery may‚ot work…roperly")
+
+1034 
+mux
+ :ğ
+h‰p
+.
+	`NewS”veMux
+()
+
+1039 
+mux
+.
+	`HªdËFunc
+("/", 
+n
+.
+hªdËGoDemo
+)
+
+1040 
+mux
+.
+	`HªdËFunc
+("/js-demo", 
+n
+.
+hªdËDemo
+)
+
+1041 
+mux
+.
+	`HªdËFunc
+("/Şd", 
+n
+.
+hªdËHome
+)
+
+1042 
+mux
+.
+	`HªdËFunc
+("/demo", 
+n
+.
+hªdËDemo
+)
+
+1043 
+mux
+.
+	`HªdËFunc
+("/goodbye", 
+n
+.
+hªdËGoodbye
+)
+
+1048 
+mux
+.
+	`HªdËFunc
+("/­i/ex™", 
+n
+.
+hªdËEx™
+)
+
+1049 
+mux
+.
+	`HªdËFunc
+("/­i/deviûs", 
+n
+.
+hªdËAPI
+)
+
+1050 
+mux
+.
+	`HªdËFunc
+("/­i/§n™iz”/commªd", 
+n
+.
+hªdËSª™iz”Commªd
+)
+
+1051 
+mux
+.
+	`HªdËFunc
+("/­i/§n™iz”/¡©es", 
+n
+.
+hªdËSª™iz”S‹s
+)
+
+1052 
+mux
+.
+	`HªdËFunc
+("/­i/pow”-Ëv–s", 
+n
+.
+hªdËPow”Lev–s
+)
+
+1053 
+mux
+.
+	`HªdËFunc
+("/­i/em”g’cy-¡İ", 
+n
+.
+hªdËEm”g’cyStİ
+)
+
+1054 
+mux
+.
+	`HªdËFunc
+("/­i/ui/¥ec", 
+n
+.
+hªdËUIS³cAPI
+)
+
+1059 
+mux
+.
+	`HªdËFunc
+("/­i/deviû-commªds/", 
+n
+.
+hªdËDeviûCommªds
+)
+
+1060 
+mux
+.
+	`HªdËFunc
+("/­i/deviû-commªds", 
+n
+.
+hªdËAÎDeviûCommªds
+)
+
+1065 
+mux
+.
+	`HªdËFunc
+("/¡©ic/wœeäame.svg", 
+n
+.
+hªdËWœeäameSVG
+)
+
+1066 
+mux
+.
+	`HªdËFunc
+("/¡©ic/wœeäame.mmd", 
+n
+.
+hªdËWœeäameMMD
+)
+
+1067 
+mux
+.
+	`HªdËFunc
+("/¡©ic/ui-¥ec.toml", 
+n
+.
+hªdËUIS³cTOML
+)
+
+1068 
+mux
+.
+	`HªdËFunc
+("/¡©ic/ui-¥ec.txt", 
+n
+.
+hªdËUIS³cTXT
+)
+
+1073 
+mux
+.
+	`HªdËFunc
+("/´Ùobuf", 
+n
+.
+hªdËPrÙobufMes§ges
+)
+
+1074 
+mux
+.
+	`HªdËFunc
+("/‹rmš®", 
+n
+.
+hªdËT”mš®V›w
+)
+
+1080 
+n
+.
+pİupG’”©Ü
+ !ğ
+n
+ {
+
+1082 
+mux
+.
+	`HªdËFunc
+("/­i/´Ùobuf/pİup", 
+n
+.
+pİupG’”©Ü
+.
+hªdËPrÙobufPİup
+)
+
+1083 
+mux
+.
+	`HªdËFunc
+("/­i/´Ùobuf/commªd", 
+n
+.
+pİupG’”©Ü
+.
+hªdËPrÙobufCommªd
+)
+
+1084 
+mux
+.
+	`HªdËFunc
+("/­i/´Ùobuf/mes§ges", 
+n
+.
+pİupG’”©Ü
+.
+hªdËMes§geTy³s
+)
+
+1085 
+mux
+.
+	`HªdËFunc
+("/­i/‹rmš®/logs", 
+n
+.
+pİupG’”©Ü
+.
+hªdËT”mš®Logs
+)
+
+1087 
+log
+.
+	`Pršn
+("âš ï¸ Protobuf…opup„outes disabled (popupGenerator‚ot‡vailable)")
+
+1092 
+n
+.
+£rv”
+ = &
+h‰p
+.
+S”v”
+{
+
+1093 
+Addr
+: ":8082",
+
+1094 
+HªdËr
+: 
+mux
+,
+
+1100 
+n
+.
+	`‹¡PrÙobufSy¡em
+()
+
+1105 
+go
+ 
+	`func
+() {
+
+1106 
+log
+.
+	`Pršn
+("Web server starting on :8082")
+
+1110 
+”r
+ :ğ
+n
+.
+£rv”
+.
+	`Li¡’AndS”ve
+();ƒ¼ !ğ
+h‰p
+.
+E¼S”v”Clo£d
+ {
+
+1111 
+log
+.
+	`Prštf
+("S”v”ƒ¼Ü: %v", 
+”r
+)
+
+1118 
+log
+.
+	`Pršn
+("ğŸš€ NgaSim started successfully!")
+
+1119 
+log
+.
+	`Pršn
+("")
+
+1120 
+log
+.
+	`Pršn
+("ğŸ“ Available Interfaces:")
+
+1121 
+log
+.
+	`Pršn
+(" ğŸŒ Main Interface: http://localhost:8082")
+
+1122 
+log
+.
+	`Pršn
+(" ğŸ® JS Demo: http://localhost:8082/js-demo")
+
+1123 
+log
+.
+	`Pršn
+(" ğŸ  Original Home: http://localhost:8082/old")
+
+1124 
+log
+.
+	`Pršn
+(" ğŸ“Š Demo Page: http://localhost:8082/demo")
+
+1125 
+log
+.
+	`Pršn
+("")
+
+1126 
+log
+.
+	`Pršn
+("ğŸ”— API Endpoints:")
+
+1127 
+log
+.
+	`Pršn
+(" ğŸ“Š Device List: http://localhost:8082/api/devices")
+
+1128 
+log
+.
+	`Pršn
+(" ğŸ§ª Sanitizer Cmd: http://localhost:8082/api/sanitizer/command")
+
+1129 
+log
+.
+	`Pršn
+(" âš¡ Power Levels: http://localhost:8082/api/power-levels")
+
+1130 
+log
+.
+	`Pršn
+(" ğŸ›‘ Emergency Stop: http://localhost:8082/api/emergency-stop")
+
+1131 
+log
+.
+	`Pršn
+(" ğŸ”§ Exit App: http://localhost:8082/api/exit")
+
+1132 
+log
+.
+	`Pršn
+("")
+
+1133 
+log
+.
+	`Pršn
+("ğŸ“‹ Documentation:")
+
+1134 
+log
+.
+	`Pršn
+(" ğŸ“„ UI Spec (TOML): http://localhost:8082/static/ui-spec.toml")
+
+1135 
+log
+.
+	`Pršn
+(" ğŸ¨ Wireframe (SVG): http://localhost:8082/static/wireframe.svg")
+
+1137  
+n
+
+
+1138 
+	}
+}
+
+1158 
+func
+ 
+	$maš
+() {
+
+1159 
+log
+.
+	`Pršn
+("=== NgaSim Pool Controller Simulator ===")
+
+1160 
+log
+.
+	`Prštf
+("V”siÚ: %s", 
+NgaSimV”siÚ
+)
+
+1161 
+log
+.
+	`Pršn
+("Starting up...")
+
+1164 
+nga
+ :ğ
+	`NewNgaSim
+()
+
+1168 
+deãr
+ 
+nga
+.
+	`ş—nup
+()
+
+1171 
+c
+ :ğ
+	`make
+(
+chª
+ 
+os
+.
+SigÇl
+, 1)
+
+1172 
+sigÇl
+.
+	`NÙify
+(
+c
+, 
+os
+.
+IÁ”ru±
+, 
+sysÿÎ
+.
+SIGTERM
+)
+
+1175 
+go
+ 
+	`func
+() {
+
+1176 <-
+c
+
+
+1177 
+log
+.
+	`Pršn
+("\nğŸ›‘ Interrupt„eceived, shutting down gracefully...")
+
+1178 
+nga
+.
+	`ş—nup
+()
+
+1179 
+os
+.
+	`Ex™
+(0)
+
+1183 
+”r
+ :ğ
+nga
+.
+	`S¹
+();ƒ¼ !ğ
+n
+ {
+
+1184 
+log
+.
+	`F©®f
+("âŒ FaedØ¡¬ˆNgaSim: %v", 
+”r
+)
+
+1187 
+log
+.
+	`Pršn
+("ğŸš€ NgaSim started successfully!")
+
+1188 
+log
+.
+	`Pršn
+("")
+
+1189 
+log
+.
+	`Pršn
+("ğŸ“ Available Interfaces:")
+
+1190 
+log
+.
+	`Pršn
+(" ğŸŒ Main Interface: http://localhost:8082")
+
+1191 
+log
+.
+	`Pršn
+(" ğŸ® JS Demo: http://localhost:8082/js-demo")
+
+1192 
+log
+.
+	`Pršn
+(" ğŸ  Original Home: http://localhost:8082/old")
+
+1193 
+log
+.
+	`Pršn
+(" ğŸ“Š Demo Page: http://localhost:8082/demo")
+
+1194 
+log
+.
+	`Pršn
+("")
+
+1195 
+log
+.
+	`Pršn
+("ğŸ”— API Endpoints:")
+
+1196 
+log
+.
+	`Pršn
+(" ğŸ“Š Device List: http://localhost:8082/api/devices")
+
+1197 
+log
+.
+	`Pršn
+(" ğŸ§ª Sanitizer Cmd: http://localhost:8082/api/sanitizer/command")
+
+1198 
+log
+.
+	`Pršn
+(" âš¡ Power Levels: http://localhost:8082/api/power-levels")
+
+1199 
+log
+.
+	`Pršn
+(" ğŸ›‘ Emergency Stop: http://localhost:8082/api/emergency-stop")
+
+1200 
+log
+.
+	`Pršn
+(" ğŸ”§ Exit App: http://localhost:8082/api/exit")
+
+1201 
+log
+.
+	`Pršn
+("")
+
+1202 
+log
+.
+	`Pršn
+("ğŸ“‹ Documentation:")
+
+1203 
+log
+.
+	`Pršn
+(" ğŸ“„ UI Spec (TOML): http://localhost:8082/static/ui-spec.toml")
+
+1204 
+log
+.
+	`Pršn
+(" ğŸ¨ Wireframe (SVG): http://localhost:8082/static/wireframe.svg")
+
+1205 
+log
+.
+	`Pršn
+("")
+
+1206 
+log
+.
+	`Pršn
+("Press Ctrl+Coƒxit")
+
+1211 
+£Ëù
+ {}
+
+1212 
+	}
+}
+
+1215 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$ü—‹DemoDeviûs
+() {
+
+1216 
+log
+.
+	`Pršn
+("Creating demo devices...")
+
+1218 
+demoDeviûs
+ :ğ[]*
+Deviû
+{
+
+1220 
+ID
+: "demo-sanitizer-001",
+
+1221 
+S”Ÿl
+: "demo-sanitizer-001",
+
+1222 
+Name
+: "Demo Salt Chlorinator",
+
+1223 
+Ty³
+: "sanitizerGen2",
+
+1224 
+C©egÜy
+: "sanitizerGen2",
+
+1225 
+Stus
+: "ONLINE",
+
+1226 
+La¡S“n
+: 
+time
+.
+	`Now
+(),
+
+1227 
+ProduùName
+: "AquaRite Pro",
+
+1228 
+Mod–Id
+: "AQR-PRO-25",
+
+1229 
+Fœmw¬eV”siÚ
+: "2.1.3",
+
+1230 
+P”ûÁageOuut
+: 45,
+
+1231 
+Aùu®P”ûÁage
+: 45,
+
+1232 
+PPMS®t
+: 3200,
+
+1233 
+LšeIÅutVŞge
+: 240,
+
+1234 
+RSSI
+: -45,
+
+1237 
+ID
+: "demo-vsp-001",
+
+1238 
+S”Ÿl
+: "demo-vsp-001",
+
+1239 
+Name
+: "Demo Variable Speed Pump",
+
+1240 
+Ty³
+: "VSP",
+
+1241 
+Stus
+: "ONLINE",
+
+1242 
+La¡S“n
+: 
+time
+.
+	`Now
+(),
+
+1243 
+RPM
+: 2400,
+
+1244 
+Pow”
+: 850,
+
+1245 
+Temp
+: 32.5,
+
+1248 
+ID
+: "demo-icl-001",
+
+1249 
+S”Ÿl
+: "demo-icl-001",
+
+1250 
+Name
+: "Demo Pool Light",
+
+1251 
+Ty³
+: "ICL",
+
+1252 
+Stus
+: "ONLINE",
+
+1253 
+La¡S“n
+: 
+time
+.
+	`Now
+(),
+
+1254 
+Red
+: 128,
+
+1255 
+G»’
+: 64,
+
+1256 
+Blue
+: 255,
+
+1257 
+Wh™e
+: 200,
+
+1260 
+ID
+: "demo-trusense-001",
+
+1261 
+S”Ÿl
+: "demo-trusense-001",
+
+1262 
+Name
+: "Demo…H/ORP Sensor",
+
+1263 
+Ty³
+: "TruSense",
+
+1264 
+Stus
+: "ONLINE",
+
+1265 
+La¡S“n
+: 
+time
+.
+	`Now
+(),
+
+1266 
+PH
+: 7.2,
+
+1267 
+ORP
+: 750,
+
+1268 
+Temp
+: 25.8,
+
+1271 
+ID
+: "demo-heater-001",
+
+1272 
+S”Ÿl
+: "demo-heater-001",
+
+1273 
+Name
+: "Demo Pool Heater",
+
+1274 
+Ty³
+: "Heater",
+
+1275 
+Stus
+: "ONLINE",
+
+1276 
+La¡S“n
+: 
+time
+.
+	`Now
+(),
+
+1277 
+S‘Temp
+: 28.0,
+
+1278 
+W©”Temp
+: 26.5,
+
+1279 
+Pow”
+: 15000,
+
+1283 
+n
+.
+mu‹x
+.
+	`Lock
+()
+
+1284 
+deãr
+ 
+n
+.
+mu‹x
+.
+	`UÆock
+()
+
+1286 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+demoDeviûs
+ {
+
+1287 
+n
+.
+deviûs
+[
+deviû
+.
+S”Ÿl
+] = device
+
+1288 
+log
+.
+	`Prštf
+("C»©ed demØdeviû: % (%s)", 
+deviû
+.
+Name
+, deviû.
+S”Ÿl
+)
+
+1291 
+log
+.
+	`Prštf
+("C»©ed %d demØdeviûs", 
+	`Ën
+(
+demoDeviûs
+))
+
+1292 
+	}
+}
+
+1295 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$£ndSª™iz”Commªd
+(
+£rŸl
+, 
+ÿ‹gÜy
+ 
+¡ršg
+, 
+³rûÁage
+ è
+”rÜ
+ {
+
+1296 
+log
+.
+	`Prštf
+("ğŸ§ª S’dšg sª™iz” commªd: % -> %d%%", 
+£rŸl
+, 
+³rûÁage
+)
+
+1299 
+³rûÁage
+ < 0 ||…ercentage > 101 {
+
+1300  
+fmt
+.
+	`E¼Üf
+("šv®id…”ûÁage: %d (mu¡ b0-101)", 
+³rûÁage
+)
+
+1304 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+1305 
+deviû
+, 
+exi¡s
+ :ğ
+n
+.
+deviûs
+[
+£rŸl
+]
+
+1306 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+1308 !
+exi¡s
+ {
+
+1309  
+fmt
+.
+	`E¼Üf
+("deviû‚Ù found: %s", 
+£rŸl
+)
+
+1313 
+n
+.
+mu‹x
+.
+	`Lock
+()
+
+1314 
+deviû
+.
+P’dšgP”ûÁage
+ = 
+	`št32
+(
+³rûÁage
+)
+
+1315 
+deviû
+.
+La¡CommªdTime
+ = 
+time
+.
+	`Now
+()
+
+1316 
+n
+.
+mu‹x
+.
+	`UÆock
+()
+
+1319 
+n
+.
+mq‰
+ !ğ
+n
+ &&‚.mq‰.
+	`IsCÚÃùed
+() {
+
+1320  
+n
+.
+	`£ndMQTTSª™iz”Commªd
+(
+£rŸl
+, 
+ÿ‹gÜy
+, 
+³rûÁage
+)
+
+1324 
+log
+.
+	`Prštf
+("ğŸ”§ DemØmode: SimuÏtšg commªdƒxecutiÚ fÜ %s", 
+£rŸl
+)
+
+1327 
+go
+ 
+	`func
+() {
+
+1328 
+time
+.
+	`SË•
+(2 *ime.
+SecÚd
+)
+
+1330 
+n
+.
+mu‹x
+.
+	`Lock
+()
+
+1331 
+deviû
+, 
+exi¡s
+ :ğ
+n
+.
+deviûs
+[
+£rŸl
+];ƒxists {
+
+1332 
+deviû
+.
+P”ûÁageOuut
+ = 
+	`št32
+(
+³rûÁage
+)
+
+1333 
+deviû
+.
+Aùu®P”ûÁage
+ = 
+	`št32
+(
+³rûÁage
+)
+
+1334 
+deviû
+.
+P’dšgP”ûÁage
+ = 0
+
+1335 
+deviû
+.
+La¡CommªdTime
+ = 
+time
+.
+Time
+{}
+
+1336 
+deviû
+.
+La¡S“n
+ = 
+time
+.
+	`Now
+()
+
+1337 
+log
+.
+	`Prštf
+("âœ… DemØcommªd com¶‘ed: % -> %d%%", 
+£rŸl
+, 
+³rûÁage
+)
+
+1339 
+n
+.
+mu‹x
+.
+	`UÆock
+()
+
+1342  
+n
+
+
+1343 
+	}
+}
+
+1346 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$£ndMQTTSª™iz”Commªd
+(
+£rŸl
+, 
+ÿ‹gÜy
+ 
+¡ršg
+, 
+³rûÁage
+ è
+”rÜ
+ {
+
+1347 
+log
+.
+	`Prštf
+("ğŸ“¡ S’dšg MQTT sª™iz” commªd: % -> %d%%", 
+£rŸl
+, 
+³rûÁage
+)
+
+1355 
+commªdPaylßd
+ :ğ
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+1357 "rg‘_³rûÁage": 
+³rûÁage
+,
+
+1358 "time¡amp": 
+time
+.
+	`Now
+().
+	`Unix
+(),
+
+1362 
+commªdBy‹s
+, 
+”r
+ :ğ
+jsÚ
+.
+	`M¬sh®
+(
+commªdPaylßd
+)
+
+1363 
+”r
+ !ğ
+n
+ {
+
+1364  
+fmt
+.
+	`E¼Üf
+("çedØm¬sh® commªd: %v", 
+”r
+)
+
+1369 
+tİic
+ :ğ
+fmt
+.
+	`S´štf
+("async/%s/%s/cmd", 
+ÿ‹gÜy
+, 
+£rŸl
+)
+
+1372 
+cÜ»ÏtiÚID
+ :ğ
+n
+.
+logg”
+.
+	`LogReque¡
+(
+£rŸl
+, "S‘Sª™iz”T¬g‘P”ûÁage", 
+commªdBy‹s
+, 
+ÿ‹gÜy
+, "sanitizer", "percentage_command")
+
+1375 
+tok’
+ :ğ
+n
+.
+mq‰
+.
+	`Publish
+(
+tİic
+, 1, 
+çl£
+, 
+commªdBy‹s
+)
+
+1376 
+tok’
+.
+	`Wa™
+(è&&ok’.
+	`E¼Ü
+(è!ğ
+n
+ {
+
+1377 
+n
+.
+logg”
+.
+	`LogE¼Ü
+(
+£rŸl
+, "SetSanitizerTargetPercentage",
+
+1378 
+fmt
+.
+	`S´štf
+("MQTT…ublish faed: %v", 
+tok’
+.
+	`E¼Ü
+()), 
+cÜ»ÏtiÚID
+, 
+ÿ‹gÜy
+)
+
+1379  
+fmt
+.
+	`E¼Üf
+("çedØpublish commªd: %v", 
+tok’
+.
+	`E¼Ü
+())
+
+1382 
+log
+.
+	`Prštf
+("âœ… MQTT commªd s’ˆsucûssfuÎy: % -> %d%% (cÜ»ÏtiÚ: %s)", 
+£rŸl
+, 
+³rûÁage
+, 
+cÜ»ÏtiÚID
+)
+
+1383  
+n
+
+
+1384 
+	}
+}
+
+1387 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$hªdËAÎDeviûCommªds
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+1388 
+log
+.
+	`Pršn
+("ğŸ”§ All device commands„equest„eceived")
+
+1390 
+ÿ‹gÜ›s
+ :ğ
+n
+.
+commªdRegi¡ry
+.
+	`G‘AÎC©egÜ›s
+()
+
+1391 
+»suÉ
+ :ğ
+	`make
+(
+m­
+[
+¡ršg
+]
+DeviûCommªds
+)
+
+1393 
+_
+, 
+ÿ‹gÜy
+ :ğ
+¿nge
+ 
+ÿ‹gÜ›s
+ {
+
+1394 
+commªds
+, 
+exi¡s
+ :ğ
+n
+.
+commªdRegi¡ry
+.
+	`G‘CommªdsFÜC©egÜy
+(
+ÿ‹gÜy
+)
+
+1395 
+exi¡s
+ {
+
+1396 
+»suÉ
+[
+ÿ‹gÜy
+] = 
+DeviûCommªds
+{
+
+1397 
+C©egÜy
+: 
+ÿ‹gÜy
+,
+
+1398 
+Commªds
+: 
+commªds
+,
+
+1403 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+1404 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+1406 
+”r
+ :ğ
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+»suÉ
+);ƒ¼ !ğ
+n
+ {
+
+1407 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("E¼Üƒncodšg JSON: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+1411 
+log
+.
+	`Prštf
+("ğŸ“¤ S’ˆcommªd fÜ %d c©egÜ›s", 
+	`Ën
+(
+»suÉ
+))
+
+1412 
+	}
+}
+
+1415 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$‹¡PrÙobufSy¡em
+() {
+
+1416 
+log
+.
+	`Pršn
+("ğŸ§ª Testing…rotobuf„eflection system...")
+
+1418 
+n
+.
+»æeùiÚEngše
+ =ğ
+n
+ {
+
+1419 
+log
+.
+	`Pršn
+("âŒ Reflectionƒngine‚ot initialized")
+
+1423 
+mes§ges
+ :ğ
+n
+.
+»æeùiÚEngše
+.
+	`G‘AÎMes§ges
+()
+
+1424 
+log
+.
+	`Prštf
+("ğŸ“‹ Found %d…rÙobuàmes§gty³s:", 
+	`Ën
+(
+mes§ges
+))
+
+1426 
+_
+, 
+desc
+ :ğ
+¿nge
+ 
+mes§ges
+ {
+
+1427 
+log
+.
+	`Prštf
+(" ğŸ“„ % (%sè- %d f›lds", 
+desc
+.
+Name
+, desc.
+Package
+, 
+	`Ën
+(desc.
+F›lds
+))
+
+1428 
+desc
+.
+IsReque¡
+ {
+
+1429 
+log
+.
+	`Prštf
+(" ğŸš€ REQUEST mes§gfÜ c©egÜy: %s", 
+desc
+.
+C©egÜy
+)
+
+1431 
+desc
+.
+IsRe¥Ú£
+ {
+
+1432 
+log
+.
+	`Prštf
+(" ğŸ“¨ RESPONSE message")
+
+1434 
+desc
+.
+IsT–em‘ry
+ {
+
+1435 
+log
+.
+	`Prštf
+(" ğŸ“Š TELEMETRY message")
+
+1439 
+log
+.
+	`Pršn
+("âœ… Protobuf systemest complete")
+
+1440 
+	}
+}
+
+1443 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$addDeviûT”mš®EÁry
+(
+deviûS”Ÿl
+, 
+’ŒyTy³
+, 
+mes§ge
+ 
+¡ršg
+, 
+¿wD©a
+ []
+by‹
+) {
+
+1444 
+n
+.
+mu‹x
+.
+	`Lock
+()
+
+1445 
+deãr
+ 
+n
+.
+mu‹x
+.
+	`UÆock
+()
+
+1447 
+deviû
+, 
+exi¡s
+ :ğ
+n
+.
+deviûs
+[
+deviûS”Ÿl
+]
+
+1448 !
+exi¡s
+ {
+
+1453 
+·r£r
+ :ğ
+	`NewPrÙobufMes§geP¬£r
+(
+n
+.
+»æeùiÚEngše
+)
+
+1456 
+’Œy
+ :ğ
+T”mš®EÁry
+{
+
+1457 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+1458 
+Ty³
+: 
+’ŒyTy³
+,
+
+1459 
+Mes§ge
+: 
+mes§ge
+,
+
+1460 
+D©a
+: 
+	`¡ršg
+(
+¿wD©a
+),
+
+1464 
+¡ršgs
+.
+	`ToUµ”
+(
+’ŒyTy³
+) {
+
+1466 
+·r£d
+, 
+”r
+ :ğ
+·r£r
+.
+	`P¬£AÂounûMes§ge
+(
+¿wD©a
+, 
+deviûS”Ÿl
+);ƒ¼ =ğ
+n
+ {
+
+1467 
+’Œy
+.
+P¬£dPrÙobuf
+ = 
+·r£d
+
+
+1469 
+	`Ën
+(
+·r£d
+.
+F›lds
+) > 0 {
+
+1470 
+’Œy
+.
+Mes§ge
+ = 
+fmt
+.
+	`S´štf
+("Device‡nnounced: %s (%d fields…arsed)",
+
+1471 
+deviû
+.
+Name
+, 
+	`Ën
+(
+·r£d
+.
+F›lds
+))
+
+1474 
+log
+.
+	`Prštf
+("FaedØ·r£‡Âounû…rÙobuf: %v", 
+”r
+)
+
+1478 
+·r£d
+, 
+”r
+ :ğ
+·r£r
+.
+	`P¬£T–em‘ryMes§ge
+(
+¿wD©a
+, 
+deviûS”Ÿl
+);ƒ¼ =ğ
+n
+ {
+
+1479 
+’Œy
+.
+P¬£dPrÙobuf
+ = 
+·r£d
+
+
+1481 
+	`Ën
+(
+·r£d
+.
+F›lds
+) > 0 {
+
+1482 
+’Œy
+.
+Mes§ge
+ = 
+fmt
+.
+	`S´štf
+("Telemetry„eceived (%d fields…arsed)",
+
+1483 
+	`Ën
+(
+·r£d
+.
+F›lds
+))
+
+1486 
+log
+.
+	`Prštf
+("FaedØ·r£–em‘ry…rÙobuf: %v", 
+”r
+)
+
+1491 
+deviû
+.
+LiveT”mš®
+ = 
+	`­³nd
+(deviû.LiveT”mš®, 
+’Œy
+)
+
+1494 
+	`Ën
+(
+deviû
+.
+LiveT”mš®
+) > 50 {
+
+1495 
+deviû
+.
+LiveT”mš®
+ = deviû.LiveT”mš®[
+	`Ën
+(device.LiveTerminal)-50:]
+
+1499 
+n
+.
+‹rmš®Logg”
+ !ğ
+n
+ {
+
+1500 
+n
+.
+‹rmš®Logg”
+.
+	`LogPrÙobufMes§ge
+(
+’ŒyTy³
+, 
+deviûS”Ÿl
+, "DEVICE", 
+mes§ge
+, 
+¿wD©a
+)
+
+1502 
+	}
+}
+
+1505 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	`g‘SÜ‹dDeviûs
+(è[]*
+Deviû
+ {
+
+1506 
+n
+.
+mu‹x
+.
+	`RLock
+()
+
+1507 
+deviûs
+ :ğ
+	`make
+([]*
+Deviû
+, 0, 
+	`Ën
+(
+n
+.devices))
+
+1508 
+_
+, 
+deviû
+ :ğ
+¿nge
+ 
+n
+.
+deviûs
+ {
+
+1509 
+deviûs
+ = 
+	`­³nd
+(deviûs, 
+deviû
+)
+
+1511 
+n
+.
+mu‹x
+.
+	`RUÆock
+()
+
+1514 
+sÜt
+.
+	`Sliû
+(
+deviûs
+, 
+	`func
+(
+i
+, 
+j
+ è
+boŞ
+ {
+
+1515  
+deviûs
+[
+i
+].
+S”Ÿl
+ < deviûs[
+j
+].Serial
+
+1518  
+deviûs
+
+
+1519 
+	}
+}
+
+1522 
+	$func
+ (
+n
+ *
+NgaSim
+è
+	$pİuÏ‹DeviûCommªds
+() {
+
+1523 
+n
+.
+»æeùiÚEngše
+ =ğ
+n
+ {
+
+1527 
+mes§ges
+ :ğ
+n
+.
+»æeùiÚEngše
+.
+	`G‘AÎMes§ges
+()
+
+1530 
+_
+, 
+desc
+ :ğ
+¿nge
+ 
+mes§ges
+ {
+
+1531 
+desc
+.
+IsReque¡
+ && desc.
+C©egÜy
+ != "" {
+
+1533 
+n
+.
+deviûCommªds
+[
+desc
+.
+C©egÜy
+] =ğ
+n
+ {
+
+1534 
+n
+.
+deviûCommªds
+[
+desc
+.
+C©egÜy
+] = 
+	`make
+([]
+¡ršg
+, 0)
+
+1538 
+commªdName
+ :ğ
+desc
+.
+Name
+
+
+1539 
+¡ršgs
+.
+	`HasSuffix
+(
+commªdName
+, "RequestPayload") {
+
+1540 
+commªdName
+ = 
+¡ršgs
+.
+	`TrimSuffix
+(commandName, "RequestPayload")
+
+1543 
+n
+.
+deviûCommªds
+[
+desc
+.
+C©egÜy
+] = 
+	`­³nd
+Ò.deviûCommªds[desc.C©egÜy], 
+commªdName
+)
+
+1547 
+log
+.
+	`Prštf
+("ğŸ“‹ PİuÏ‹d deviû commªd fÜ %d c©egÜ›s", 
+	`Ën
+(
+n
+.
+deviûCommªds
+))
+
+1548 
+	}
+}
+
+1552 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	$discov”DeviûC­ab™›s
+(
+deviûTy³
+ 
+¡ršg
+è
+m­
+[¡ršg]
+š‹rçû
+{
+	}
+} {
+
+1553 
+	gÿ·b™›s
+ :ğ
+make
+(
+m­
+[
+¡ršg
+]
+š‹rçû
+{})
+
+1558 
+deviûTy³
+ {
+
+1569  
+ÿ·b™›s
+
+
+1574 
+	$func
+ (
+sim
+ *
+NgaSim
+è
+	`g’”©eDyÇmicWebUI
+(
+deviûS”Ÿl
+ 
+¡ršg
+, 
+ÿ·b™›s
+ 
+m­
+[¡ršg]
+š‹rçû
+{
+	}
+}è
+	g¡ršg
+ {
+
+	@mqtt.go
+
+1 
+·ckage
+ 
+	gmaš
+
+
+	@popup_generator.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+18 
+ty³
+ 
+PİupUIG’”©Ü
+ struct {
+
+19 
+»æeùiÚEngše
+ *
+PrÙobufReæeùiÚEngše
+
+
+20 
+‹rmš®Logg”
+ *
+T”mš®Logg”
+
+
+21 
+ngaSim
+ *
+	mNgaSim
+
+
+25 
+ty³
+ 
+PİupReque¡
+ struct {
+
+26 
+Mes§geTy³
+ 
+	m¡ršg
+ `
+	mjsÚ
+:"message_type"`
+
+27 
+DeviûS”Ÿl
+ 
+¡ršg
+ `
+jsÚ
+:"device_serial"`
+
+28 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category"`
+
+32 
+ty³
+ 
+PİupRe¥Ú£
+ struct {
+
+33 
+HTML
+ 
+¡ršg
+ `
+jsÚ
+:"html"`
+
+34 
+Mes§geTy³
+ 
+¡ršg
+ `
+jsÚ
+:"message_type"`
+
+35 
+F›lds
+ []
+F›ldDesütÜ
+ `
+jsÚ
+:"fields"`
+
+36 
+T™Ë
+ 
+¡ršg
+ `
+jsÚ
+:"title"`
+
+40 
+ty³
+ 
+CommªdExecutiÚReque¡
+ struct {
+
+41 
+Mes§geTy³
+ 
+¡ršg
+ `
+jsÚ
+:"message_type"`
+
+42 
+DeviûS”Ÿl
+ 
+¡ršg
+ `
+jsÚ
+:"device_serial"`
+
+43 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category"`
+
+44 
+F›ldV®ues
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+jsÚ
+:"field_values"`
+
+48 
+ty³
+ 
+CommªdExecutiÚRe¥Ú£
+ struct {
+
+49 
+Sucûss
+ 
+boŞ
+ `
+jsÚ
+:"success"`
+
+50 
+E¼Ü
+ 
+¡ršg
+ `
+jsÚ
+:"error,omitempty"`
+
+51 
+CÜ»ÏtiÚID
+ 
+¡ršg
+ `
+jsÚ
+:"correlation_id"`
+
+52 
+Time¡amp
+ 
+time
+.
+Time
+ `
+jsÚ
+:"timestamp"`
+
+53 
+Mes§geS’t
+ 
+š‹rçû
+{} `
+jsÚ
+:"message_sent,omitempty"`
+
+57 
+func
+ 
+NewPİupUIG’”©Ü
+(
+»æeùiÚEngše
+ *
+PrÙobufReæeùiÚEngše
+, 
+‹rmš®Logg”
+ *
+T”mš®Logg”
+, 
+ngaSim
+ *
+NgaSim
+è*
+	gPİupUIG’”©Ü
+ {
+
+58  &
+	gPİupUIG’”©Ü
+{
+
+59 
+	g»æeùiÚEngše
+: 
+»æeùiÚEngše
+,
+
+60 
+	g‹rmš®Logg”
+: 
+‹rmš®Logg”
+,
+
+61 
+	gngaSim
+: 
+ngaSim
+,
+
+66 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	`G’”©ePİupHTML
+(
+mes§geTy³
+, 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+ 
+¡ršg
+è(*
+PİupRe¥Ú£
+, 
+”rÜ
+) {
+
+68 
+mes§ges
+ :ğ
+pug
+.
+»æeùiÚEngše
+.
+	`G‘AÎMes§ges
+()
+
+69 
+msgDesc
+, 
+exi¡s
+ :ğ
+mes§ges
+[
+mes§geTy³
+]
+
+70 !
+exi¡s
+ {
+
+71  
+n
+, 
+fmt
+.
+	`E¼Üf
+("mes§gty³‚Ù found: %s", 
+mes§geTy³
+)
+
+75 
+html
+ :ğ
+pug
+.
+	`g’”©eFÜmHTML
+(
+msgDesc
+, 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+)
+
+77 
+»¥Ú£
+ :ğ&
+PİupRe¥Ú£
+{
+
+78 
+HTML
+: 
+html
+,
+
+79 
+Mes§geTy³
+: 
+mes§geTy³
+,
+
+80 
+F›lds
+: 
+msgDesc
+.Fields,
+
+81 
+T™Ë
+: 
+fmt
+.
+	`S´štf
+("% - %s", 
+msgDesc
+.
+Name
+, 
+deviûS”Ÿl
+),
+
+84  
+»¥Ú£
+, 
+n
+
+
+85 
+	}
+}
+
+88 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	$g’”©eFÜmHTML
+(
+msgDesc
+ 
+Mes§geDesütÜ
+, 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+ 
+¡ršg
+) string {
+
+89 
+v¬
+ 
+html
+ 
+¡ršgs
+.
+Bud”
+
+
+92 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+93 <
+div
+ 
+şass
+="popup-header">
+
+94 <
+h3
+>%
+s
+</h3>
+
+95 <
+p
+>
+Deviû
+: <
+¡rÚg
+>%
+s
+</¡rÚg> | 
+C©egÜy
+: <strong>%s</strong></p>
+
+96 <
+bu‰Ú
+ 
+şass
+="şo£-bŠ" 
+Úşick
+="şo£Pİup()">&
+times
+;</button>
+
+97 </
+div
+>
+
+98 <
+div
+ 
+şass
+="popup-body">
+
+99 <
+fÜm
+ 
+id
+="protobuf-command-form">
+
+100 <
+šput
+ 
+ty³
+="hidd’" 
+Çme
+="mes§ge_ty³" 
+v®ue
+="%s">
+
+101 <
+šput
+ 
+ty³
+="hidd’" 
+Çme
+="deviû_£rŸl" 
+v®ue
+="%s">
+
+102 <
+šput
+ 
+ty³
+="hidd’" 
+Çme
+="ÿ‹gÜy" 
+v®ue
+="%s">
+
+103 `, 
+msgDesc
+.
+Name
+, 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+, msgDesc.
+Package
++"."+msgDesc.Name, deviceSerial, category))
+
+106 
+_
+, 
+f›ld
+ :ğ
+¿nge
+ 
+msgDesc
+.
+F›lds
+ {
+
+107 
+html
+.
+	`Wr™eSŒšg
+(
+pug
+.
+	`g’”©eF›ldHTML
+(
+f›ld
+))
+
+111 
+html
+.
+	`Wr™eSŒšg
+(`
+
+112 </
+fÜm
+>
+
+113 </
+div
+>
+
+114 <
+div
+ 
+şass
+="popup-footer">
+
+115 <
+bu‰Ú
+ 
+ty³
+="bu‰Ú" 
+şass
+="bŠ-£cÚd¬y" 
+Úşick
+="şo£Pİup()">
+Cªûl
+</button>
+
+116 <
+bu‰Ú
+ 
+ty³
+="bu‰Ú" 
+şass
+="bŠ-´im¬y" 
+Úşick
+="execu‹PrÙobufCommªd()">
+S’d
+ 
+Commªd
+</button>
+
+117 <
+bu‰Ú
+ 
+ty³
+="bu‰Ú" 
+şass
+="bŠ-šfo" 
+Úşick
+="´ev›wCommªd()">
+P»v›w
+ 
+Mes§ge
+</button>
+
+118 </
+div
+>
+
+119 <
+div
+ 
+id
+="commªd-´ev›w" 
+şass
+="commªd-´ev›w" 
+¡yË
+="display:‚one;">
+
+120 <
+h4
+>
+Mes§ge
+ 
+P»v›w
+:</h4>
+
+121 <
+´e
+ 
+id
+="preview-content"></pre>
+
+122 </
+div
+>
+
+125  
+html
+.
+	`SŒšg
+()
+
+126 
+	}
+}
+
+129 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	$g’”©eF›ldHTML
+(
+f›ld
+ 
+F›ldDesütÜ
+è
+¡ršg
+ {
+
+130 
+v¬
+ 
+html
+ 
+¡ršgs
+.
+Bud”
+
+
+132 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+133 <
+div
+ 
+şass
+="form-group">
+
+134 <
+Ïb–
+ ="f›ld_%s">%
+s
+</label>
+
+135 <
+div
+ 
+şass
+="f›ld-desütiÚ">%
+s
+</div>
+
+136 `, 
+f›ld
+.
+Name
+, f›ld.
+Lab–
+, f›ld.
+DesütiÚ
+))
+
+138 
+f›ld
+.
+Ty³
+ {
+
+140 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+141 <
+£Ëù
+ 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="form-control">
+
+142 <
+İtiÚ
+ 
+v®ue
+="çl£">
+F®£
+</option>
+
+143 <
+İtiÚ
+ 
+v®ue
+="Œue">
+True
+</option>
+
+144 </
+£Ëù
+>`, 
+f›ld
+.
+Name
+, field.Name))
+
+147 
+mš
+ := ""
+
+148 
+max
+ := ""
+
+149 
+f›ld
+.
+Mš
+ !ğ
+n
+ {
+
+150 
+mš
+ = 
+fmt
+.
+	`S´štf
+(`mš="%v"`, 
+f›ld
+.
+Mš
+)
+
+152 
+f›ld
+.
+Max
+ !ğ
+n
+ {
+
+153 
+max
+ = 
+fmt
+.
+	`S´štf
+(`max="%v"`, 
+f›ld
+.
+Max
+)
+
+155 
+deçuÉV®
+ := ""
+
+156 
+f›ld
+.
+DeçuÉV®ue
+ !ğ
+n
+ {
+
+157 
+deçuÉV®
+ = 
+fmt
+.
+	`S´štf
+(`
+v®ue
+="%v"`, 
+f›ld
+.
+DeçuÉV®ue
+)
+
+160 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+161 <
+šput
+ 
+ty³
+="numb”" 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="fÜm-cÚŒŞ" %
+s
+ %s %s>
+
+162 `, 
+f›ld
+.
+Name
+, f›ld.Name, 
+mš
+, 
+max
+, 
+deçuÉV®
+))
+
+165 
+deçuÉV®
+ := ""
+
+166 
+f›ld
+.
+DeçuÉV®ue
+ !ğ
+n
+ {
+
+167 
+deçuÉV®
+ = 
+fmt
+.
+	`S´štf
+(`
+v®ue
+="%v"`, 
+f›ld
+.
+DeçuÉV®ue
+)
+
+170 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+171 <
+šput
+ 
+ty³
+="numb”" 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="fÜm-cÚŒŞ" 
+¡•
+="0.01" %
+s
+>
+
+172 `, 
+f›ld
+.
+Name
+, f›ld.Name, 
+deçuÉV®
+))
+
+175 
+deçuÉV®
+ := ""
+
+176 
+f›ld
+.
+DeçuÉV®ue
+ !ğ
+n
+ {
+
+177 
+deçuÉV®
+ = 
+fmt
+.
+	`S´štf
+(`
+v®ue
+="%v"`, 
+f›ld
+.
+DeçuÉV®ue
+)
+
+180 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+181 <
+šput
+ 
+ty³
+="‹xt" 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="fÜm-cÚŒŞ" %
+s
+>
+
+182 `, 
+f›ld
+.
+Name
+, f›ld.Name, 
+deçuÉV®
+))
+
+185 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+186 <
+£Ëù
+ 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="fÜm-cÚŒŞ">`, 
+f›ld
+.
+Name
+, field.Name))
+
+188 
+_
+, 
+’umV®ue
+ :ğ
+¿nge
+ 
+f›ld
+.
+EnumV®ues
+ {
+
+189 
+£Ëùed
+ := ""
+
+190 
+f›ld
+.
+DeçuÉV®ue
+ !ğ
+n
+ && 
+fmt
+.
+	`S´štf
+("%v", f›ld.DeçuÉV®ueè=ğ
+’umV®ue
+ {
+
+191 
+£Ëùed
+ = "selected"
+
+193 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+194 <
+İtiÚ
+ 
+v®ue
+="%s" %
+s
+>%s</İtiÚ>`, 
+’umV®ue
+, 
+£Ëùed
+,ƒnumValue))
+
+197 
+html
+.
+	`Wr™eSŒšg
+(`
+
+198 </
+£Ëù
+>`)
+
+201 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+202 <
+‹x»a
+ 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="fÜm-cÚŒŞ" 
+rows
+="3" 
+¶aûhŞd”
+="Enter hex data (e.g., 0x1A2B3C or 1A2B3C)"></textarea>
+
+203 `, 
+f›ld
+.
+Name
+, field.Name))
+
+207 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+208 <
+šput
+ 
+ty³
+="‹xt" 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="fÜm-cÚŒŞ" 
+¶aûhŞd”
+="%s">
+
+209 `, 
+f›ld
+.
+Name
+, f›ld.Name, f›ld.
+Ty³
+))
+
+213 
+f›ld
+.
+Requœed
+ {
+
+214 
+html
+.
+	`Wr™eSŒšg
+(`<
+sm®l
+ 
+şass
+="»quœed-šdiÿtÜ">* 
+Requœed
+</small>`)
+
+217 
+html
+.
+	`Wr™eSŒšg
+(`</
+div
+>`)
+
+219  
+html
+.
+	`SŒšg
+()
+
+220 
+	}
+}
+
+223 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	`Execu‹PrÙobufCommªd
+(
+»q
+ 
+CommªdExecutiÚReque¡
+è(*
+CommªdExecutiÚRe¥Ú£
+, 
+”rÜ
+) {
+
+224 
+log
+.
+	`Prštf
+("ğŸš€ Executšg…rÙobuàcommªd: % fÜ deviû %s", 
+»q
+.
+Mes§geTy³
+,„eq.
+DeviûS”Ÿl
+)
+
+227 
+msg
+, 
+”r
+ :ğ
+pug
+.
+»æeùiÚEngše
+.
+	`C»©eMes§ge
+(
+»q
+.
+Mes§geTy³
+)
+
+228 
+”r
+ !ğ
+n
+ {
+
+229  &
+CommªdExecutiÚRe¥Ú£
+{
+
+230 
+Sucûss
+: 
+çl£
+,
+
+231 
+E¼Ü
+: 
+fmt
+.
+	`S´štf
+("FaedØü—‹ mes§ge: %v", 
+”r
+),
+
+232 }, 
+”r
+
+
+236 
+”r
+ :ğ
+pug
+.
+»æeùiÚEngše
+.
+	`PİuÏ‹Mes§ge
+(
+msg
+, 
+»q
+.
+F›ldV®ues
+);ƒ¼ !ğ
+n
+ {
+
+237  &
+CommªdExecutiÚRe¥Ú£
+{
+
+238 
+Sucûss
+: 
+çl£
+,
+
+239 
+E¼Ü
+: 
+fmt
+.
+	`S´štf
+("FaedØpİuÏ‹ mes§ge: %v", 
+”r
+),
+
+240 }, 
+”r
+
+
+244 
+msgBy‹s
+, 
+”r
+ :ğ
+´Ùo
+.
+	`M¬sh®
+(
+msg
+)
+
+245 
+”r
+ !ğ
+n
+ {
+
+246  &
+CommªdExecutiÚRe¥Ú£
+{
+
+247 
+Sucûss
+: 
+çl£
+,
+
+248 
+E¼Ü
+: 
+fmt
+.
+	`S´štf
+("FaedØ£rŸlizmes§ge: %v", 
+”r
+),
+
+249 }, 
+”r
+
+
+253 
+cÜ»ÏtiÚID
+ :ğ
+fmt
+.
+	`S´štf
+("pİup_%d", 
+time
+.
+	`Now
+().
+	`UnixNªo
+())
+
+256 
+pug
+.
+‹rmš®Logg”
+.
+	`LogPrÙobufMes§ge
+("REQUEST", 
+»q
+.
+DeviûS”Ÿl
+, "OUTGOING", 
+msg
+, 
+msgBy‹s
+)
+
+259 
+v¬
+ 
+£ndE¼
+ 
+”rÜ
+
+
+260 
+pug
+.
+ngaSim
+.
+mq‰
+ !ğ
+n
+ &&…ug.ngaSim.mq‰.
+	`IsCÚÃùed
+() {
+
+261 
+£ndE¼
+ = 
+pug
+.
+	`£ndMQTTCommªd
+(
+»q
+.
+DeviûS”Ÿl
+,„eq.
+C©egÜy
+,„eq.
+Mes§geTy³
+, 
+msgBy‹s
+, 
+cÜ»ÏtiÚID
+)
+
+264 
+go
+ 
+pug
+.
+	`simuÏ‹Re¥Ú£
+(
+»q
+.
+DeviûS”Ÿl
+,„eq.
+Mes§geTy³
+, 
+cÜ»ÏtiÚID
+)
+
+267 
+»¥Ú£
+ :ğ&
+CommªdExecutiÚRe¥Ú£
+{
+
+268 
+Sucûss
+: 
+£ndE¼
+ =ğ
+n
+,
+
+269 
+CÜ»ÏtiÚID
+: 
+cÜ»ÏtiÚID
+,
+
+270 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+271 
+Mes§geS’t
+: 
+msg
+,
+
+274 
+£ndE¼
+ !ğ
+n
+ {
+
+275 
+»¥Ú£
+.
+E¼Ü
+ = 
+£ndE¼
+.
+	`E¼Ü
+()
+
+276 
+pug
+.
+‹rmš®Logg”
+.
+	`LogE¼Ü
+(
+»q
+.
+DeviûS”Ÿl
+, "CommªdƒxecutiÚ faed", 
+£ndE¼
+)
+
+279  
+»¥Ú£
+, 
+£ndE¼
+
+
+280 
+	}
+}
+
+283 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	$£ndMQTTCommªd
+(
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+, 
+mes§geTy³
+ 
+¡ršg
+, 
+msgBy‹s
+ []
+by‹
+, 
+cÜ»ÏtiÚID
+ sŒšgè
+”rÜ
+ {
+
+285 
+tİic
+ :ğ
+fmt
+.
+	`S´štf
+("async/%s/%s/cmd", 
+ÿ‹gÜy
+, 
+deviûS”Ÿl
+)
+
+288 
+tok’
+ :ğ
+pug
+.
+ngaSim
+.
+mq‰
+.
+	`Publish
+(
+tİic
+, 1, 
+çl£
+, 
+msgBy‹s
+)
+
+289 
+tok’
+.
+	`Wa™
+(è&&ok’.
+	`E¼Ü
+(è!ğ
+n
+ {
+
+290  
+fmt
+.
+	`E¼Üf
+("MQTT…ublish faed: %v", 
+tok’
+.
+	`E¼Ü
+())
+
+293 
+log
+.
+	`Prštf
+("âœ… MQTT commªd s’t: % -> % (cÜ»ÏtiÚ: %s)", 
+deviûS”Ÿl
+, 
+mes§geTy³
+, 
+cÜ»ÏtiÚID
+)
+
+294  
+n
+
+
+295 
+	}
+}
+
+298 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	$simuÏ‹Re¥Ú£
+(
+deviûS”Ÿl
+, 
+mes§geTy³
+, 
+cÜ»ÏtiÚID
+ 
+¡ršg
+) {
+
+300 
+time
+.
+	`SË•
+(1 *ime.
+SecÚd
+)
+
+303 
+»¥Ú£D©a
+ :ğ
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+304 "cÜ»ÏtiÚ_id": 
+cÜ»ÏtiÚID
+,
+
+305 "sucûss": 
+Œue
+,
+
+306 "time¡amp": 
+time
+.
+	`Now
+().
+	`Unix
+(),
+
+307 "deviû_£rŸl": 
+deviûS”Ÿl
+,
+
+308 "mes§ge_ty³": 
+mes§geTy³
+,
+
+313 
+pug
+.
+‹rmš®Logg”
+.
+	`LogPrÙobufMes§ge
+("RESPONSE", 
+deviûS”Ÿl
+, "INCOMING", 
+»¥Ú£D©a
+, 
+n
+)
+
+315 
+log
+.
+	`Prštf
+("ğŸ­ SimuÏ‹d„e¥Ú£ fÜ %s: %s", 
+deviûS”Ÿl
+, 
+cÜ»ÏtiÚID
+)
+
+316 
+	}
+}
+
+321 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	$hªdËPrÙobufPİup
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+322 
+r
+.
+M‘hod
+ !ğ
+h‰p
+.
+M‘hodPo¡
+ {
+
+323 
+h‰p
+.
+	`E¼Ü
+(
+w
+, "M‘hod‚Ù‡Îowed", h‰p.
+StusM‘hodNÙAÎowed
+)
+
+327 
+v¬
+ 
+»q
+ 
+PİupReque¡
+
+
+328 
+”r
+ :ğ
+jsÚ
+.
+	`NewDecod”
+(
+r
+.
+Body
+).
+	`Decode
+(&
+»q
+);ƒ¼ !ğ
+n
+ {
+
+329 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Inv®id JSON: %v", 
+”r
+), h‰p.
+StusBadReque¡
+)
+
+333 
+»¥Ú£
+, 
+”r
+ :ğ
+pug
+.
+	`G’”©ePİupHTML
+(
+»q
+.
+Mes§geTy³
+,„eq.
+DeviûS”Ÿl
+,„eq.
+C©egÜy
+)
+
+334 
+”r
+ !ğ
+n
+ {
+
+335 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("FaedØg’”©pİup: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+339 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+340 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+341 
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+»¥Ú£
+)
+
+342 
+	}
+}
+
+345 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	$hªdËPrÙobufCommªd
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+346 
+r
+.
+M‘hod
+ !ğ
+h‰p
+.
+M‘hodPo¡
+ {
+
+347 
+h‰p
+.
+	`E¼Ü
+(
+w
+, "M‘hod‚Ù‡Îowed", h‰p.
+StusM‘hodNÙAÎowed
+)
+
+351 
+v¬
+ 
+»q
+ 
+CommªdExecutiÚReque¡
+
+
+352 
+”r
+ :ğ
+jsÚ
+.
+	`NewDecod”
+(
+r
+.
+Body
+).
+	`Decode
+(&
+»q
+);ƒ¼ !ğ
+n
+ {
+
+353 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("Inv®id JSON: %v", 
+”r
+), h‰p.
+StusBadReque¡
+)
+
+357 
+»¥Ú£
+, 
+”r
+ :ğ
+pug
+.
+	`Execu‹PrÙobufCommªd
+(
+»q
+)
+
+358 
+”r
+ !ğ
+n
+ {
+
+359 
+log
+.
+	`Prštf
+("CommªdƒxecutiÚƒ¼Ü: %v", 
+”r
+)
+
+362 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+363 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+364 
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+»¥Ú£
+)
+
+365 
+	}
+}
+
+368 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	$hªdËMes§geTy³s
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+369 
+mes§ges
+ :ğ
+pug
+.
+»æeùiÚEngše
+.
+	`G‘AÎMes§ges
+()
+
+372 
+»que¡Mes§ges
+ :ğ
+	`make
+(
+m­
+[
+¡ršg
+]
+Mes§geDesütÜ
+)
+
+373 
+Çme
+, 
+desc
+ :ğ
+¿nge
+ 
+mes§ges
+ {
+
+374 
+desc
+.
+IsReque¡
+ {
+
+375 
+»que¡Mes§ges
+[
+Çme
+] = 
+desc
+
+
+379 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+380 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+381 
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+»que¡Mes§ges
+)
+
+382 
+	}
+}
+
+385 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	$hªdËT”mš®Logs
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+386 
+lim™SŒ
+ :ğ
+r
+.
+URL
+.
+	`Qu”y
+().
+	`G‘
+("limit")
+
+387 
+lim™
+ := 100
+
+389 
+lim™SŒ
+ != "" {
+
+390 
+·r£d
+, 
+”r
+ :ğ
+¡rcÚv
+.
+	`Atoi
+(
+lim™SŒ
+);ƒ¼ =ğ
+n
+ {
+
+391 
+lim™
+ = 
+·r£d
+
+
+395 
+’Œ›s
+ :ğ
+pug
+.
+‹rmš®Logg”
+.
+	`G‘ReûÁEÁr›s
+(
+lim™
+)
+
+397 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "application/json")
+
+398 
+w
+.
+	`H—d”
+().
+	`S‘
+("Access-Control-Allow-Origin", "*")
+
+399 
+jsÚ
+.
+	`NewEncod”
+(
+w
+).
+	`Encode
+(
+’Œ›s
+)
+
+400 
+	}
+}
+
+403 
+	$func
+ (
+pug
+ *
+PİupUIG’”©Ü
+è
+	`Execu‹PrÙobufCommªd
+(
+»q
+ 
+CommªdExecutiÚReque¡
+è(*
+CommªdExecutiÚRe¥Ú£
+, 
+”rÜ
+) {
+
+404 
+log
+.
+	`Prštf
+("ğŸš€ Executšg…rÙobuàcommªd: % fÜ deviû %s", 
+»q
+.
+Mes§geTy³
+,„eq.
+DeviûS”Ÿl
+)
+
+407 
+šÃrMsg
+, 
+”r
+ :ğ
+pug
+.
+»æeùiÚEngše
+.
+	`C»©eMes§ge
+(
+»q
+.
+Mes§geTy³
+)
+
+408 
+”r
+ !ğ
+n
+ {
+
+409  &
+CommªdExecutiÚRe¥Ú£
+{
+
+410 
+Sucûss
+: 
+çl£
+,
+
+411 
+E¼Ü
+: 
+fmt
+.
+	`S´štf
+("FaedØü—‹ mes§ge: %v", 
+”r
+),
+
+412 }, 
+”r
+
+
+416 
+”r
+ :ğ
+pug
+.
+»æeùiÚEngše
+.
+	`PİuÏ‹Mes§ge
+(
+šÃrMsg
+, 
+»q
+.
+F›ldV®ues
+);ƒ¼ !ğ
+n
+ {
+
+417  &
+CommªdExecutiÚRe¥Ú£
+{
+
+418 
+Sucûss
+: 
+çl£
+,
+
+419 
+E¼Ü
+: 
+fmt
+.
+	`S´štf
+("FaedØpİuÏ‹ mes§ge: %v", 
+”r
+),
+
+420 }, 
+”r
+
+
+424 
+v¬
+ 
+cmdMsg
+ 
+´Ùo
+.
+Mes§ge
+
+
+425 
+v¬
+ 
+msgBy‹s
+ []
+by‹
+
+
+428 
+commªdUUID
+ :ğ
+uuid
+.
+	`New
+().
+	`SŒšg
+()
+
+430 
+¡ršgs
+.
+	`ToLow”
+(
+»q
+.
+C©egÜy
+) {
+
+433 
+cmd
+ :ğ&
+Ãd
+.
+CommªdReque¡Mes§ge
+{}
+
+434 
+cmd
+.
+CommªdUuid
+ = 
+commªdUUID
+
+
+438 
+msgBy‹s
+, 
+”r
+ = 
+´Ùo
+.
+	`M¬sh®
+(
+šÃrMsg
+)
+
+443 
+log
+.
+	`Prštf
+("âš ï¸ Sanitizer commands‚eed specific CommandRequestMessage wrapper")
+
+444 
+msgBy‹s
+, 
+”r
+ = 
+´Ùo
+.
+	`M¬sh®
+(
+šÃrMsg
+)
+
+448 
+log
+.
+	`Prštf
+("âš ï¸ DCT commands‚eed specific CommandRequestMessage wrapper")
+
+449 
+msgBy‹s
+, 
+”r
+ = 
+´Ùo
+.
+	`M¬sh®
+(
+šÃrMsg
+)
+
+453 
+log
+.
+	`Prštf
+("âš ï¸ SpeedSet commands‚eed specific CommandRequestMessage wrapper")
+
+454 
+msgBy‹s
+, 
+”r
+ = 
+´Ùo
+.
+	`M¬sh®
+(
+šÃrMsg
+)
+
+458 
+log
+.
+	`Prštf
+("âš ï¸ UnknowÀÿ‹gÜy %s, s’dšg iÂ” mes§gw™houˆCommªdReque¡Mes§gw¿µ”", 
+»q
+.
+C©egÜy
+)
+
+459 
+msgBy‹s
+, 
+”r
+ = 
+´Ùo
+.
+	`M¬sh®
+(
+šÃrMsg
+)
+
+462 
+”r
+ !ğ
+n
+ {
+
+463  &
+CommªdExecutiÚRe¥Ú£
+{
+
+464 
+Sucûss
+: 
+çl£
+,
+
+465 
+E¼Ü
+: 
+fmt
+.
+	`S´štf
+("FaedØ£rŸlizmes§ge: %v", 
+”r
+),
+
+466 }, 
+”r
+
+
+470 
+cÜ»ÏtiÚID
+ :ğ
+commªdUUID
+
+
+473 
+pug
+.
+‹rmš®Logg”
+.
+	`LogPrÙobufMes§ge
+("REQUEST", 
+»q
+.
+DeviûS”Ÿl
+, "OUTGOING", 
+šÃrMsg
+, 
+msgBy‹s
+)
+
+476 
+v¬
+ 
+£ndE¼
+ 
+”rÜ
+
+
+477 
+pug
+.
+ngaSim
+.
+mq‰
+ !ğ
+n
+ &&…ug.ngaSim.mq‰.
+	`IsCÚÃùed
+() {
+
+478 
+£ndE¼
+ = 
+pug
+.
+	`£ndMQTTCommªd
+(
+»q
+.
+DeviûS”Ÿl
+,„eq.
+C©egÜy
+,„eq.
+Mes§geTy³
+, 
+msgBy‹s
+, 
+cÜ»ÏtiÚID
+)
+
+481 
+go
+ 
+pug
+.
+	`simuÏ‹Re¥Ú£
+(
+»q
+.
+DeviûS”Ÿl
+,„eq.
+Mes§geTy³
+, 
+cÜ»ÏtiÚID
+)
+
+484 
+»¥Ú£
+ :ğ&
+CommªdExecutiÚRe¥Ú£
+{
+
+485 
+Sucûss
+: 
+£ndE¼
+ =ğ
+n
+,
+
+486 
+CÜ»ÏtiÚID
+: 
+cÜ»ÏtiÚID
+,
+
+487 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+488 
+Mes§geS’t
+: 
+šÃrMsg
+,
+
+491 
+£ndE¼
+ !ğ
+n
+ {
+
+492 
+»¥Ú£
+.
+E¼Ü
+ = 
+£ndE¼
+.
+	`E¼Ü
+()
+
+493 
+pug
+.
+‹rmš®Logg”
+.
+	`LogE¼Ü
+(
+»q
+.
+DeviûS”Ÿl
+, "CommªdƒxecutiÚ faed", 
+£ndE¼
+)
+
+495 
+log
+.
+	`Prštf
+("âœ… Commªd s’ˆw™h UUID: %s", 
+commªdUUID
+)
+
+498  
+»¥Ú£
+, 
+£ndE¼
+
+
+499 
+	}
+}
+
+	@protobuf_parser.go
+
+2 
+·ckage
+ 
+maš
+
+
+4 
+impÜt
+ (
+
+12 
+ty³
+ 
+PrÙobufMes§geP¬£r
+ struct {
+
+13 
+»æeùiÚEngše
+ *
+	mPrÙobufReæeùiÚEngše
+
+
+17 
+ty³
+ 
+P¬£dPrÙobufF›ld
+ struct {
+
+18 
+Name
+ 
+	m¡ršg
+ `
+	mjsÚ
+:"name"`
+
+19 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"type"`
+
+20 
+V®ue
+ 
+š‹rçû
+{} `
+jsÚ
+:"value"`
+
+21 
+RawV®ue
+ 
+¡ršg
+ `
+jsÚ
+:"raw_value"`
+
+22 
+IsS‘
+ 
+boŞ
+ `
+jsÚ
+:"is_set"`
+
+23 
+DesütiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"description"`
+
+24 
+Un™
+ 
+¡ršg
+ `
+jsÚ
+:"unit"`
+
+28 
+ty³
+ 
+P¬£dPrÙobufMes§ge
+ struct {
+
+29 
+Mes§geTy³
+ 
+¡ršg
+ `
+jsÚ
+:"message_type"`
+
+30 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category"`
+
+31 
+F›lds
+ []
+P¬£dPrÙobufF›ld
+ `
+jsÚ
+:"fields"`
+
+32 
+Time¡amp
+ 
+time
+.
+Time
+ `
+jsÚ
+:"timestamp"`
+
+33 
+RawD©a
+ []
+by‹
+ `
+jsÚ
+:"raw_data"`
+
+34 
+P¬£dOK
+ 
+boŞ
+ `
+jsÚ
+:"parsed_ok"`
+
+38 
+func
+ 
+NewPrÙobufMes§geP¬£r
+(
+»æeùiÚEngše
+ *
+PrÙobufReæeùiÚEngše
+è*
+PrÙobufMes§geP¬£r
+ {
+
+39  &
+PrÙobufMes§geP¬£r
+{
+
+40 
+»æeùiÚEngše
+:„eflectionEngine,
+
+45 
+	$func
+ (
+p
+ *
+PrÙobufMes§geP¬£r
+è
+	`P¬£AÂounûMes§ge
+(
+¿wD©a
+ []
+by‹
+, 
+deviûS”Ÿl
+ 
+¡ršg
+è(*
+P¬£dPrÙobufMes§ge
+, 
+”rÜ
+) {
+
+46 
+·r£d
+ :ğ&
+P¬£dPrÙobufMes§ge
+{
+
+47 
+Mes§geTy³
+: "DeviceAnnouncement",
+
+48 
+C©egÜy
+: "announce",
+
+49 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+50 
+RawD©a
+: 
+¿wD©a
+,
+
+51 
+F›lds
+: []
+P¬£dPrÙobufF›ld
+{},
+
+52 
+P¬£dOK
+: 
+çl£
+,
+
+56 
+d©aSŒ
+ :ğ
+	`¡ršg
+(
+¿wD©a
+)
+
+59 
+	`Ën
+(
+¿wD©a
+) > 10 {
+
+60 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+61 
+Name
+: "Device Serial",
+
+62 
+Ty³
+: "string",
+
+63 
+V®ue
+: 
+deviûS”Ÿl
+,
+
+64 
+RawV®ue
+: 
+deviûS”Ÿl
+,
+
+65 
+IsS‘
+: 
+Œue
+,
+
+66 
+DesütiÚ
+: "Device serial‚umber from MQTTopic",
+
+67 
+Un™
+: "",
+
+70 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+71 
+Name
+: "Message Type",
+
+72 
+Ty³
+: "string",
+
+73 
+V®ue
+: "ANNOUNCE",
+
+74 
+RawV®ue
+: "ANNOUNCE",
+
+75 
+IsS‘
+: 
+Œue
+,
+
+76 
+DesütiÚ
+: "Device‡nnouncement message",
+
+77 
+Un™
+: "",
+
+80 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+81 
+Name
+: "Data Size",
+
+82 
+Ty³
+: "int32",
+
+83 
+V®ue
+: 
+	`Ën
+(
+¿wD©a
+),
+
+84 
+RawV®ue
+: 
+fmt
+.
+	`S´štf
+("%d by‹s", 
+	`Ën
+(
+¿wD©a
+)),
+
+85 
+IsS‘
+: 
+Œue
+,
+
+86 
+DesütiÚ
+: "Raw…rotobuf message size",
+
+87 
+Un™
+: "bytes",
+
+91 
+	`Ën
+(
+d©aSŒ
+è> 0 && 
+¡ršgs
+.
+	`CÚšs
+(dataStr, "sanitizer") {
+
+92 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+93 
+Name
+: "Device Category",
+
+94 
+Ty³
+: "string",
+
+95 
+V®ue
+: "sanitizerGen2",
+
+96 
+RawV®ue
+: "sanitizerGen2",
+
+97 
+IsS‘
+: 
+Œue
+,
+
+98 
+DesütiÚ
+: "Detected device category",
+
+99 
+Un™
+: "",
+
+103 
+·r£d
+.
+P¬£dOK
+ = 
+Œue
+
+
+104 
+log
+.
+	`Prštf
+("ğŸ“‹ P¬£d‡Âounû mes§ge: %d f›ld exŒaùed (basiø·rsšg)", 
+	`Ën
+(
+·r£d
+.
+F›lds
+))
+
+107  
+·r£d
+, 
+n
+
+
+108 
+	}
+}
+
+111 
+	$func
+ (
+p
+ *
+PrÙobufMes§geP¬£r
+è
+	`P¬£T–em‘ryMes§ge
+(
+¿wD©a
+ []
+by‹
+, 
+deviûS”Ÿl
+ 
+¡ršg
+è(*
+P¬£dPrÙobufMes§ge
+, 
+”rÜ
+) {
+
+112 
+·r£d
+ :ğ&
+P¬£dPrÙobufMes§ge
+{
+
+113 
+Mes§geTy³
+: "DeviceTelemetry",
+
+114 
+C©egÜy
+: "sanitizer_telemetry",
+
+115 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+116 
+RawD©a
+: 
+¿wD©a
+,
+
+117 
+F›lds
+: []
+P¬£dPrÙobufF›ld
+{},
+
+118 
+P¬£dOK
+: 
+çl£
+,
+
+122 
+	`Ën
+(
+¿wD©a
+) > 10 {
+
+123 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+124 
+Name
+: "Device Serial",
+
+125 
+Ty³
+: "string",
+
+126 
+V®ue
+: 
+deviûS”Ÿl
+,
+
+127 
+RawV®ue
+: 
+deviûS”Ÿl
+,
+
+128 
+IsS‘
+: 
+Œue
+,
+
+129 
+DesütiÚ
+: "Device serial‚umber from MQTTopic",
+
+130 
+Un™
+: "",
+
+133 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+134 
+Name
+: "Message Type",
+
+135 
+Ty³
+: "string",
+
+136 
+V®ue
+: "TELEMETRY",
+
+137 
+RawV®ue
+: "TELEMETRY",
+
+138 
+IsS‘
+: 
+Œue
+,
+
+139 
+DesütiÚ
+: "Deviceelemetry message",
+
+140 
+Un™
+: "",
+
+143 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+144 
+Name
+: "Data Size",
+
+145 
+Ty³
+: "int32",
+
+146 
+V®ue
+: 
+	`Ën
+(
+¿wD©a
+),
+
+147 
+RawV®ue
+: 
+fmt
+.
+	`S´štf
+("%d by‹s", 
+	`Ën
+(
+¿wD©a
+)),
+
+148 
+IsS‘
+: 
+Œue
+,
+
+149 
+DesütiÚ
+: "Raw…rotobuf message size",
+
+150 
+Un™
+: "bytes",
+
+153 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+154 
+Name
+: "Timestamp",
+
+155 
+Ty³
+: "string",
+
+156 
+V®ue
+: 
+·r£d
+.
+Time¡amp
+.
+	`FÜm©
+("15:04:05"),
+
+157 
+RawV®ue
+: 
+·r£d
+.
+Time¡amp
+.
+	`FÜm©
+("15:04:05"),
+
+158 
+IsS‘
+: 
+Œue
+,
+
+159 
+DesütiÚ
+: "Message„eceivedime",
+
+160 
+Un™
+: "",
+
+164 
+hexDump
+ :ğ
+fmt
+.
+	`S´štf
+("%x", 
+¿wD©a
+[:
+	`mš
+(8, 
+	`Ën
+(rawData))])
+
+165 
+·r£d
+.
+F›lds
+ = 
+	`­³nd
+Õ¬£d.F›lds, 
+P¬£dPrÙobufF›ld
+{
+
+166 
+Name
+: "Raw Data (hex)",
+
+167 
+Ty³
+: "string",
+
+168 
+V®ue
+: 
+hexDump
+,
+
+169 
+RawV®ue
+: 
+hexDump
+,
+
+170 
+IsS‘
+: 
+Œue
+,
+
+171 
+DesütiÚ
+: "First 8 bytes in hexadecimal",
+
+172 
+Un™
+: "",
+
+175 
+·r£d
+.
+P¬£dOK
+ = 
+Œue
+
+
+176 
+log
+.
+	`Prštf
+("ğŸ“Š P¬£d–em‘ry mes§ge: %d f›ld exŒaùed (basiø·rsšg)", 
+	`Ën
+(
+·r£d
+.
+F›lds
+))
+
+179  
+·r£d
+, 
+n
+
+
+180 
+	}
+}
+
+183 
+func
+ 
+	$mš
+(
+a
+, 
+b
+ ) {
+
+184 
+a
+ < 
+b
+ {
+
+185  
+a
+
+
+187  
+b
+
+
+188 
+	}
+}
+
+191 
+	$func
+ (
+f›ld
+ 
+P¬£dPrÙobufF›ld
+è
+	$FÜm©F›ldFÜDi¥Ïy
+(è
+¡ršg
+ {
+
+192 !
+f›ld
+.
+IsS‘
+ {
+
+193  
+fmt
+.
+	`S´štf
+("%-20s: <nÙ s‘>", 
+f›ld
+.
+Name
+)
+
+196 
+f›ld
+.
+Ty³
+ {
+
+198 
+f›ld
+.
+V®ue
+.(
+boŞ
+) {
+
+199  
+fmt
+.
+	`S´štf
+("%-20s: âœ…rue", 
+f›ld
+.
+Name
+)
+
+201  
+fmt
+.
+	`S´štf
+("%-20s: âŒ f®£", 
+f›ld
+.
+Name
+)
+
+204  
+fmt
+.
+	`S´štf
+("%-20s: %v", 
+f›ld
+.
+Name
+, f›ld.
+RawV®ue
+)
+
+206 
+	}
+}
+
+	@protobuf_reflection.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+15 
+ty³
+ 
+PrÙobufReæeùiÚEngše
+ struct {
+
+16 
+mes§geTy³s
+ 
+	mm­
+[
+¡ršg
+]
+	m´ÙÜeæeù
+.
+Mes§geTy³
+
+
+17 
+f›ldInfo
+ 
+	mm­
+[
+¡ršg
+][]
+F›ldDesütÜ
+
+
+18 
+mu‹x
+ 
+	msync
+.
+	mRWMu‹x
+
+
+22 
+ty³
+ 
+F›ldDesütÜ
+ struct {
+
+23 
+Name
+ 
+	m¡ršg
+ `
+	mjsÚ
+:"name"`
+
+24 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"type"`
+
+25 
+Lab–
+ 
+¡ršg
+ `
+jsÚ
+:"label"`
+
+26 
+Requœed
+ 
+boŞ
+ `
+jsÚ
+:"required"`
+
+27 
+R•—‹d
+ 
+boŞ
+ `
+jsÚ
+:"repeated"`
+
+28 
+DeçuÉV®ue
+ 
+š‹rçû
+{} `
+jsÚ
+:"default_value,omitempty"`
+
+29 
+EnumV®ues
+ []
+¡ršg
+ `
+jsÚ
+:"enum_values,omitempty"`
+
+30 
+Mš
+ 
+š‹rçû
+{} `
+jsÚ
+:"min,omitempty"`
+
+31 
+Max
+ 
+š‹rçû
+{} `
+jsÚ
+:"max,omitempty"`
+
+32 
+DesütiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"description,omitempty"`
+
+36 
+ty³
+ 
+Mes§geDesütÜ
+ struct {
+
+37 
+Name
+ 
+¡ršg
+ `
+jsÚ
+:"name"`
+
+38 
+Package
+ 
+¡ršg
+ `
+jsÚ
+:"package"`
+
+39 
+F›lds
+ []
+F›ldDesütÜ
+ `
+jsÚ
+:"fields"`
+
+40 
+IsReque¡
+ 
+boŞ
+ `
+jsÚ
+:"is_request"`
+
+41 
+IsRe¥Ú£
+ 
+boŞ
+ `
+jsÚ
+:"is_response"`
+
+42 
+IsT–em‘ry
+ 
+boŞ
+ `
+jsÚ
+:"is_telemetry"`
+
+43 
+C©egÜy
+ 
+¡ršg
+ `
+jsÚ
+:"category"`
+
+47 
+func
+ 
+NewPrÙobufReæeùiÚEngše
+(è*
+PrÙobufReæeùiÚEngše
+ {
+
+48  &
+PrÙobufReæeùiÚEngše
+{
+
+49 
+mes§geTy³s
+: 
+make
+(
+m­
+[
+¡ršg
+]
+´ÙÜeæeù
+.
+Mes§geTy³
+),
+
+50 
+	gf›ldInfo
+: 
+make
+(
+m­
+[
+¡ršg
+][]
+F›ldDesütÜ
+),
+
+55 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	$Discov”Mes§ges
+(è
+”rÜ
+ {
+
+56 
+´e
+.
+mu‹x
+.
+	`Lock
+()
+
+57 
+deãr
+ 
+´e
+.
+mu‹x
+.
+	`UÆock
+()
+
+59 
+log
+.
+	`Pršn
+("ğŸ” Starting…rotobuf message discovery...")
+
+62 
+´ÙÜegi¡ry
+.
+Glob®Ty³s
+.
+	`RªgeMes§ges
+(
+	`func
+(
+mes§geTy³
+ 
+´ÙÜeæeù
+.
+Mes§geTy³
+è
+boŞ
+ {
+
+63 
+desütÜ
+ :ğ
+mes§geTy³
+.
+	`DesütÜ
+()
+
+64 
+fuÎName
+ :ğ
+	`¡ršg
+(
+desütÜ
+.
+	`FuÎName
+())
+
+66 
+log
+.
+	`Prštf
+("ğŸ“‹ Discov”ed mes§ge: %s", 
+fuÎName
+)
+
+68 
+´e
+.
+mes§geTy³s
+[
+fuÎName
+] = 
+mes§geTy³
+
+
+69 
+´e
+.
+f›ldInfo
+[
+fuÎName
+] =…».
+	`ª®yzeMes§geF›lds
+(
+desütÜ
+)
+
+71  
+Œue
+
+
+74 
+log
+.
+	`Prštf
+("âœ… Discov”y com¶‘e. Found %d mes§gty³s", 
+	`Ën
+(
+´e
+.
+mes§geTy³s
+))
+
+75  
+n
+
+
+76 
+	}
+}
+
+79 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	`ª®yzeMes§geF›lds
+(
+desc
+ 
+´ÙÜeæeù
+.
+Mes§geDesütÜ
+è[]
+F›ldDesütÜ
+ {
+
+80 
+v¬
+ 
+f›lds
+ []
+F›ldDesütÜ
+
+
+82 
+f›ldDescs
+ :ğ
+desc
+.
+	`F›lds
+()
+
+83 
+i
+ :ğ0; i < 
+f›ldDescs
+.
+	`L’
+(); i++ {
+
+84 
+f›ld
+ :ğ
+f›ldDescs
+.
+	`G‘
+(
+i
+)
+
+86 
+f›ldDesc
+ :ğ
+F›ldDesütÜ
+{
+
+87 
+Name
+: 
+	`¡ršg
+(
+f›ld
+.
+	`Name
+()),
+
+88 
+Lab–
+: 
+	`¡ršg
+(
+f›ld
+.
+	`Name
+()),
+
+89 
+Requœed
+: 
+f›ld
+.
+	`C¬dš®™y
+(è=ğ
+´ÙÜeæeù
+.Required,
+
+90 
+R•—‹d
+: 
+f›ld
+.
+	`C¬dš®™y
+(è=ğ
+´ÙÜeæeù
+.Repeated,
+
+94 
+f›ld
+.
+	`Kšd
+() {
+
+95 
+´ÙÜeæeù
+.
+BoŞKšd
+:
+
+96 
+f›ldDesc
+.
+Ty³
+ = "boolean"
+
+97 
+´ÙÜeæeù
+.
+IÁ32Kšd
+,…rÙÜeæeù.
+Sšt32Kšd
+,…rÙÜeæeù.
+Sfixed32Kšd
+:
+
+98 
+f›ldDesc
+.
+Ty³
+ = "int32"
+
+99 
+f›ldDesc
+.
+Mš
+ = 
+	`št32
+(-2147483648)
+
+100 
+f›ldDesc
+.
+Max
+ = 
+	`št32
+(2147483647)
+
+101 
+´ÙÜeæeù
+.
+IÁ64Kšd
+,…rÙÜeæeù.
+Sšt64Kšd
+,…rÙÜeæeù.
+Sfixed64Kšd
+:
+
+102 
+f›ldDesc
+.
+Ty³
+ = "int64"
+
+103 
+´ÙÜeæeù
+.
+Ušt32Kšd
+,…rÙÜeæeù.
+Fixed32Kšd
+:
+
+104 
+f›ldDesc
+.
+Ty³
+ = "uint32"
+
+105 
+f›ldDesc
+.
+Mš
+ = 
+	`ušt32
+(0)
+
+106 
+f›ldDesc
+.
+Max
+ = 
+	`ušt32
+(4294967295)
+
+107 
+´ÙÜeæeù
+.
+Ušt64Kšd
+,…rÙÜeæeù.
+Fixed64Kšd
+:
+
+108 
+f›ldDesc
+.
+Ty³
+ = "uint64"
+
+109 
+f›ldDesc
+.
+Mš
+ = 
+	`ušt64
+(0)
+
+110 
+´ÙÜeæeù
+.
+FlßtKšd
+:
+
+111 
+f›ldDesc
+.
+Ty³
+ = "float"
+
+112 
+´ÙÜeæeù
+.
+DoubËKšd
+:
+
+113 
+f›ldDesc
+.
+Ty³
+ = "double"
+
+114 
+´ÙÜeæeù
+.
+SŒšgKšd
+:
+
+115 
+f›ldDesc
+.
+Ty³
+ = "string"
+
+116 
+´ÙÜeæeù
+.
+By‹sKšd
+:
+
+117 
+f›ldDesc
+.
+Ty³
+ = "bytes"
+
+118 
+´ÙÜeæeù
+.
+EnumKšd
+:
+
+119 
+f›ldDesc
+.
+Ty³
+ = "enum"
+
+120 
+f›ldDesc
+.
+EnumV®ues
+ = 
+´e
+.
+	`g‘EnumV®ues
+(
+f›ld
+.
+	`Enum
+())
+
+121 
+´ÙÜeæeù
+.
+Mes§geKšd
+:
+
+122 
+f›ldDesc
+.
+Ty³
+ = "message"
+
+123 
+f›ldDesc
+.
+Lab–
+ = 
+	`¡ršg
+(
+f›ld
+.
+	`Mes§ge
+().
+	`FuÎName
+())
+
+127 
+f›ld
+.
+	`HasDeçuÉ
+() {
+
+128 
+f›ldDesc
+.
+DeçuÉV®ue
+ = 
+f›ld
+.
+	`DeçuÉ
+().
+	`IÁ”çû
+()
+
+132 
+f›ldDesc
+.
+DesütiÚ
+ = 
+´e
+.
+	`g’”©eF›ldDesütiÚ
+(f›ldDesc.
+Name
+, f›ldDesc.
+Ty³
+)
+
+134 
+f›lds
+ = 
+	`­³nd
+(f›lds, 
+f›ldDesc
+)
+
+137  
+f›lds
+
+
+138 
+	}
+}
+
+141 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	`g‘EnumV®ues
+(
+’umDesc
+ 
+´ÙÜeæeù
+.
+EnumDesütÜ
+è[]
+¡ršg
+ {
+
+142 
+v¬
+ 
+v®ues
+ []
+¡ršg
+
+
+143 
+’umV®ues
+ :ğ
+’umDesc
+.
+	`V®ues
+()
+
+144 
+i
+ :ğ0; i < 
+’umV®ues
+.
+	`L’
+(); i++ {
+
+145 
+v®ues
+ = 
+	`­³nd
+(v®ues, 
+	`¡ršg
+(
+’umV®ues
+.
+	`G‘
+(
+i
+).
+	`Name
+()))
+
+147  
+v®ues
+
+
+148 
+	}
+}
+
+151 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	$g’”©eF›ldDesütiÚ
+(
+Çme
+, 
+f›ldTy³
+ 
+¡ršg
+) string {
+
+152 
+Çme
+ = 
+¡ršgs
+.
+	`ToLow”
+(name)
+
+155 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "percentage"):
+
+157 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "temp"):
+
+159 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "voltage"):
+
+161 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "current"):
+
+163 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "ppm") || strings.Contains(name, "salt"):
+
+165 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "serial"):
+
+167 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "id"):
+
+169 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "status"):
+
+172  
+fmt
+.
+	`S´štf
+("% f›ld", 
+f›ldTy³
+)
+
+174 
+	}
+}
+
+177 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	$G‘AÎMes§ges
+(è
+m­
+[
+¡ršg
+]
+Mes§geDesütÜ
+ {
+
+178 
+´e
+.
+mu‹x
+.
+	`RLock
+()
+
+179 
+deãr
+ 
+´e
+.
+mu‹x
+.
+	`RUÆock
+()
+
+181 
+»suÉ
+ :ğ
+	`make
+(
+m­
+[
+¡ršg
+]
+Mes§geDesütÜ
+)
+
+183 
+fuÎName
+, 
+f›lds
+ :ğ
+¿nge
+ 
+´e
+.
+f›ldInfo
+ {
+
+184 
+·¹s
+ :ğ
+¡ršgs
+.
+	`S¶™
+(
+fuÎName
+, ".")
+
+185 
+Çme
+ :ğ
+·¹s
+[
+	`Ën
+(parts)-1]
+
+186 
+pkg
+ :ğ
+¡ršgs
+.
+	`Još
+(
+·¹s
+[:
+	`Ën
+(parts)-1], ".")
+
+188 
+desc
+ :ğ
+Mes§geDesütÜ
+{
+
+189 
+Name
+: 
+Çme
+,
+
+190 
+Package
+: 
+pkg
+,
+
+191 
+F›lds
+: 
+f›lds
+,
+
+192 
+IsReque¡
+: 
+´e
+.
+	`isReque¡Mes§ge
+(
+Çme
+),
+
+193 
+IsRe¥Ú£
+: 
+´e
+.
+	`isRe¥Ú£Mes§ge
+(
+Çme
+),
+
+194 
+IsT–em‘ry
+: 
+´e
+.
+	`isT–em‘ryMes§ge
+(
+Çme
+),
+
+195 
+C©egÜy
+: 
+´e
+.
+	`g‘C©egÜyFromName
+(
+fuÎName
+),
+
+198 
+»suÉ
+[
+fuÎName
+] = 
+desc
+
+
+201  
+»suÉ
+
+
+202 
+	}
+}
+
+205 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	$isReque¡Mes§ge
+(
+Çme
+ 
+¡ršg
+è
+boŞ
+ {
+
+206 
+Çme
+ = 
+¡ršgs
+.
+	`ToLow”
+(name)
+
+207  
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "set") || strings.Contains(name, "command") ||
+
+208 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "request") || strings.Contains(name, "cmd")
+
+209 
+	}
+}
+
+211 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	$isRe¥Ú£Mes§ge
+(
+Çme
+ 
+¡ršg
+è
+boŞ
+ {
+
+212 
+Çme
+ = 
+¡ršgs
+.
+	`ToLow”
+(name)
+
+213  
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "response") || strings.Contains(name, "reply") ||
+
+214 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "ack") || strings.Contains(name, "result")
+
+215 
+	}
+}
+
+217 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	$isT–em‘ryMes§ge
+(
+Çme
+ 
+¡ršg
+è
+boŞ
+ {
+
+218 
+Çme
+ = 
+¡ršgs
+.
+	`ToLow”
+(name)
+
+219  
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "telemetry") || strings.Contains(name, "data") ||
+
+220 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "status") || strings.Contains(name, "announce")
+
+221 
+	}
+}
+
+223 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	$g‘C©egÜyFromName
+(
+fuÎName
+ 
+¡ršg
+) string {
+
+224 
+Çme
+ :ğ
+¡ršgs
+.
+	`ToLow”
+(
+fuÎName
+)
+
+227 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "sanitizer"):
+
+229 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "pump") || strings.Contains(name, "vsp"):
+
+231 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "light") || strings.Contains(name, "icl"):
+
+233 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "sensor") || strings.Contains(name, "trusense"):
+
+235 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "heater"):
+
+237 
+¡ršgs
+.
+	`CÚšs
+(
+Çme
+, "heatpump"):
+
+242 
+	}
+}
+
+245 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	$C»©eMes§ge
+(
+fuÎName
+ 
+¡ršg
+è(
+´Ùo
+.
+Mes§ge
+, 
+”rÜ
+) {
+
+246 
+´e
+.
+mu‹x
+.
+	`RLock
+()
+
+247 
+mes§geTy³
+, 
+exi¡s
+ :ğ
+´e
+.
+mes§geTy³s
+[
+fuÎName
+]
+
+248 
+´e
+.
+mu‹x
+.
+	`RUÆock
+()
+
+250 !
+exi¡s
+ {
+
+251  
+n
+, 
+fmt
+.
+	`E¼Üf
+("mes§gty³‚Ù found: %s", 
+fuÎName
+)
+
+254  
+mes§geTy³
+.
+	`New
+().
+	`IÁ”çû
+(), 
+n
+
+
+255 
+	}
+}
+
+258 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	`PİuÏ‹Mes§ge
+(
+msg
+ 
+´Ùo
+.
+Mes§ge
+, 
+v®ues
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{
+	}
+}è
+	g”rÜ
+ {
+
+259 
+	g»æeùMsg
+ :ğ
+msg
+.
+PrÙoReæeù
+()
+
+260 
+desütÜ
+ :ğ
+»æeùMsg
+.
+DesütÜ
+()
+
+262 
+f›lds
+ :ğ
+desütÜ
+.
+F›lds
+()
+
+263 
+i
+ :ğ0; 
+	gi
+ < 
+	gf›lds
+.
+L’
+(); i++ {
+
+264 
+	gf›ld
+ :ğ
+f›lds
+.
+G‘
+(
+i
+)
+
+265 
+f›ldName
+ :ğ
+¡ršg
+(
+f›ld
+.
+Name
+())
+
+267 
+v®ue
+, 
+	gexi¡s
+ :ğ
+v®ues
+[
+f›ldName
+];ƒxi¡ && 
+	gv®ue
+ !ğ
+n
+ {
+
+268 
+”r
+ :ğ
+´e
+.
+£tF›ldV®ue
+(
+»æeùMsg
+, 
+f›ld
+, 
+v®ue
+); 
+	g”r
+ !ğ
+n
+ {
+
+269  
+fmt
+.
+E¼Üf
+("çedØ£ˆf›ld %s: %v", 
+f›ldName
+, 
+”r
+)
+
+274  
+	gn
+
+
+278 
+	$func
+ (
+´e
+ *
+PrÙobufReæeùiÚEngše
+è
+	`£tF›ldV®ue
+(
+msg
+ 
+´ÙÜeæeù
+.
+Mes§ge
+, 
+f›ld
+…rÙÜeæeù.
+F›ldDesütÜ
+, 
+v®ue
+ 
+š‹rçû
+{
+	}
+}è
+	g”rÜ
+ {
+
+279 
+	gf›ld
+.
+Kšd
+() {
+
+280 
+	g´ÙÜeæeù
+.
+	gBoŞKšd
+:
+
+281 
+v
+, 
+	gok
+ :ğ
+v®ue
+.(
+boŞ
+); ok {
+
+282 
+	gmsg
+.
+S‘
+(
+f›ld
+, 
+´ÙÜeæeù
+.
+V®ueOfBoŞ
+(
+v
+))
+
+284 
+	g´ÙÜeæeù
+.
+	gIÁ32Kšd
+:
+
+285 
+v
+, 
+	gok
+ :ğ
+v®ue
+.(
+æßt64
+); ok {
+
+286 
+	gmsg
+.
+S‘
+(
+f›ld
+, 
+´ÙÜeæeù
+.
+V®ueOfIÁ32
+(
+št32
+(
+v
+)))
+
+288 
+	g´ÙÜeæeù
+.
+	gIÁ64Kšd
+:
+
+289 
+v
+, 
+	gok
+ :ğ
+v®ue
+.(
+æßt64
+); ok {
+
+290 
+	gmsg
+.
+S‘
+(
+f›ld
+, 
+´ÙÜeæeù
+.
+V®ueOfIÁ64
+(
+št64
+(
+v
+)))
+
+292 
+	g´ÙÜeæeù
+.
+	gUšt32Kšd
+:
+
+293 
+v
+, 
+	gok
+ :ğ
+v®ue
+.(
+æßt64
+); ok {
+
+294 
+	gmsg
+.
+S‘
+(
+f›ld
+, 
+´ÙÜeæeù
+.
+V®ueOfUšt32
+(
+ušt32
+(
+v
+)))
+
+296 
+	g´ÙÜeæeù
+.
+	gUšt64Kšd
+:
+
+297 
+v
+, 
+	gok
+ :ğ
+v®ue
+.(
+æßt64
+); ok {
+
+298 
+	gmsg
+.
+S‘
+(
+f›ld
+, 
+´ÙÜeæeù
+.
+V®ueOfUšt64
+(
+ušt64
+(
+v
+)))
+
+300 
+	g´ÙÜeæeù
+.
+	gFlßtKšd
+:
+
+301 
+v
+, 
+	gok
+ :ğ
+v®ue
+.(
+æßt64
+); ok {
+
+302 
+	gmsg
+.
+S‘
+(
+f›ld
+, 
+´ÙÜeæeù
+.
+V®ueOfFlßt32
+(
+æßt32
+(
+v
+)))
+
+304 
+	g´ÙÜeæeù
+.
+	gDoubËKšd
+:
+
+305 
+v
+, 
+	gok
+ :ğ
+v®ue
+.(
+æßt64
+); ok {
+
+306 
+	gmsg
+.
+S‘
+(
+f›ld
+, 
+´ÙÜeæeù
+.
+V®ueOfFlßt64
+(
+v
+))
+
+308 
+	g´ÙÜeæeù
+.
+	gSŒšgKšd
+:
+
+309 
+v
+, 
+	gok
+ :ğ
+v®ue
+.(
+¡ršg
+); ok {
+
+310 
+	gmsg
+.
+S‘
+(
+f›ld
+, 
+´ÙÜeæeù
+.
+V®ueOfSŒšg
+(
+v
+))
+
+314  
+	gn
+
+
+	@sanitizer_controller.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+10 
+ty³
+ 
+Sª™iz”CÚŒŞËr
+ struct {
+
+11 
+deviûs
+ 
+	mm­
+[
+¡ršg
+]*
+Sª™iz”S‹
+
+
+12 
+mu‹x
+ 
+	msync
+.
+RWMu‹x
+
+
+13 
+commªdQueue
+ 
+chª
+ 
+Sª™iz”Commªd
+
+
+14 
+ngaSim
+ *
+	mNgaSim
+
+
+18 
+ty³
+ 
+Sª™iz”S‹
+ struct {
+
+19 
+S”Ÿl
+ 
+	m¡ršg
+ `
+	mjsÚ
+:"serial"`
+
+20 
+Cu¼’tOuut
+ 
+št32
+ `
+jsÚ
+:"current_output"`
+
+21 
+T¬g‘Ouut
+ 
+št32
+ `
+jsÚ
+:"target_output"`
+
+22 
+IsBoo¡Mode
+ 
+boŞ
+ `
+jsÚ
+:"is_boost_mode"`
+
+23 
+Boo¡S¹Time
+ 
+time
+.
+Time
+ `
+jsÚ
+:"boost_start_time,omitempty"`
+
+24 
+Boo¡Du¿tiÚ
+ `
+jsÚ
+:"boost_duration_minutes"`
+
+25 
+La¡CommªdTime
+ 
+time
+.
+Time
+ `
+jsÚ
+:"last_command_time"`
+
+26 
+CommªdInFlight
+ 
+boŞ
+ `
+jsÚ
+:"command_in_flight"`
+
+27 
+SaãtyLocked
+ 
+boŞ
+ `
+jsÚ
+:"safety_locked"`
+
+28 
+E¼ÜCouÁ
+ `
+jsÚ
+:"error_count"`
+
+29 
+Stus
+ 
+¡ršg
+ `
+jsÚ
+:"status"`
+
+33 
+ty³
+ 
+Sª™iz”Commªd
+ struct {
+
+34 
+S”Ÿl
+ 
+¡ršg
+ `
+jsÚ
+:"serial"`
+
+35 
+AùiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"action"`
+
+36 
+V®ue
+ 
+št32
+ `
+jsÚ
+:"value"`
+
+37 
+Du¿tiÚ
+ `
+jsÚ
+:"duration"`
+
+38 
+Cl›ÁID
+ 
+¡ršg
+ `
+jsÚ
+:"client_id"`
+
+39 
+Time¡amp
+ 
+time
+.
+Time
+ `
+jsÚ
+:"timestamp"`
+
+43 
+ty³
+ 
+Pow”Lev–
+ struct {
+
+44 
+P”ûÁage
+ 
+št32
+ `
+jsÚ
+:"percentage"`
+
+45 
+Name
+ 
+¡ršg
+ `
+jsÚ
+:"name"`
+
+46 
+CŞÜ
+ 
+¡ršg
+ `
+jsÚ
+:"color"`
+
+47 
+IsS³cŸl
+ 
+boŞ
+ `
+jsÚ
+:"is_special"`
+
+51 
+func
+ 
+G‘V®idPow”Lev–s
+(è[]
+Pow”Lev–
+ {
+
+52  []
+Pow”Lev–
+{
+
+53 {0, "OFF", "dªg”", 
+	gçl£
+},
+
+54 {10, "LOW", "w¬nšg", 
+	gçl£
+},
+
+55 {50, "MEDIUM", "´im¬y", 
+	gçl£
+},
+
+56 {100, "HIGH", "sucûss", 
+	gçl£
+},
+
+57 {101, "BOOST", "sucûss", 
+	gŒue
+},
+
+62 
+func
+ 
+NewSª™iz”CÚŒŞËr
+(
+ngaSim
+ *
+NgaSim
+è*
+	gSª™iz”CÚŒŞËr
+ {
+
+63 
+	gsc
+ :ğ&
+Sª™iz”CÚŒŞËr
+{
+
+64 
+deviûs
+: 
+make
+(
+m­
+[
+¡ršg
+]*
+Sª™iz”S‹
+),
+
+65 
+commªdQueue
+: 
+make
+(
+chª
+ 
+Sª™iz”Commªd
+, 100),
+
+66 
+ngaSim
+:‚gaSim,
+
+70 
+go
+ 
+sc
+.
+´oûssCommªds
+()
+
+71  
+sc
+
+
+75 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	`Regi¡”Sª™iz”
+(
+£rŸl
+ 
+¡ršg
+è*
+Sª™iz”S‹
+ {
+
+76 
+sc
+.
+mu‹x
+.
+	`Lock
+()
+
+77 
+deãr
+ 
+sc
+.
+mu‹x
+.
+	`UÆock
+()
+
+79 
+_
+, 
+exi¡s
+ :ğ
+sc
+.
+deviûs
+[
+£rŸl
+]; !exists {
+
+80 
+sc
+.
+deviûs
+[
+£rŸl
+] = &
+Sª™iz”S‹
+{
+
+81 
+S”Ÿl
+: 
+£rŸl
+,
+
+82 
+Cu¼’tOuut
+: 0,
+
+83 
+T¬g‘Ouut
+: 0,
+
+84 
+Boo¡Du¿tiÚ
+: 60,
+
+85 
+Stus
+: "ONLINE",
+
+88  
+sc
+.
+deviûs
+[
+£rŸl
+]
+
+89 
+	}
+}
+
+92 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$V®id©eCommªd
+(
+cmd
+ 
+Sª™iz”Commªd
+è
+”rÜ
+ {
+
+93 
+sc
+.
+mu‹x
+.
+	`RLock
+()
+
+94 
+deviû
+, 
+exi¡s
+ :ğ
+sc
+.
+deviûs
+[
+cmd
+.
+S”Ÿl
+]
+
+95 
+sc
+.
+mu‹x
+.
+	`RUÆock
+()
+
+97 !
+exi¡s
+ {
+
+98  
+fmt
+.
+	`E¼Üf
+("§n™iz” % nÙ found", 
+cmd
+.
+S”Ÿl
+)
+
+101 
+deviû
+.
+SaãtyLocked
+ {
+
+102  
+fmt
+.
+	`E¼Üf
+("§n™iz” % i §ãty†ocked", 
+cmd
+.
+S”Ÿl
+)
+
+105 
+cmd
+.
+AùiÚ
+ {
+
+107 
+cmd
+.
+V®ue
+ < 0 || cmd.Value > 101 {
+
+108  
+fmt
+.
+	`E¼Üf
+("šv®id…ow”†ev–: %d (mu¡ b0-101)", 
+cmd
+.
+V®ue
+)
+
+111 
+cmd
+.
+Du¿tiÚ
+ < 1 || cmd.Duration > 1440 {
+
+112  
+fmt
+.
+	`E¼Üf
+("šv®id boo¡ du¿tiÚ: %d mšu‹ (mu¡ b1-1440)", 
+cmd
+.
+Du¿tiÚ
+)
+
+117  
+fmt
+.
+	`E¼Üf
+("unknowÀaùiÚ: %s", 
+cmd
+.
+AùiÚ
+)
+
+121 
+time
+.
+	`Sšû
+(
+deviû
+.
+La¡CommªdTime
+è< 3*time.
+SecÚd
+ {
+
+122  
+fmt
+.
+	`E¼Üf
+("¿‹†im™ƒxûeded fÜ %s", 
+cmd
+.
+S”Ÿl
+)
+
+125  
+n
+
+
+126 
+	}
+}
+
+129 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$QueueCommªd
+(
+cmd
+ 
+Sª™iz”Commªd
+è
+”rÜ
+ {
+
+130 
+cmd
+.
+Time¡amp
+ = 
+time
+.
+	`Now
+()
+
+132 
+”r
+ :ğ
+sc
+.
+	`V®id©eCommªd
+(
+cmd
+);ƒ¼ !ğ
+n
+ {
+
+133  
+”r
+
+
+136 
+£Ëù
+ {
+
+137 
+sc
+.
+commªdQueue
+ <- 
+cmd
+:
+
+138  
+n
+
+
+140  
+fmt
+.
+	`E¼Üf
+("command queue full")
+
+142 
+	}
+}
+
+145 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$´oûssCommªds
+() {
+
+146 
+cmd
+ :ğ
+¿nge
+ 
+sc
+.
+commªdQueue
+ {
+
+147 
+sc
+.
+	`execu‹Commªd
+(
+cmd
+)
+
+149 
+	}
+}
+
+152 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$execu‹Commªd
+(
+cmd
+ 
+Sª™iz”Commªd
+) {
+
+153 
+sc
+.
+mu‹x
+.
+	`Lock
+()
+
+154 
+deviû
+ :ğ
+sc
+.
+deviûs
+[
+cmd
+.
+S”Ÿl
+]
+
+155 
+sc
+.
+mu‹x
+.
+	`UÆock
+()
+
+157 
+cmd
+.
+AùiÚ
+ {
+
+159 
+sc
+.
+	`£tPow”Lev–
+(
+deviû
+, 
+cmd
+.
+V®ue
+)
+
+161 
+sc
+.
+	`aùiv©eBoo¡
+(
+deviû
+, 
+cmd
+.
+Du¿tiÚ
+)
+
+163 
+sc
+.
+	`£tPow”Lev–
+(
+deviû
+, 0)
+
+165 
+sc
+.
+	`em”g’cyStİ
+(
+deviû
+)
+
+168 
+deviû
+.
+La¡CommªdTime
+ = 
+time
+.
+	`Now
+()
+
+169 
+	}
+}
+
+172 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$£tPow”Lev–
+(
+deviû
+ *
+Sª™iz”S‹
+, 
+³rûÁage
+ 
+št32
+) {
+
+173 
+deviû
+.
+T¬g‘Ouut
+ = 
+³rûÁage
+
+
+174 
+deviû
+.
+IsBoo¡Mode
+ = (
+³rûÁage
+ == 101)
+
+175 
+deviû
+.
+CommªdInFlight
+ = 
+Œue
+
+
+177 
+deviû
+.
+IsBoo¡Mode
+ {
+
+178 
+deviû
+.
+Boo¡S¹Time
+ = 
+time
+.
+	`Now
+()
+
+182 
+ÿ‹gÜy
+ := "sanitizerGen2"
+
+183 
+”r
+ :ğ
+sc
+.
+ngaSim
+.
+	`£ndSª™iz”Commªd
+(
+deviû
+.
+S”Ÿl
+, 
+ÿ‹gÜy
+, (
+³rûÁage
+))
+
+184 
+”r
+ !ğ
+n
+ {
+
+185 
+deviû
+.
+E¼ÜCouÁ
+++
+
+186 
+deviû
+.
+Stus
+ = "ERROR"
+
+188 
+	}
+}
+
+191 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$aùiv©eBoo¡
+(
+deviû
+ *
+Sª™iz”S‹
+, 
+du¿tiÚMšu‹s
+ ) {
+
+192 
+deviû
+.
+Boo¡Du¿tiÚ
+ = 
+du¿tiÚMšu‹s
+
+
+193 
+sc
+.
+	`£tPow”Lev–
+(
+deviû
+, 101)
+
+194 
+	}
+}
+
+197 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$em”g’cyStİ
+(
+deviû
+ *
+Sª™iz”S‹
+) {
+
+198 
+deviû
+.
+T¬g‘Ouut
+ = 0
+
+199 
+deviû
+.
+IsBoo¡Mode
+ = 
+çl£
+
+
+200 
+deviû
+.
+SaãtyLocked
+ = 
+Œue
+
+
+201 
+deviû
+.
+CommªdInFlight
+ = 
+Œue
+
+
+204 
+ÿ‹gÜy
+ := "sanitizerGen2"
+
+205 
+sc
+.
+ngaSim
+.
+	`£ndSª™iz”Commªd
+(
+deviû
+.
+S”Ÿl
+, 
+ÿ‹gÜy
+, 0)
+
+206 
+	}
+}
+
+209 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$G‘AÎS‹s
+(è
+m­
+[
+¡ršg
+]*
+Sª™iz”S‹
+ {
+
+210 
+sc
+.
+mu‹x
+.
+	`RLock
+()
+
+211 
+deãr
+ 
+sc
+.
+mu‹x
+.
+	`RUÆock
+()
+
+214 
+¡©es
+ :ğ
+	`make
+(
+m­
+[
+¡ršg
+]*
+Sª™iz”S‹
+)
+
+215 
+k
+, 
+v
+ :ğ
+¿nge
+ 
+sc
+.
+deviûs
+ {
+
+217 
+¡©eCİy
+ :ğ*
+v
+
+
+218 
+¡©es
+[
+k
+] = &
+¡©eCİy
+
+
+220  
+¡©es
+
+
+221 
+	}
+}
+
+224 
+	$func
+ (
+sc
+ *
+Sª™iz”CÚŒŞËr
+è
+	$Upd©eFromT–em‘ry
+(
+£rŸl
+ 
+¡ršg
+, 
+aùu®Ouut
+ 
+št32
+) {
+
+225 
+sc
+.
+mu‹x
+.
+	`Lock
+()
+
+226 
+deãr
+ 
+sc
+.
+mu‹x
+.
+	`UÆock
+()
+
+228 
+deviû
+, 
+exi¡s
+ :ğ
+sc
+.
+deviûs
+[
+£rŸl
+]
+
+229 !
+exi¡s
+ {
+
+233 
+deviû
+.
+Cu¼’tOuut
+ = 
+aùu®Ouut
+
+
+236 
+deviû
+.
+CommªdInFlight
+ && deviû.
+Cu¼’tOuut
+ =ğdeviû.
+T¬g‘Ouut
+ {
+
+237 
+deviû
+.
+CommªdInFlight
+ = 
+çl£
+
+
+238 
+deviû
+.
+E¼ÜCouÁ
+ = 0
+
+239 
+deviû
+.
+Stus
+ = "ONLINE"
+
+243 
+deviû
+.
+IsBoo¡Mode
+ && 
+time
+.
+	`Sšû
+(deviû.
+Boo¡S¹Time
+è>ime.
+	`Du¿tiÚ
+(deviû.
+Boo¡Du¿tiÚ
+)*time.
+Mšu‹
+ {
+
+245 
+sc
+.
+	`£tPow”Lev–
+(
+deviû
+, 100)
+
+247 
+	}
+}
+
+	@smart_forms.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+10 
+ty³
+ 
+Sm¬tFÜmG’”©Ü
+ struct {
+
+11 
+pİupG’”©Ü
+ *
+	mPİupUIG’”©Ü
+
+
+15 
+ty³
+ 
+U£rF›ldCÚfig
+ struct {
+
+16 
+Di¥ÏyName
+ 
+	m¡ršg
+ `
+	mjsÚ
+:"display_name"`
+
+17 
+H–pText
+ 
+¡ršg
+ `
+jsÚ
+:"help_text"`
+
+18 
+ShowToU£r
+ 
+boŞ
+ `
+jsÚ
+:"show_to_user"`
+
+19 
+AutoG’”©e
+ 
+boŞ
+ `
+jsÚ
+:"auto_generate"`
+
+20 
+DeçuÉV®ue
+ 
+š‹rçû
+{} `
+jsÚ
+:"default_value"`
+
+21 
+CÚŒŞTy³
+ 
+¡ršg
+ `
+jsÚ
+:"control_type"`
+
+22 
+ChoiûLi¡
+ []
+¡ršg
+ `
+jsÚ
+:"choice_list"`
+
+23 
+MšV®ue
+ 
+æßt64
+ `
+jsÚ
+:"min_value"`
+
+24 
+MaxV®ue
+ 
+æßt64
+ `
+jsÚ
+:"max_value"`
+
+25 
+S‹pSize
+ 
+æßt64
+ `
+jsÚ
+:"step_size"`
+
+26 
+Di¥ÏyUn™
+ 
+¡ršg
+ `
+jsÚ
+:"display_unit"`
+
+30 
+func
+ 
+NewSm¬tFÜmG’”©Ü
+(
+pİupG’”©Ü
+ *
+PİupUIG’”©Ü
+è*
+Sm¬tFÜmG’”©Ü
+ {
+
+31  &
+Sm¬tFÜmG’”©Ü
+{
+
+32 
+pİupG’”©Ü
+:…opupGenerator,
+
+37 
+	$func
+ (
+sfg
+ *
+Sm¬tFÜmG’”©Ü
+è
+	$G’”©eU£rFr›ndlyFÜm
+(
+mes§geTy³
+, 
+deviûS”Ÿl
+, 
+deviûName
+ 
+¡ršg
+) string {
+
+39 
+mes§ges
+ :ğ
+sfg
+.
+pİupG’”©Ü
+.
+»æeùiÚEngše
+.
+	`G‘AÎMes§ges
+()
+
+40 
+msgDesc
+, 
+exi¡s
+ :ğ
+mes§ges
+[
+mes§geTy³
+]
+
+41 !
+exi¡s
+ {
+
+46 
+v¬
+ 
+html
+ 
+¡ršgs
+.
+Bud”
+
+
+49 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+50 <
+div
+ 
+şass
+="popup-header smart-design">
+
+51 <
+h3
+>ğŸ›ï¸ %
+s
+</h3>
+
+52 <
+p
+>
+Deviû
+: <
+¡rÚg
+>%
+s
+</strong> (%s)</p>
+
+53 <
+bu‰Ú
+ 
+şass
+="şo£-bŠ" 
+Úşick
+="şo£Pİup()">&
+times
+;</button>
+
+54 </
+div
+>
+
+55 <
+div
+ 
+şass
+="popup-body smart-design">
+
+56 <
+fÜm
+ 
+id
+="smart-command-form">
+
+57 <
+šput
+ 
+ty³
+="hidd’" 
+Çme
+="mes§ge_ty³" 
+v®ue
+="%s">
+
+58 <
+šput
+ 
+ty³
+="hidd’" 
+Çme
+="deviû_£rŸl" 
+v®ue
+="%s">
+
+59 <
+šput
+ 
+ty³
+="hidd’" 
+Çme
+="ÿ‹gÜy" 
+v®ue
+="sanitizerGen2">
+
+60 `, 
+sfg
+.
+	`g‘Sim¶eCommªdName
+(
+mes§geTy³
+), 
+deviûName
+, 
+deviûS”Ÿl
+, messageType, deviceSerial))
+
+63 
+_
+, 
+f›ld
+ :ğ
+¿nge
+ 
+msgDesc
+.
+F›lds
+ {
+
+64 
+cÚfig
+ :ğ
+sfg
+.
+	`g‘U£rF›ldCÚfig
+(
+mes§geTy³
+, 
+f›ld
+.
+Name
+, f›ld.
+Ty³
+)
+
+66 
+cÚfig
+.
+ShowToU£r
+ {
+
+67 
+html
+.
+	`Wr™eSŒšg
+(
+sfg
+.
+	`g’”©eU£rF›ldHTML
+(
+f›ld
+, 
+cÚfig
+, 
+deviûS”Ÿl
+))
+
+68 } 
+cÚfig
+.
+AutoG’”©e
+ {
+
+70 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+71 <
+šput
+ 
+ty³
+="hidd’" 
+Çme
+="%s" 
+v®ue
+="%v">
+
+72 `, 
+f›ld
+.
+Name
+, 
+cÚfig
+.
+DeçuÉV®ue
+))
+
+77 
+html
+.
+	`Wr™eSŒšg
+(`
+
+78 </
+fÜm
+>
+
+79 <
+div
+ 
+şass
+="commªd-´ev›w-¬—" 
+id
+="commªd-´ev›w-¬—" 
+¡yË
+="display:‚one;">
+
+80 <
+h4
+>ğŸ“‹ 
+Commªd
+ 
+D‘as
+:</h4>
+
+81 <
+div
+ 
+şass
+="sm¬t-´ev›w" 
+id
+="smart-preview"></div>
+
+82 </
+div
+>
+
+83 </
+div
+>
+
+84 <
+div
+ 
+şass
+="popup-footer smart-design">
+
+85 <
+bu‰Ú
+ 
+ty³
+="bu‰Ú" 
+şass
+="bŠ bŠ-£cÚd¬y" 
+Úşick
+="şo£Pİup()">âŒ 
+Cªûl
+</button>
+
+86 <
+bu‰Ú
+ 
+ty³
+="bu‰Ú" 
+şass
+="bŠ bŠ-šfo" 
+Úşick
+="´ev›wSm¬tCommªd()">ğŸ‘ï¸ 
+P»v›w
+</button>
+
+87 <
+bu‰Ú
+ 
+ty³
+="bu‰Ú" 
+şass
+="bŠ bŠ-sucûs bŠ-Ïrge" 
+Úşick
+="execu‹Sm¬tCommªd()">ğŸš€ 
+S’d
+ 
+Commªd
+</button>
+
+88 </
+div
+>
+
+91  
+html
+.
+	`SŒšg
+()
+
+92 
+	}
+}
+
+95 
+	$func
+ (
+sfg
+ *
+Sm¬tFÜmG’”©Ü
+è
+	$g‘Sim¶eCommªdName
+(
+mes§geTy³
+ 
+¡ršg
+) string {
+
+97 
+¡ršgs
+.
+	`CÚšs
+(
+mes§geTy³
+, "SetSanitizerTargetPercentage"):
+
+99 
+¡ršgs
+.
+	`CÚšs
+(
+mes§geTy³
+, "GetSanitizerStatus"):
+
+101 
+¡ršgs
+.
+	`CÚšs
+(
+mes§geTy³
+, "GetSanitizerConfiguration"):
+
+103 
+¡ršgs
+.
+	`CÚšs
+(
+mes§geTy³
+, "SetSanitizerConfiguration"):
+
+105 
+¡ršgs
+.
+	`CÚšs
+(
+mes§geTy³
+, "GetSanitizerActiveErrors"):
+
+107 
+¡ršgs
+.
+	`CÚšs
+(
+mes§geTy³
+, "GetSanitizerDeviceInformation"):
+
+111 
+Çme
+ :ğ
+¡ršgs
+.
+	`R•ÏûAÎ
+(
+mes§geTy³
+, "RequestPayload", "")
+
+112 
+Çme
+ = 
+¡ršgs
+.
+	`R•ÏûAÎ
+(name, "Sanitizer", "")
+
+113 
+Çme
+ = 
+¡ršgs
+.
+	`R•ÏûAÎ
+(name, "Get", "Get ")
+
+114 
+Çme
+ = 
+¡ršgs
+.
+	`R•ÏûAÎ
+(name, "Set", "Set ")
+
+115  
+Çme
+
+
+117 
+	}
+}
+
+120 
+	$func
+ (
+sfg
+ *
+Sm¬tFÜmG’”©Ü
+è
+	$g‘U£rF›ldCÚfig
+(
+mes§geTy³
+, 
+f›ldName
+, 
+f›ldTy³
+ 
+¡ršg
+è
+U£rF›ldCÚfig
+ {
+
+122 
+cÚfig
+ :ğ
+U£rF›ldCÚfig
+{
+
+123 
+Di¥ÏyName
+: 
+f›ldName
+,
+
+124 
+H–pText
+: "",
+
+125 
+ShowToU£r
+: 
+Œue
+,
+
+126 
+AutoG’”©e
+: 
+çl£
+,
+
+127 
+CÚŒŞTy³
+: "input",
+
+131 
+¡ršgs
+.
+	`ToLow”
+(
+f›ldName
+) {
+
+133 
+cÚfig
+.
+Di¥ÏyName
+ = "Chlorine Output Level"
+
+134 
+cÚfig
+.
+H–pText
+ = "Sethe chlorine generator output (0% = Off, 100% = Maximum)"
+
+135 
+cÚfig
+.
+CÚŒŞTy³
+ = "slider"
+
+136 
+cÚfig
+.
+MšV®ue
+ = 0
+
+137 
+cÚfig
+.
+MaxV®ue
+ = 100
+
+138 
+cÚfig
+.
+S‹pSize
+ = 5
+
+139 
+cÚfig
+.
+Di¥ÏyUn™
+ = "%"
+
+142 
+cÚfig
+.
+ShowToU£r
+ = 
+çl£
+
+
+143 
+cÚfig
+.
+AutoG’”©e
+ = 
+Œue
+
+
+144 
+cÚfig
+.
+DeçuÉV®ue
+ = 
+fmt
+.
+	`S´štf
+("cmd_%d", 
+time
+.
+	`Now
+().
+	`UnixNªo
+())
+
+147 
+cÚfig
+.
+ShowToU£r
+ = 
+çl£
+
+
+148 
+cÚfig
+.
+AutoG’”©e
+ = 
+Œue
+
+
+149 
+cÚfig
+.
+DeçuÉV®ue
+ = 
+time
+.
+	`Now
+().
+	`Unix
+()
+
+152 
+cÚfig
+.
+Di¥ÏyName
+ = "Enable Device"
+
+153 
+cÚfig
+.
+H–pText
+ = "Turnhe device on or off"
+
+154 
+cÚfig
+.
+CÚŒŞTy³
+ = "switch"
+
+157 
+cÚfig
+.
+Di¥ÏyName
+ = "Temperature"
+
+158 
+cÚfig
+.
+H–pText
+ = "Temperature setting"
+
+159 
+cÚfig
+.
+Di¥ÏyUn™
+ = "Â°C"
+
+160 
+cÚfig
+.
+MšV®ue
+ = 10
+
+161 
+cÚfig
+.
+MaxV®ue
+ = 40
+
+164 
+cÚfig
+.
+Di¥ÏyName
+ = "Voltage"
+
+165 
+cÚfig
+.
+H–pText
+ = "Operating voltage"
+
+166 
+cÚfig
+.
+Di¥ÏyUn™
+ = "V"
+
+167 
+cÚfig
+.
+ShowToU£r
+ = 
+çl£
+
+
+170 
+cÚfig
+.
+Di¥ÏyName
+ = "Operation Mode"
+
+171 
+cÚfig
+.
+H–pText
+ = "Select howhe device should operate"
+
+172 
+cÚfig
+.
+CÚŒŞTy³
+ = "dropdown"
+
+173 
+cÚfig
+.
+ChoiûLi¡
+ = []
+¡ršg
+{"Auto", "Manual", "Off"}
+
+177 
+cÚfig
+.
+Di¥ÏyName
+ = 
+¡ršgs
+.
+	`R•ÏûAÎ
+(
+f›ldName
+, "_", " ")
+
+178 
+cÚfig
+.
+Di¥ÏyName
+ = 
+¡ršgs
+.
+	`T™Ë
+(config.DisplayName)
+
+181  
+cÚfig
+
+
+182 
+	}
+}
+
+185 
+	$func
+ (
+sfg
+ *
+Sm¬tFÜmG’”©Ü
+è
+	$g’”©eU£rF›ldHTML
+(
+f›ld
+ 
+F›ldDesütÜ
+, 
+cÚfig
+ 
+U£rF›ldCÚfig
+, 
+deviûS”Ÿl
+ 
+¡ršg
+) string {
+
+186 
+v¬
+ 
+html
+ 
+¡ršgs
+.
+Bud”
+
+
+188 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+189 <
+div
+ 
+şass
+="smart-form-group">
+
+190 <
+Ïb–
+ ="f›ld_%s" 
+şass
+="sm¬t-Ïb–">%
+s
+</label>
+
+191 `, 
+f›ld
+.
+Name
+, 
+cÚfig
+.
+Di¥ÏyName
+))
+
+193 
+cÚfig
+.
+H–pText
+ != "" {
+
+194 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+195 <
+div
+ 
+şass
+="sm¬t-h–p">%
+s
+</div>
+
+196 `, 
+cÚfig
+.
+H–pText
+))
+
+199 
+cÚfig
+.
+CÚŒŞTy³
+ {
+
+201 
+deçuÉV®
+ :ğ
+cÚfig
+.
+MšV®ue
+
+
+202 
+f›ld
+.
+DeçuÉV®ue
+ !ğ
+n
+ {
+
+203 
+v®
+, 
+ok
+ :ğ
+f›ld
+.
+DeçuÉV®ue
+.(
+æßt64
+); ok {
+
+204 
+deçuÉV®
+ = 
+v®
+
+
+208 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+209 <
+div
+ 
+şass
+="slider-control">
+
+210 <
+šput
+ 
+ty³
+="range"
+
+211 
+Çme
+="%s"
+
+212 
+id
+="field_%s"
+
+213 
+şass
+="smart-slider"
+
+214 
+mš
+="%g"
+
+215 
+max
+="%g"
+
+216 
+¡•
+="%g"
+
+217 
+v®ue
+="%g"
+
+218 
+Úšput
+="updateSliderDisplay('%s',his.value, '%s')">
+
+219 <
+div
+ 
+şass
+="slider-display">
+
+220 <
+¥ª
+ 
+id
+="di¥Ïy_%s">%
+g
+</¥ª>%
+s
+
+
+221 </
+div
+>
+
+222 </
+div
+>
+
+223 `, 
+f›ld
+.
+Name
+, f›ld.Name, 
+cÚfig
+.
+MšV®ue
+, cÚfig.
+MaxV®ue
+, cÚfig.
+S‹pSize
+, 
+deçuÉV®
+, f›ld.Name, cÚfig.
+Di¥ÏyUn™
+, field.Name, defaultVal, config.DisplayUnit))
+
+226 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+227 <
+div
+ 
+şass
+="switch-control">
+
+228 <
+Ïb–
+ 
+şass
+="smart-switch">
+
+229 <
+šput
+ 
+ty³
+="checkbox" 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="switch-input">
+
+230 <
+¥ª
+ 
+şass
+="switch-slider"></span>
+
+231 </
+Ïb–
+>
+
+232 <
+¥ª
+ 
+şass
+="sw™ch-‹xt">
+EÇbË
+</span>
+
+233 </
+div
+>
+
+234 `, 
+f›ld
+.
+Name
+, field.Name))
+
+237 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+238 <
+£Ëù
+ 
+Çme
+="%s" 
+id
+="f›ld_%s" 
+şass
+="smart-dropdown">
+
+239 `, 
+f›ld
+.
+Name
+, field.Name))
+
+241 
+_
+, 
+İtiÚ
+ :ğ
+¿nge
+ 
+cÚfig
+.
+ChoiûLi¡
+ {
+
+242 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+243 <
+İtiÚ
+ 
+v®ue
+="%s">%
+s
+</option>`, option, option))
+
+246 
+html
+.
+	`Wr™eSŒšg
+(`
+
+247 </
+£Ëù
+>`)
+
+250 
+šputTy³
+ := "text"
+
+251 
+f›ld
+.
+Ty³
+ == "int32" || field.Type == "float" {
+
+252 
+šputTy³
+ = "number"
+
+255 
+html
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(`
+
+256 <
+šput
+ 
+ty³
+="%s"
+
+257 
+Çme
+="%s"
+
+258 
+id
+="field_%s"
+
+259 
+şass
+="smart-input"
+
+260 
+¶aûhŞd”
+="Enter %s">
+
+261 `, 
+šputTy³
+, 
+f›ld
+.
+Name
+, f›ld.Name, 
+cÚfig
+.
+Di¥ÏyName
+))
+
+264 
+html
+.
+	`Wr™eSŒšg
+(`</
+div
+>`)
+
+266  
+html
+.
+	`SŒšg
+()
+
+267 
+	}
+}
+
+	@templates.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+9 
+v¬
+ 
+	g‹m¶©eFuncs
+ = 
+‹m¶©e
+.
+FuncM­
+{
+
+10 "low”": 
+¡ršgs
+.
+ToLow”
+,
+
+11 "uµ”": 
+¡ršgs
+.
+ToUµ”
+,
+
+12 "t™Ë": 
+¡ršgs
+.
+T™Ë
+,
+
+18 
+v¬
+ 
+goDemoTem¶©eHTML
+ = `
+
+19 <!
+DOCTYPE
+ 
+html
+>
+
+20 <
+html
+ 
+Ïng
+="en">
+
+21 <
+h—d
+>
+
+22 <
+m‘a
+ 
+ch¬£t
+="UTF-8">
+
+23 <
+m‘a
+ 
+Çme
+="v›wpÜt" 
+cÚ‹Á
+="width=device-width, initial-scale=1.0">
+
+24 <
+t™Ë
+>{{.
+T™Ë
+}}</title>
+
+25 <
+¡yË
+>
+
+26 * { 
+m¬gš
+: 0; 
+	g·ddšg
+: 0; 
+	gbox
+-
+	gsizšg
+: 
+bÜd”
+-
+box
+; }
+
+28 
+	gbody
+ {
+
+29 
+	gfÚt
+-
+	gçmy
+: 'SegÛ UI', 
+	gTahoma
+, 
+	gG’eva
+, 
+	gV”dªa
+, 
+	g§ns
+-
+	g£rif
+;
+
+30 
+	gbackground
+: 
+lš—r
+-
+g¿d›Á
+(135de
+g
+, #667eea 0%, #764ba2 100%);
+
+31 
+	gmš
+-
+	gheight
+: 100
+vh
+;
+
+32 
+	gcŞÜ
+: #333;
+
+35 .
+	gcÚš”
+ {
+
+36 
+	gmax
+-
+	gwidth
+: 1200
+px
+;
+
+37 
+	gm¬gš
+: 0‡uto;
+
+38 
+	g·ddšg
+: 20
+px
+;
+
+41 .
+	gh—d”
+ {
+
+42 
+	gbackground
+: 
+rgba
+(255, 255, 255, 0.95);
+
+43 
+	g·ddšg
+: 20
+px
+;
+
+44 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+;
+
+45 
+	gm¬gš
+-
+	gbÙtom
+: 20
+px
+;
+
+46 
+	gbox
+-
+	gshadow
+: 0 4
+px
+ 6px 
+rgba
+(0, 0, 0, 0.1);
+
+49 .
+h—d”
+ 
+	gh1
+ {
+
+50 
+	gcŞÜ
+: #4
+a5568
+;
+
+51 
+	gm¬gš
+-
+	gbÙtom
+: 10
+px
+;
+
+54 .
+	gÇv
+-
+	glšks
+ {
+
+55 
+	gdi¥Ïy
+: 
+æex
+;
+
+56 
+	gg­
+: 15
+px
+;
+
+57 
+	gæex
+-
+	gw¿p
+: 
+w¿p
+;
+
+60 .
+	gÇv
+-
+lšks
+ 
+	ga
+ {
+
+61 
+	gcŞÜ
+: #667eea;
+
+62 
+	g‹xt
+-
+	gdecÜ©iÚ
+: 
+nÚe
+;
+
+63 
+	g·ddšg
+: 8
+px
+ 15px;
+
+64 
+	gbÜd”
+: 2
+px
+ 
+sŞid
+ #667eea;
+
+65 
+	gbÜd”
+-
+	g¿dius
+: 5
+px
+;
+
+66 
+	gŒªs™iÚ
+: 
+®l
+ 0.3
+s
+ 
+—£
+;
+
+69 .
+	gÇv
+-
+lšks
+ 
+	ga
+:
+hov”
+ {
+
+70 
+background
+: #667eea;
+
+71 
+	gcŞÜ
+: 
+wh™e
+;
+
+74 .
+	gdeviûs
+-
+	ggrid
+ {
+
+75 
+	gdi¥Ïy
+: 
+grid
+;
+
+76 
+	ggrid
+-
+	g‹m¶©e
+-
+	gcŞumns
+: 
+»³©
+×uto-
+f™
+, 
+mšmax
+(350
+px
+, 1f
+r
+));
+
+77 
+	gg­
+: 20
+px
+;
+
+78 
+	gm¬gš
+-
+	gbÙtom
+: 30
+px
+;
+
+81 .
+	gdeviû
+-
+	gÿrd
+ {
+
+82 
+	gbackground
+: 
+rgba
+(255, 255, 255, 0.95);
+
+83 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+;
+
+84 
+	g·ddšg
+: 20
+px
+;
+
+85 
+	gbox
+-
+	gshadow
+: 0 4
+px
+ 6px 
+rgba
+(0, 0, 0, 0.1);
+
+86 
+	gŒªs™iÚ
+: 
+ŒªsfÜm
+ 0.3
+s
+ 
+—£
+;
+
+89 .
+	gdeviû
+-
+	gÿrd
+:
+hov”
+ {
+
+90 
+ŒªsfÜm
+: 
+Œª¦©eY
+(-5
+px
+);
+
+93 .
+	gdeviû
+-
+	gh—d”
+ {
+
+94 
+	gdi¥Ïy
+: 
+æex
+;
+
+95 
+	gju¡ify
+-
+	gcÚ‹Á
+: 
+¥aû
+-
+b‘w“n
+;
+
+96 
+	g®ign
+-
+	g™ems
+: 
+ûÁ”
+;
+
+97 
+	gm¬gš
+-
+	gbÙtom
+: 15
+px
+;
+
+98 
+	g·ddšg
+-
+	gbÙtom
+: 10
+px
+;
+
+99 
+	gbÜd”
+-
+	gbÙtom
+: 2
+px
+ 
+sŞid
+ #e2e8f0;
+
+102 .
+	gdeviû
+-
+	gt™Ë
+ {
+
+103 
+	gfÚt
+-
+	gsize
+: 1.2e
+m
+;
+
+104 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+;
+
+105 
+	gcŞÜ
+: #2
+d3748
+;
+
+108 .
+	g¡©us
+-
+	gšdiÿtÜ
+ {
+
+109 
+	g·ddšg
+: 4
+px
+ 12px;
+
+110 
+	gbÜd”
+-
+	g¿dius
+: 20
+px
+;
+
+111 
+	gfÚt
+-
+	gsize
+: 0.8e
+m
+;
+
+112 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+;
+
+113 
+	g‹xt
+-
+	gŒªsfÜm
+: 
+uµ”ÿ£
+;
+
+116 .
+	g¡©us
+-
+	gÚlše
+ {
+
+117 
+	gbackground
+: #68d391;
+
+118 
+	gcŞÜ
+: #22543d;
+
+121 .
+	g¡©us
+-
+	gofæše
+ {
+
+122 
+	gbackground
+: #fc8181;
+
+123 
+	gcŞÜ
+: #742a2a;
+
+126 .
+	gdeviû
+-
+	gšfo
+ {
+
+127 
+	gdi¥Ïy
+: 
+grid
+;
+
+128 
+	ggrid
+-
+	g‹m¶©e
+-
+	gcŞumns
+: 1f
+r
+ 1fr;
+
+129 
+	gg­
+: 10
+px
+;
+
+130 
+	gm¬gš
+-
+	gbÙtom
+: 15
+px
+;
+
+131 
+	gfÚt
+-
+	gsize
+: 0.9e
+m
+;
+
+134 .
+	gšfo
+-
+	g™em
+ {
+
+135 
+	gdi¥Ïy
+: 
+æex
+;
+
+136 
+	gju¡ify
+-
+	gcÚ‹Á
+: 
+¥aû
+-
+b‘w“n
+;
+
+139 .
+	gšfo
+-
+	gÏb–
+ {
+
+140 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+;
+
+141 
+	gcŞÜ
+: #4
+a5568
+;
+
+144 .
+	gšfo
+-
+	gv®ue
+ {
+
+145 
+	gcŞÜ
+: #2
+d3748
+;
+
+148 .
+	gcÚŒŞ
+-
+	ggroup
+ {
+
+149 
+	gm¬gš
+-
+	gbÙtom
+: 20
+px
+;
+
+152 .
+	gcÚŒŞ
+-
+	gÏb–
+ {
+
+153 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+;
+
+154 
+	gcŞÜ
+: #4
+a5568
+;
+
+155 
+	gm¬gš
+-
+	gbÙtom
+: 8
+px
+;
+
+156 
+	gdi¥Ïy
+: 
+block
+;
+
+159 .
+	gcÚŒŞs
+ {
+
+160 
+	gdi¥Ïy
+: 
+æex
+;
+
+161 
+	gg­
+: 8
+px
+;
+
+162 
+	gæex
+-
+	gw¿p
+: 
+w¿p
+;
+
+165 .
+	gbŠ
+ {
+
+166 
+	g·ddšg
+: 8
+px
+ 16px;
+
+167 
+	gbÜd”
+: 
+nÚe
+;
+
+168 
+	gbÜd”
+-
+	g¿dius
+: 5
+px
+;
+
+169 
+	gcursÜ
+: 
+poš‹r
+;
+
+170 
+	gfÚt
+-
+	gsize
+: 0.9e
+m
+;
+
+171 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+;
+
+172 
+	gŒªs™iÚ
+: 
+®l
+ 0.3
+s
+ 
+—£
+;
+
+173 
+	g‹xt
+-
+	gdecÜ©iÚ
+: 
+nÚe
+;
+
+174 
+	gdi¥Ïy
+: 
+šlše
+-
+block
+;
+
+175 
+	g‹xt
+-
+	g®ign
+: 
+ûÁ”
+;
+
+178 .
+	gbŠ
+-
+	g´im¬y
+ {
+
+179 
+	gbackground
+: #667eea;
+
+180 
+	gcŞÜ
+: 
+wh™e
+;
+
+183 .
+	gbŠ
+-
+	g´im¬y
+:
+hov”
+ {
+
+184 
+background
+: #5
+a67d8
+;
+
+187 .
+	gbŠ
+-
+	g£cÚd¬y
+ {
+
+188 
+	gbackground
+: #a0aec0;
+
+189 
+	gcŞÜ
+: 
+wh™e
+;
+
+192 .
+	gbŠ
+-
+	g£cÚd¬y
+:
+hov”
+ {
+
+193 
+background
+: #718096;
+
+196 .
+	gbŠ
+-
+	gsucûss
+ {
+
+197 
+	gbackground
+: #48bb78;
+
+198 
+	gcŞÜ
+: 
+wh™e
+;
+
+201 .
+	gbŠ
+-
+	gsucûss
+:
+hov”
+ {
+
+202 
+background
+: #38a169;
+
+205 .
+	gbŠ
+-
+	gw¬nšg
+ {
+
+206 
+	gbackground
+: #ed8936;
+
+207 
+	gcŞÜ
+: 
+wh™e
+;
+
+210 .
+	gbŠ
+-
+	gw¬nšg
+:
+hov”
+ {
+
+211 
+background
+: #dd6b20;
+
+214 .
+	gbŠ
+-
+	gdªg”
+ {
+
+215 
+	gbackground
+: #f56565;
+
+216 
+	gcŞÜ
+: 
+wh™e
+;
+
+219 .
+	gbŠ
+-
+	gdªg”
+:
+hov”
+ {
+
+220 
+background
+: #e53e3e;
+
+223 .
+	g´Ùobuf
+-
+	g£ùiÚ
+ {
+
+224 
+	gbackground
+: 
+rgba
+(255, 255, 255, 0.95);
+
+225 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+;
+
+226 
+	g·ddšg
+: 20
+px
+;
+
+227 
+	gm¬gš
+-
+	gbÙtom
+: 20
+px
+;
+
+228 
+	gbox
+-
+	gshadow
+: 0 4
+px
+ 6px 
+rgba
+(0, 0, 0, 0.1);
+
+231 .
+	g´Ùobuf
+-
+	gcommªds
+ {
+
+232 
+	gdi¥Ïy
+: 
+grid
+;
+
+233 
+	ggrid
+-
+	g‹m¶©e
+-
+	gcŞumns
+: 
+»³©
+×uto-
+f™
+, 
+mšmax
+(200
+px
+, 1f
+r
+));
+
+234 
+	gg­
+: 10
+px
+;
+
+237 .
+	g´Ùobuf
+-
+	gcmd
+-
+	gbŠ
+ {
+
+238 
+	gbackground
+: #9
+f7«a
+;
+
+239 
+	gcŞÜ
+: 
+wh™e
+;
+
+240 
+	gbÜd”
+: 
+nÚe
+;
+
+241 
+	g·ddšg
+: 10
+px
+ 15px;
+
+242 
+	gbÜd”
+-
+	g¿dius
+: 5
+px
+;
+
+243 
+	gcursÜ
+: 
+poš‹r
+;
+
+244 
+	gfÚt
+-
+	gsize
+: 0.9e
+m
+;
+
+245 
+	gŒªs™iÚ
+: 
+®l
+ 0.3
+s
+ 
+—£
+;
+
+248 .
+	g´Ùobuf
+-
+	gcmd
+-
+	gbŠ
+:
+hov”
+ {
+
+249 
+background
+: #805ad5;
+
+252 .
+	g‹rmš®
+-
+	g£ùiÚ
+ {
+
+253 
+	gbackground
+: 
+rgba
+(255, 255, 255, 0.95);
+
+254 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+;
+
+255 
+	g·ddšg
+: 20
+px
+;
+
+256 
+	gm¬gš
+-
+	gbÙtom
+: 20
+px
+;
+
+257 
+	gbox
+-
+	gshadow
+: 0 4
+px
+ 6px 
+rgba
+(0, 0, 0, 0.1);
+
+260 .
+	g‹rmš®
+-
+	gh—d”
+ {
+
+261 
+	gdi¥Ïy
+: 
+æex
+;
+
+262 
+	gju¡ify
+-
+	gcÚ‹Á
+: 
+¥aû
+-
+b‘w“n
+;
+
+263 
+	g®ign
+-
+	g™ems
+: 
+ûÁ”
+;
+
+264 
+	gm¬gš
+-
+	gbÙtom
+: 15
+px
+;
+
+267 .
+	g‹rmš®
+-
+	gdi¥Ïy
+ {
+
+268 
+	gbackground
+: #1
+a202c
+;
+
+269 
+	gcŞÜ
+: #e2e8f0;
+
+270 
+	gfÚt
+-
+	gçmy
+: 'Cour›¸New', 
+	gmÚo¥aû
+;
+
+271 
+	gfÚt
+-
+	gsize
+: 0.8e
+m
+;
+
+272 
+	g·ddšg
+: 15
+px
+;
+
+273 
+	gbÜd”
+-
+	g¿dius
+: 5
+px
+;
+
+274 
+	gheight
+: 300
+px
+;
+
+275 
+	gov”æow
+-
+	gy
+:‡uto;
+
+276 
+	gbÜd”
+: 1
+px
+ 
+sŞid
+ #4
+a5568
+;
+
+279 .
+	glog
+-
+	g’Œy
+ {
+
+280 
+	gm¬gš
+-
+	gbÙtom
+: 5
+px
+;
+
+281 
+	g·ddšg
+: 2
+px
+ 0;
+
+284 .
+	glog
+-
+	gtime¡amp
+ {
+
+285 
+	gcŞÜ
+: #a0aec0;
+
+288 .
+	glog
+-
+	g»que¡
+ {
+
+289 
+	gcŞÜ
+: #63b3ed;
+
+292 .
+	glog
+-
+	g»¥Ú£
+ {
+
+293 
+	gcŞÜ
+: #68d391;
+
+296 .
+	glog
+-
+	g”rÜ
+ {
+
+297 
+	gcŞÜ
+: #fc8181;
+
+300 .
+	glog
+-
+	g‹Ëm‘ry
+ {
+
+301 
+	gcŞÜ
+: #81e6d9;
+
+305 .
+	gmod®
+ {
+
+306 
+	gdi¥Ïy
+: 
+nÚe
+;
+
+307 
+	gpos™iÚ
+: 
+fixed
+;
+
+308 
+	gz
+-
+	gšdex
+: 1000;
+
+309 
+	gËá
+: 0;
+
+310 
+	gtİ
+: 0;
+
+311 
+	gwidth
+: 100%;
+
+312 
+	gheight
+: 100%;
+
+313 
+	gbackground
+-
+	gcŞÜ
+: 
+rgba
+(0, 0, 0, 0.5);
+
+316 .
+	gmod®
+-
+	gcÚ‹Á
+ {
+
+317 
+	gpos™iÚ
+: 
+»Ïtive
+;
+
+318 
+	gbackground
+-
+	gcŞÜ
+: 
+wh™e
+;
+
+319 
+	gm¬gš
+: 5%‡uto;
+
+320 
+	g·ddšg
+: 0;
+
+321 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+;
+
+322 
+	gwidth
+: 90%;
+
+323 
+	gmax
+-
+	gwidth
+: 600
+px
+;
+
+324 
+	gmax
+-
+	gheight
+: 80
+vh
+;
+
+325 
+	gov”æow
+-
+	gy
+:‡uto;
+
+326 
+	gbox
+-
+	gshadow
+: 0 8
+px
+ 32px 
+rgba
+(0, 0, 0, 0.3);
+
+329 .
+	gpİup
+-
+	gh—d”
+ {
+
+330 
+	gbackground
+: #667eea;
+
+331 
+	gcŞÜ
+: 
+wh™e
+;
+
+332 
+	g·ddšg
+: 20
+px
+;
+
+333 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+ 10px 0 0;
+
+334 
+	gpos™iÚ
+: 
+»Ïtive
+;
+
+337 .
+	gpİup
+-
+h—d”
+ 
+	gh3
+ {
+
+338 
+	gm¬gš
+: 0;
+
+339 
+	gfÚt
+-
+	gsize
+: 1.3e
+m
+;
+
+342 .
+	gşo£
+-
+	gbŠ
+ {
+
+343 
+	gpos™iÚ
+: 
+absŞu‹
+;
+
+344 
+	gright
+: 15
+px
+;
+
+345 
+	gtİ
+: 15
+px
+;
+
+346 
+	gbackground
+: 
+nÚe
+;
+
+347 
+	gbÜd”
+: 
+nÚe
+;
+
+348 
+	gcŞÜ
+: 
+wh™e
+;
+
+349 
+	gfÚt
+-
+	gsize
+: 24
+px
+;
+
+350 
+	gcursÜ
+: 
+poš‹r
+;
+
+353 .
+	gpİup
+-
+	gbody
+ {
+
+354 
+	g·ddšg
+: 20
+px
+;
+
+357 .
+	gfÜm
+-
+	ggroup
+ {
+
+358 
+	gm¬gš
+-
+	gbÙtom
+: 15
+px
+;
+
+361 .
+	gfÜm
+-
+group
+ 
+	gÏb–
+ {
+
+362 
+	gdi¥Ïy
+: 
+block
+;
+
+363 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+;
+
+364 
+	gm¬gš
+-
+	gbÙtom
+: 5
+px
+;
+
+365 
+	gcŞÜ
+: #4
+a5568
+;
+
+368 .
+	gf›ld
+-
+	gdesütiÚ
+ {
+
+369 
+	gfÚt
+-
+	gsize
+: 0.8e
+m
+;
+
+370 
+	gcŞÜ
+: #718096;
+
+371 
+	gm¬gš
+-
+	gbÙtom
+: 5
+px
+;
+
+374 .
+	gfÜm
+-
+	gcÚŒŞ
+ {
+
+375 
+	gwidth
+: 100%;
+
+376 
+	g·ddšg
+: 8
+px
+ 12px;
+
+377 
+	gbÜd”
+: 1
+px
+ 
+sŞid
+ #cbd5e0;
+
+378 
+	gbÜd”
+-
+	g¿dius
+: 5
+px
+;
+
+379 
+	gfÚt
+-
+	gsize
+: 0.9e
+m
+;
+
+382 .
+	gfÜm
+-
+	gcÚŒŞ
+:
+focus
+ {
+
+383 
+ouše
+: 
+nÚe
+;
+
+384 
+	gbÜd”
+-
+	gcŞÜ
+: #667eea;
+
+385 
+	gbox
+-
+	gshadow
+: 0 0 0 3
+px
+ 
+rgba
+(102, 126, 234, 0.1);
+
+388 .
+	g»quœed
+-
+	gšdiÿtÜ
+ {
+
+389 
+	gcŞÜ
+: #e53e3e;
+
+390 
+	gfÚt
+-
+	gsize
+: 0.8e
+m
+;
+
+393 .
+	gpİup
+-
+	gfoÙ”
+ {
+
+394 
+	gbackground
+: #f7fafc;
+
+395 
+	g·ddšg
+: 15
+px
+ 20px;
+
+396 
+	gbÜd”
+-
+	g¿dius
+: 0 0 10
+px
+ 10px;
+
+397 
+	gdi¥Ïy
+: 
+æex
+;
+
+398 
+	gg­
+: 10
+px
+;
+
+399 
+	gju¡ify
+-
+	gcÚ‹Á
+: 
+æex
+-
+’d
+;
+
+402 .
+	gcommªd
+-
+	g´ev›w
+ {
+
+403 
+	gbackground
+: #f7fafc;
+
+404 
+	gbÜd”
+: 1
+px
+ 
+sŞid
+ #e2e8f0;
+
+405 
+	gbÜd”
+-
+	g¿dius
+: 5
+px
+;
+
+406 
+	g·ddšg
+: 15
+px
+;
+
+407 
+	gm¬gš
+-
+	gtİ
+: 15
+px
+;
+
+410 .
+	gcommªd
+-
+´ev›w
+ 
+	g´e
+ {
+
+411 
+	gbackground
+: #1
+a202c
+;
+
+412 
+	gcŞÜ
+: #e2e8f0;
+
+413 
+	g·ddšg
+: 10
+px
+;
+
+414 
+	gbÜd”
+-
+	g¿dius
+: 5
+px
+;
+
+415 
+	gfÚt
+-
+	gsize
+: 0.8e
+m
+;
+
+416 
+	gov”æow
+-
+	gx
+:‡uto;
+
+419 .
+	gbŠ
+-
+	gšfo
+ {
+
+420 
+	gbackground
+: #4299e1;
+
+421 
+	gcŞÜ
+: 
+wh™e
+;
+
+424 .
+	gbŠ
+-
+	gšfo
+:
+hov”
+ {
+
+425 
+background
+: #3182ce;
+
+428 .
+	gfoÙ”
+ {
+
+429 
+	gbackground
+: 
+rgba
+(255, 255, 255, 0.95);
+
+430 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+;
+
+431 
+	g·ddšg
+: 15
+px
+;
+
+432 
+	g‹xt
+-
+	g®ign
+: 
+ûÁ”
+;
+
+433 
+	gm¬gš
+-
+	gtİ
+: 20
+px
+;
+
+434 
+	gbox
+-
+	gshadow
+: 0 4
+px
+ 6px 
+rgba
+(0, 0, 0, 0.1);
+
+437 .
+	gem”g’cy
+-
+	gcÚŒŞs
+ {
+
+438 
+	gbackground
+: #fed7d7;
+
+439 
+	gbÜd”
+: 2
+px
+ 
+sŞid
+ #fc8181;
+
+440 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+;
+
+441 
+	g·ddšg
+: 15
+px
+;
+
+442 
+	gm¬gš
+-
+	gbÙtom
+: 20
+px
+;
+
+445 .
+	gem”g’cy
+-
+cÚŒŞs
+ 
+	gh3
+ {
+
+446 
+	gcŞÜ
+: #742a2a;
+
+447 
+	gm¬gš
+-
+	gbÙtom
+: 10
+px
+;
+
+451 .
+	gsm¬t
+-
+	gdesign
+ .
+	gpİup
+-
+	gh—d”
+ {
+
+452 
+	gbackground
+: 
+lš—r
+-
+g¿d›Á
+(135de
+g
+, #4299e1 0%, #2
+b6cb0
+ 100%);
+
+453 
+	gcŞÜ
+: 
+wh™e
+;
+
+456 .
+	gpİup
+-
+	gbody
+.
+	gsm¬t
+-
+	gdesign
+ {
+
+457 
+	g·ddšg
+: 25
+px
+;
+
+460 .
+	gsm¬t
+-
+	gfÜm
+-
+	ggroup
+ {
+
+461 
+	gm¬gš
+-
+	gbÙtom
+: 20
+px
+;
+
+462 
+	g·ddšg
+: 15
+px
+;
+
+463 
+	gbackground
+: #f7fafc;
+
+464 
+	gbÜd”
+-
+	g¿dius
+: 8
+px
+;
+
+465 
+	gbÜd”
+-
+	gËá
+: 4
+px
+ 
+sŞid
+ #4299e1;
+
+468 .
+	gsm¬t
+-
+	gÏb–
+ {
+
+469 
+	gfÚt
+-
+	gsize
+: 1.1e
+m
+;
+
+470 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+;
+
+471 
+	gcŞÜ
+: #2
+d3748
+;
+
+472 
+	gm¬gš
+-
+	gbÙtom
+: 8
+px
+;
+
+473 
+	gdi¥Ïy
+: 
+block
+;
+
+476 .
+	gsm¬t
+-
+	gh–p
+ {
+
+477 
+	gfÚt
+-
+	gsize
+: 0.9e
+m
+;
+
+478 
+	gcŞÜ
+: #4
+a5568
+;
+
+479 
+	gm¬gš
+-
+	gbÙtom
+: 12
+px
+;
+
+480 
+	g·ddšg
+: 6
+px
+ 10px;
+
+481 
+	gbackground
+: #edf2f7;
+
+482 
+	gbÜd”
+-
+	g¿dius
+: 4
+px
+;
+
+486 .
+	g¦id”
+-
+	gcÚŒŞ
+ {
+
+487 
+	gm¬gš
+: 10
+px
+ 0;
+
+490 .
+	gsm¬t
+-
+	g¦id”
+ {
+
+491 
+	gwidth
+: 100%;
+
+492 
+	gheight
+: 6
+px
+;
+
+493 
+	gbÜd”
+-
+	g¿dius
+: 3
+px
+;
+
+494 
+	gbackground
+: #e2e8f0;
+
+495 
+	gouše
+: 
+nÚe
+;
+
+496 -
+	gwebk™
+-
+	g­³¬ªû
+: 
+nÚe
+;
+
+499 .
+	gsm¬t
+-
+	g¦id”
+::-
+webk™
+-
+¦id”
+-
+thumb
+ {
+
+500 -
+webk™
+-
+­³¬ªû
+: 
+nÚe
+;
+
+501 
+	g­³¬ªû
+: 
+nÚe
+;
+
+502 
+	gwidth
+: 20
+px
+;
+
+503 
+	gheight
+: 20
+px
+;
+
+504 
+	gbÜd”
+-
+	g¿dius
+: 50%;
+
+505 
+	gbackground
+: #4299e1;
+
+506 
+	gcursÜ
+: 
+poš‹r
+;
+
+507 
+	gbox
+-
+	gshadow
+: 0 2
+px
+ 4px 
+rgba
+(0,0,0,0.2);
+
+510 .
+	g¦id”
+-
+	gdi¥Ïy
+ {
+
+511 
+	g‹xt
+-
+	g®ign
+: 
+ûÁ”
+;
+
+512 
+	gm¬gš
+-
+	gtİ
+: 8
+px
+;
+
+513 
+	gfÚt
+-
+	gsize
+: 1.3e
+m
+;
+
+514 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+;
+
+515 
+	gcŞÜ
+: #2
+d3748
+;
+
+516 
+	g·ddšg
+: 8
+px
+;
+
+517 
+	gbackground
+: 
+wh™e
+;
+
+518 
+	gbÜd”
+-
+	g¿dius
+: 4
+px
+;
+
+519 
+	gbÜd”
+: 2
+px
+ 
+sŞid
+ #4299e1;
+
+523 .
+	gdeviû
+-
+	g‹rmš®
+ {
+
+524 
+	gbackground
+: #1
+a202c
+;
+
+525 
+	gcŞÜ
+: #e2e8f0;
+
+526 
+	gfÚt
+-
+	gçmy
+: 'Cour›¸New', 
+	gmÚo¥aû
+;
+
+527 
+	gfÚt
+-
+	gsize
+: 0.8e
+m
+;
+
+528 
+	g·ddšg
+: 10
+px
+;
+
+529 
+	gbÜd”
+-
+	g¿dius
+: 5
+px
+;
+
+530 
+	gheight
+: 200
+px
+;
+
+531 
+	gov”æow
+-
+	gy
+:‡uto;
+
+532 
+	gm¬gš
+-
+	gtİ
+: 10
+px
+;
+
+533 
+	gbÜd”
+: 1
+px
+ 
+sŞid
+ #4
+a5568
+;
+
+536 .
+	g‹rmš®
+-
+	g’Œy
+ {
+
+537 
+	gm¬gš
+-
+	gbÙtom
+: 3
+px
+;
+
+538 
+	g·ddšg
+: 1
+px
+ 0;
+
+541 .
+	g‹rmš®
+-
+	gªnounû
+ { 
+	gcŞÜ
+: #f6e05e; }
+
+542 .
+	g‹rmš®
+-
+	g‹Ëm‘ry
+ { 
+	gcŞÜ
+: #68d391; }
+
+543 .
+	g‹rmš®
+-
+	gcommªd
+ { 
+	gcŞÜ
+: #63b3ed; }
+
+544 .
+	g‹rmš®
+-
+	g»¥Ú£
+ { 
+	gcŞÜ
+: #9
+«6b4
+; }
+
+545 .
+	g‹rmš®
+-
+	g”rÜ
+ { 
+	gcŞÜ
+: #fc8181; }
+
+546 </
+	g¡yË
+>
+
+547 </
+	gh—d
+>
+
+548 <
+	gbody
+>
+
+549 <
+div
+ 
+	gşass
+="container">
+
+550 <!-- 
+H—d”
+ -->
+
+551 <
+div
+ 
+şass
+="header">
+
+552 <
+h1
+>ğŸŠ 
+NgaSim
+ 
+PoŞ
+ 
+CÚŒŞËr
+ 
+v
+{{.
+V”siÚ
+}}</h1>
+
+553 <
+p
+>
+DyÇmic
+ 
+PrÙobuf
+ 
+IÁ”çû
+ 
+w™h
+ 
+Live
+ 
+T”mš®
+</p>
+
+554 <
+div
+ 
+şass
+="nav-links">
+
+555 <
+a
+ 
+h»f
+="/">ğŸ  
+Maš
+</a>
+
+556 <
+a
+ 
+h»f
+="/´Ùobuf">ğŸ§¬ 
+PrÙobuf
+ 
+Mes§ges
+</a>
+
+557 <
+a
+ 
+h»f
+="/‹rmš®">ğŸ“º 
+Live
+ 
+T”mš®
+</a>
+
+558 <
+a
+ 
+h»f
+="/js-demo">ğŸ® 
+JS
+ 
+Demo
+</a>
+
+559 <
+a
+ 
+h»f
+="/Şd">ğŸ  
+Origš®
+</a>
+
+560 <
+a
+ 
+h»f
+="/­i/deviûs">ğŸ“Š 
+API
+</a>
+
+561 <
+a
+ 
+h»f
+="/goodbye">ğŸ‘‹ 
+Ex™
+</a>
+
+562 </
+div
+>
+
+563 </
+div
+>
+
+565 <!-- 
+Em”g’cy
+ 
+CÚŒŞs
+ -->
+
+566 <
+div
+ 
+şass
+="emergency-controls">
+
+567 <
+h3
+>ğŸš¨ 
+Em”g’cy
+ 
+CÚŒŞs
+</h3>
+
+568 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-dªg”" 
+Úşick
+="em”g’cyStİ()">ğŸ›‘ 
+EMERGENCY
+ 
+STOP
+ 
+ALL
+</button>
+
+569 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-w¬nšg" 
+Úşick
+="»äeshDeviûs()">ğŸ”„ 
+Reäesh
+ 
+Deviûs
+</button>
+
+570 </
+div
+>
+
+572 <!-- 
+Live
+ 
+T”mš®
+ 
+Di¥Ïy
+ -->
+
+573 <
+div
+ 
+şass
+="terminal-section">
+
+574 <
+div
+ 
+şass
+="terminal-header">
+
+575 <
+h3
+>ğŸ“º 
+Live
+ 
+T”mš®
+ (
+La¡
+ 50 
+’Œ›s
+)</h3>
+
+576 <
+div
+>
+
+577 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-£cÚd¬y" 
+Úşick
+="ş—rT”mš®()">ğŸ—‘ï¸ 
+CË¬
+</button>
+
+578 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-´im¬y" 
+Úşick
+="»äeshT”mš®()">ğŸ”„ 
+Reäesh
+</button>
+
+579 </
+div
+>
+
+580 </
+div
+>
+
+581 <
+div
+ 
+şass
+="‹rmš®-di¥Ïy" 
+id
+="terminal-display">
+
+582 <
+div
+ 
+şass
+="log-entry">
+
+583 <
+¥ª
+ 
+şass
+="log-time¡amp">[
+Lßdšg
+...]</span>
+
+584 <
+¥ª
+>
+T”mš®
+ 
+š™Ÿlizšg
+...</span>
+
+585 </
+div
+>
+
+586 </
+div
+>
+
+587 </
+div
+>
+
+589 <!-- 
+Deviûs
+ 
+Grid
+ -->
+
+590 <
+div
+ 
+şass
+="devices-grid">
+
+591 {{
+¿nge
+ .
+Deviûs
+}}
+
+592 <
+div
+ 
+şass
+="device-card">
+
+593 <!-- 
+Deviû
+ 
+H—d”
+ -->
+
+594 <
+div
+ 
+şass
+="device-header">
+
+595 <
+div
+ 
+şass
+="deviû-t™Ë">{{.
+Name
+}}</div>
+
+596 <
+div
+ 
+şass
+="¡©us-šdiÿtÜ {{iàeq .Stu "
+ONLINE
+"}}status-online{{else}}status-offline{{end}}">
+
+597 {{.
+Stus
+}}
+
+598 </
+div
+>
+
+599 </
+div
+>
+
+601 <!-- 
+Deviû
+ 
+InfÜm©iÚ
+ -->
+
+602 <
+div
+ 
+şass
+="device-info">
+
+603 <
+div
+ 
+şass
+="info-item">
+
+604 <
+¥ª
+ 
+şass
+="šfo-Ïb–">
+S”Ÿl
+:</span>
+
+605 <
+¥ª
+ 
+şass
+="šfo-v®ue">{{.
+S”Ÿl
+}}</span>
+
+606 </
+div
+>
+
+607 <
+div
+ 
+şass
+="info-item">
+
+608 <
+¥ª
+ 
+şass
+="šfo-Ïb–">
+Ty³
+:</span>
+
+609 <
+¥ª
+ 
+şass
+="šfo-v®ue">{{.
+Ty³
+}}</span>
+
+610 </
+div
+>
+
+611 {{.
+ProduùName
+}}
+
+612 <
+div
+ 
+şass
+="info-item">
+
+613 <
+¥ª
+ 
+şass
+="šfo-Ïb–">
+Produù
+:</span>
+
+614 <
+¥ª
+ 
+şass
+="šfo-v®ue">{{.
+ProduùName
+}}</span>
+
+615 </
+div
+>
+
+616 {{
+’d
+}}
+
+617 {{.
+Fœmw¬eV”siÚ
+}}
+
+618 <
+div
+ 
+şass
+="info-item">
+
+619 <
+¥ª
+ 
+şass
+="šfo-Ïb–">
+Fœmw¬e
+:</span>
+
+620 <
+¥ª
+ 
+şass
+="šfo-v®ue">{{.
+Fœmw¬eV”siÚ
+}}</span>
+
+621 </
+div
+>
+
+622 {{
+’d
+}}
+
+623 <
+div
+ 
+şass
+="info-item">
+
+624 <
+¥ª
+ 
+şass
+="šfo-Ïb–">
+La¡
+ 
+S“n
+:</span>
+
+625 <
+¥ª
+ 
+şass
+="šfo-v®ue">{{.
+La¡S“n
+.
+FÜm©
+ "15:04:05"}}</span>
+
+626 </
+div
+>
+
+627 </
+div
+>
+
+629 <!-- 
+Deviû
+-
+S³cific
+ 
+CÚŒŞs
+ -->
+
+630 {{
+eq
+ .
+Ty³
+ "sanitizerGen2"}}
+
+631 <
+div
+ 
+şass
+="control-group">
+
+632 <
+div
+ 
+şass
+="cÚŒŞ-Ïb–">ğŸ’§ 
+Sª™iz”
+ 
+CÚŒŞ
+ (
+Cu¼’t
+: {{.
+Aùu®P”ûÁage
+}}%)</div>
+
+633 <
+div
+ 
+şass
+="controls">
+
+634 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-£cÚd¬y" 
+Úşick
+="£ndSª™iz”Commªd('{{.S”Ÿl}}', 0)">
+OFF
+</button>
+
+635 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-´im¬y" 
+Úşick
+="sendSanitizerCommand('{{.Serial}}', 10)">10%</button>
+
+636 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-´im¬y" 
+Úşick
+="sendSanitizerCommand('{{.Serial}}', 50)">50%</button>
+
+637 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-´im¬y" 
+Úşick
+="sendSanitizerCommand('{{.Serial}}', 100)">100%</button>
+
+638 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-w¬nšg" 
+Úşick
+="£ndSª™iz”Commªd('{{.S”Ÿl}}', 101)">
+BOOST
+</button>
+
+639 </
+div
+>
+
+640 {{.
+PPMS®t
+}}<
+p
+ 
+¡yË
+="fÚt-size: 0.8em; cŞÜ: #666; m¬gš-tİ: 5px;">
+S®t
+: {{.PPMS®t}} 
+µm
+ | 
+VŞge
+: {{.
+LšeIÅutVŞge
+}}
+V
+ | 
+RSSI
+: {{.RSSI}} 
+dBm
+</p>{{
+’d
+}}
+
+641 </
+div
+>
+
+642 {{
+’d
+}}
+
+644 <!-- 
+DyÇmic
+ 
+PrÙobuf
+ 
+Commªds
+ -->
+
+645 <
+div
+ 
+şass
+="control-group">
+
+646 <
+div
+ 
+şass
+="cÚŒŞ-Ïb–">ğŸ§¬ 
+PrÙobuf
+ 
+Commªds
+</div>
+
+647 <
+div
+ 
+şass
+="controls">
+
+648 <
+bu‰Ú
+ 
+şass
+="bŠ…rÙobuf-cmd-bŠ" 
+Úşick
+="showProtobufCommands('{{.Serial}}', '{{.Type}}')">
+
+649 ğŸ“‹ 
+Show
+ 
+AvaabË
+ 
+Commªds
+
+
+650 </
+bu‰Ú
+>
+
+651 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-sucûss" 
+Úşick
+="showDeviceTerminal('{{.Serial}}')">
+
+652 ğŸ“º 
+Deviû
+ 
+T”mš®
+
+
+653 </
+bu‰Ú
+>
+
+654 </
+div
+>
+
+655 </
+div
+>
+
+657 <!-- 
+T–em‘ry
+ 
+Di¥Ïy
+ -->
+
+658 {{
+Ü
+ .
+Temp
+ .
+Pow”
+ .
+RPM
+ .
+PH
+ .
+ORP
+}}
+
+659 <
+div
+ 
+şass
+="control-group">
+
+660 <
+div
+ 
+şass
+="cÚŒŞ-Ïb–">ğŸ“Š 
+Live
+ 
+T–em‘ry
+</div>
+
+661 <
+div
+ 
+şass
+="device-info">
+
+662 {{.
+Temp
+}}<
+div
+ 
+şass
+="šfo-™em"><
+¥ª
+ cÏss="šfo-Ïb–">
+Tem³¿tu»
+:</¥ª><¥ª cÏss="šfo-v®ue">{{
+´štf
+ "%.1f" .Temp}}Â°
+C
+</¥ª></div>{{
+’d
+}}
+
+663 {{.
+Pow”
+}}<
+div
+ 
+şass
+="šfo-™em"><
+¥ª
+ cÏss="šfo-Ïb–">Pow”:</¥ª><¥ª cÏss="šfo-v®ue">{{.Pow”}}
+W
+</¥ª></div>{{
+’d
+}}
+
+664 {{.
+RPM
+}}<
+div
+ 
+şass
+="šfo-™em"><
+¥ª
+ cÏss="šfo-Ïb–">RPM:</¥ª><¥ª cÏss="šfo-v®ue">{{.RPM}}</¥ª></div>{{
+’d
+}}
+
+665 {{.
+PH
+}}<
+div
+ 
+şass
+="šfo-™em"><
+¥ª
+ cÏss="šfo-Ïb–">
+pH
+:</¥ª><¥ª cÏss="šfo-v®ue">{{
+´štf
+ "%.1f" .PH}}</¥ª></div>{{
+’d
+}}
+
+666 {{.
+ORP
+}}<
+div
+ 
+şass
+="šfo-™em"><
+¥ª
+ cÏss="šfo-Ïb–">ORP:</¥ª><¥ª cÏss="šfo-v®ue">{{.ORP}} 
+mV
+</¥ª></div>{{
+’d
+}}
+
+667 </
+div
+>
+
+668 </
+div
+>
+
+669 {{
+’d
+}}
+
+671 <!-- 
+Deviû
+ 
+Live
+ 
+T”mš®
+ -->
+
+672 <
+div
+ 
+şass
+="control-group">
+
+673 <
+div
+ 
+şass
+="cÚŒŞ-Ïb–">ğŸ“º 
+Live
+ 
+Deviû
+ 
+T”mš®
+</div>
+
+674 <
+div
+ 
+şass
+="deviû-‹rmš®" 
+id
+="terminal-{{.Serial}}">
+
+675 {{
+¿nge
+ .
+LiveT”mš®
+}}
+
+676 <
+div
+ 
+şass
+="terminal-entryerminal-{{.Type |†ower}}">
+
+677 <
+div
+ 
+şass
+="terminal-header">
+
+678 <
+¥ª
+ 
+¡yË
+="cŞÜ: #a0«c0;">[{{.
+Time¡amp
+.
+FÜm©
+ "15:04:05"}}]</span>
+
+679 <
+¥ª
+ 
+şass
+="‹rmš®-{{.Ty³ |†ow”}}">[{{.
+Ty³
+}}]</span>
+
+680 <
+¥ª
+>{{.
+Mes§ge
+}}</span>
+
+681 </
+div
+>
+
+682 {{.
+P¬£dPrÙobuf
+}}
+
+683 <
+div
+ 
+şass
+="´Ùobuf-d‘as" 
+¡yË
+="margin-left: 20px;…adding: 5px; background:„gba(255,255,255,0.05); border-radius: 3px; font-size: 0.85em;">
+
+684 <
+div
+ 
+¡yË
+="cŞÜ: #63b3ed; fÚt-weight: bŞd; m¬gš-bÙtom: 3px;">ğŸ“‹ {{.
+P¬£dPrÙobuf
+.
+Mes§geTy³
+}} ({{
+Ën
+ .P¬£dPrÙobuf.
+F›lds
+}} 
+f›lds
+)</div>
+
+685 {{
+¿nge
+ .
+P¬£dPrÙobuf
+.
+F›lds
+}}
+
+686 {{.
+IsS‘
+}}
+
+687 <
+div
+ 
+¡yË
+="margin-bottom: 1px;">
+
+688 <
+¥ª
+ 
+¡yË
+="cŞÜ: #a0«c0; fÚt-weight: bŞd;">{{.
+Name
+}}:</span>
+
+689 <
+¥ª
+ 
+¡yË
+="cŞÜ: #e2e8f0; m¬gš-Ëá: 8px;">{{.
+RawV®ue
+}}</span>
+
+690 {{.
+DesütiÚ
+}}<
+¥ª
+ 
+¡yË
+="cŞÜ: #718096; fÚt-¡yË: ilic; fÚt-size: 0.8em;"> - {{.DesütiÚ}}</¥ª>{{
+’d
+}}
+
+691 </
+div
+>
+
+692 {{
+’d
+}}
+
+693 {{
+’d
+}}
+
+694 </
+div
+>
+
+695 {{
+’d
+}}
+
+696 </
+div
+>
+
+697 {{
+’d
+}}
+
+698 {{
+nÙ
+ .
+LiveT”mš®
+}}
+
+699 <
+div
+ 
+şass
+="terminal-entry">
+
+700 <
+¥ª
+ 
+¡yË
+="cŞÜ: #a0«c0;">
+Wa™šg
+ 
+deviû
+ 
+aùiv™y
+...</span>
+
+701 </
+div
+>
+
+702 {{
+’d
+}}
+
+703 </
+div
+>
+
+704 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-£cÚd¬y bŠ-sm®l" 
+Úşick
+="ş—rDeviûT”mš®('{{.S”Ÿl}}')">ğŸ—‘ï¸ 
+CË¬
+</button>
+
+705 </
+div
+>
+
+706 </
+div
+>
+
+707 {{
+’d
+}}
+
+708 </
+div
+>
+
+710 <!-- 
+FoÙ”
+ -->
+
+711 <
+div
+ 
+şass
+="footer">
+
+712 <
+p
+>
+NgaSim
+ 
+PoŞ
+ 
+CÚŒŞËr
+ 
+v
+{{.
+V”siÚ
+}} |
+
+713 <
+a
+ 
+h»f
+="/­i/deviûs">
+JSON
+ 
+API
+</a> |
+
+714 <
+a
+ 
+h»f
+="/´Ùobuf">
+PrÙobuf
+ 
+IÁ”çû
+</a> |
+
+715 <
+a
+ 
+h»f
+="/‹rmš®">
+Live
+ 
+T”mš®
+</a></
+p
+>
+
+716 </
+div
+>
+
+717 </
+div
+>
+
+719 <!-- 
+PrÙobuf
+ 
+Commªd
+ 
+Mod®
+ -->
+
+720 <
+div
+ 
+id
+="´ÙobufMod®" 
+şass
+="modal">
+
+721 <
+div
+ 
+şass
+="mod®-cÚ‹Á" 
+id
+="protobufModalContent">
+
+722 <!-- 
+DyÇmic
+ 
+cÚ‹Á
+ 
+wl
+ 
+be
+ 
+lßded
+ 
+h”e
+ -->
+
+723 </
+div
+>
+
+724 </
+div
+>
+
+726 <
+süt
+>
+
+728 
+Ët
+ 
+cu¼’tDeviû
+ = 
+nuÎ
+;
+
+729 
+Ët
+ 
+	g‹rmš®ReäeshIÁ”v®
+ = 
+nuÎ
+;
+
+732 
+	gdocum’t
+.
+addEv’tLi¡’”
+('DOMCÚ‹ÁLßded', 
+	$funùiÚ
+() {
+
+733 
+	`»äeshT”mš®
+();
+
+735 
+‹rmš®ReäeshIÁ”v®
+ = 
+	`£tIÁ”v®
+(
+»äeshT”mš®
+, 2000);
+
+736 
+	}
+});
+
+739 
+async
+ 
+funùiÚ
+ 
+	$£ndSª™iz”Commªd
+(
+£rŸl
+, 
+³rûÁage
+) {
+
+740 
+cÚsŞe
+.
+	`log
+('S’dšg sª™iz” commªd:', 
+£rŸl
+, 
+³rûÁage
+);
+
+742 
+Œy
+ {
+
+743 cÚ¡ 
+»¥Ú£
+ = 
+awa™
+ 
+	`ãtch
+('/api/sanitizer/command', {
+
+744 
+m‘hod
+: 'POST',
+
+745 
+h—d”s
+: { 'Content-Type': 'application/json' },
+
+746 
+body
+: 
+JSON
+.
+	`¡ršgify
+({ 
+£rŸl
+: s”Ÿl, 
+³rûÁage
+:…ercentage })
+
+749 cÚ¡ 
+»suÉ
+ = 
+awa™
+ 
+»¥Ú£
+.
+	`jsÚ
+();
+
+751 ià(
+»suÉ
+.
+sucûss
+) {
+
+752 
+cÚsŞe
+.
+	`log
+('âœ… Commªd sucûssful:', 
+»suÉ
+);
+
+754 
+	`£tTimeout
+((è=> 
+loÿtiÚ
+.
+	`»lßd
+(), 1000);
+
+756 
+cÚsŞe
+.
+	`”rÜ
+('âŒ Commªd faed:', 
+»suÉ
+.
+”rÜ
+);
+
+757 
+	`®”t
+('Commªd faed: ' + 
+»suÉ
+.
+”rÜ
+);
+
+759 } 
+	`ÿtch
+ (
+”rÜ
+) {
+
+760 
+cÚsŞe
+.
+	`”rÜ
+('N‘wÜkƒ¼Ü:', 
+”rÜ
+);
+
+761 
+	`®”t
+('N‘wÜkƒ¼Ü: ' + 
+”rÜ
+.
+mes§ge
+);
+
+763 
+	}
+}
+
+766 
+async
+ 
+funùiÚ
+ 
+	$showPrÙobufCommªds
+(
+deviûS”Ÿl
+, 
+deviûTy³
+) {
+
+767 
+cÚsŞe
+.
+	`log
+('Showšg…rÙobuàcommªd fÜ:', 
+deviûS”Ÿl
+, 
+deviûTy³
+);
+
+769 
+Œy
+ {
+
+771 cÚ¡ 
+»¥Ú£
+ = 
+awa™
+ 
+	`ãtch
+('/api/protobuf/messages');
+
+772 cÚ¡ 
+mes§ges
+ = 
+awa™
+ 
+»¥Ú£
+.
+	`jsÚ
+();
+
+775 cÚ¡ 
+»ËvªtMes§ges
+ = 
+Objeù
+.
+	`v®ues
+(
+mes§ges
+).
+	`f‹r
+(
+msg
+ =>
+
+776 
+msg
+.
+is_»que¡
+ && (msg.
+ÿ‹gÜy
+ ==ğ
+deviûTy³
+ || msg.category === 'Generic')
+
+779 ià(
+»ËvªtMes§ges
+.
+Ëngth
+ === 0) {
+
+780 
+	`®”t
+('NØ´Ùobuàcommªd avaabË fÜ deviûy³: ' + 
+deviûTy³
+);
+
+785 
+	`showMes§geS–eùiÚMod®
+(
+deviûS”Ÿl
+, 
+deviûTy³
+, 
+»ËvªtMes§ges
+);
+
+787 } 
+	`ÿtch
+ (
+”rÜ
+) {
+
+788 
+cÚsŞe
+.
+	`”rÜ
+('E¼Ü†ßdšg…rÙobuàcommªds:', 
+”rÜ
+);
+
+789 
+	`®”t
+('E¼Ü†ßdšg commªds: ' + 
+”rÜ
+.
+mes§ge
+);
+
+791 
+	}
+}
+
+794 
+funùiÚ
+ 
+	$showMes§geS–eùiÚMod®
+(
+deviûS”Ÿl
+, 
+deviûTy³
+, 
+mes§ges
+) {
+
+795 
+Ët
+ 
+html
+ = '<div class="popup-header">';
+
+796 
+html
+ += '<h3>Select Protobuf Command</h3>';
+
+797 
+html
+ +ğ'<p>Deviû: <¡rÚg>' + 
+deviûS”Ÿl
+ + '</¡rÚg> | Ty³: <¡rÚg>' + 
+deviûTy³
+ + '</strong></p>';
+
+798 
+html
+ += '<button class="close-btn" onclick="closePopup()">&times;</button>';
+
+799 
+html
+ += '</div>';
+
+800 
+html
+ += '<div class="popup-body">';
+
+801 
+html
+ += '<div class="protobuf-commands">';
+
+803 
+mes§ges
+.
+	`fÜEach
+(
+msg
+ => {
+
+804 
+html
+ += '<button class="protobuf-cmd-btn" onclick="showProtobufPopup(\'' +
+
+805 
+msg
+.
+·ckage
+ + '.' + msg.
+Çme
+ + '\', \'' + 
+deviûS”Ÿl
+ + '\', \'' + 
+deviûTy³
+ + '\')">';
+
+806 
+html
+ +ğ'<¡rÚg>' + 
+msg
+.
+Çme
+ + '</strong><br>';
+
+807 
+html
+ +ğ'<sm®l>' + 
+msg
+.
+·ckage
+ + '</small>';
+
+808 
+html
+ += '</button>';
+
+811 
+html
+ += '</div>';
+
+812 
+html
+ += '</div>';
+
+813 
+html
+ += '<div class="popup-footer">';
+
+814 
+html
+ += '<buttonype="button" class="btn btn-secondary" onclick="closePopup()">Cancel</button>';
+
+815 
+html
+ += '</div>';
+
+817 
+docum’t
+.
+	`g‘EËm’tById
+('´ÙobufMod®CÚ‹Á').
+šÃrHTML
+ = 
+html
+;
+
+818 
+docum’t
+.
+	`g‘EËm’tById
+('´ÙobufMod®').
+¡yË
+.
+di¥Ïy
+ = 'block';
+
+819 
+	}
+}
+
+822 
+async
+ 
+funùiÚ
+ 
+	$showPrÙobufPİup
+(
+mes§geTy³
+, 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+) {
+
+823 
+cÚsŞe
+.
+	`log
+('G’”©šg…İu°fÜ:', 
+mes§geTy³
+, 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+);
+
+825 
+Œy
+ {
+
+826 cÚ¡ 
+»¥Ú£
+ = 
+awa™
+ 
+	`ãtch
+('/api/protobuf/popup', {
+
+827 
+m‘hod
+: 'POST',
+
+828 
+h—d”s
+: { 'Content-Type': 'application/json' },
+
+829 
+body
+: 
+JSON
+.
+	`¡ršgify
+({
+
+830 
+mes§ge_ty³
+: 
+mes§geTy³
+,
+
+831 
+deviû_£rŸl
+: 
+deviûS”Ÿl
+,
+
+832 
+ÿ‹gÜy
+: category
+
+836 cÚ¡ 
+»suÉ
+ = 
+awa™
+ 
+»¥Ú£
+.
+	`jsÚ
+();
+
+838 ià(
+»suÉ
+.
+html
+) {
+
+839 
+docum’t
+.
+	`g‘EËm’tById
+('´ÙobufMod®CÚ‹Á').
+šÃrHTML
+ = 
+»suÉ
+.
+html
+;
+
+840 
+docum’t
+.
+	`g‘EËm’tById
+('´ÙobufMod®').
+¡yË
+.
+di¥Ïy
+ = 'block';
+
+842 
+	`®”t
+('FaedØg’”©pİup: ' + (
+»suÉ
+.
+”rÜ
+ || 'Unknownƒrror'));
+
+844 } 
+	`ÿtch
+ (
+”rÜ
+) {
+
+845 
+cÚsŞe
+.
+	`”rÜ
+('E¼Ü g’”©šg…İup:', 
+”rÜ
+);
+
+846 
+	`®”t
+('E¼Ü: ' + 
+”rÜ
+.
+mes§ge
+);
+
+848 
+	}
+}
+
+851 
+async
+ 
+funùiÚ
+ 
+	$execu‹PrÙobufCommªd
+() {
+
+852 cÚ¡ 
+fÜm
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('protobuf-command-form');
+
+853 cÚ¡ 
+fÜmD©a
+ = 
+Ãw
+ 
+	`FÜmD©a
+(
+fÜm
+);
+
+856 cÚ¡ 
+f›ldV®ues
+ = {};
+
+857 
+Ët
+ [
+key
+, 
+v®ue
+] 
+of
+ 
+fÜmD©a
+.
+	`’Œ›s
+()) {
+
+858 ià(
+key
+ !== 'message_type' && key !== 'device_serial' && key !== 'category') {
+
+860 ià(
+v®ue
+ === 'true' || value === 'false') {
+
+861 
+f›ldV®ues
+[
+key
+] = 
+v®ue
+ === 'true';
+
+862 } ià(!
+	`isNaN
+(
+v®ue
+) && value !== '') {
+
+863 
+f›ldV®ues
+[
+key
+] = 
+	`·r£Flßt
+(
+v®ue
+);
+
+865 
+f›ldV®ues
+[
+key
+] = 
+v®ue
+;
+
+870 cÚ¡ 
+commªdD©a
+ = {
+
+871 
+mes§ge_ty³
+: 
+fÜmD©a
+.
+	`g‘
+('message_type'),
+
+872 
+deviû_£rŸl
+: 
+fÜmD©a
+.
+	`g‘
+('device_serial'),
+
+873 
+ÿ‹gÜy
+: 
+fÜmD©a
+.
+	`g‘
+('category'),
+
+874 
+f›ld_v®ues
+: 
+f›ldV®ues
+
+
+877 
+cÚsŞe
+.
+	`log
+('Executšg…rÙobuàcommªd:', 
+commªdD©a
+);
+
+879 
+Œy
+ {
+
+880 cÚ¡ 
+»¥Ú£
+ = 
+awa™
+ 
+	`ãtch
+('/api/protobuf/command', {
+
+881 
+m‘hod
+: 'POST',
+
+882 
+h—d”s
+: { 'Content-Type': 'application/json' },
+
+883 
+body
+: 
+JSON
+.
+	`¡ršgify
+(
+commªdD©a
+)
+
+886 cÚ¡ 
+»suÉ
+ = 
+awa™
+ 
+»¥Ú£
+.
+	`jsÚ
+();
+
+888 ià(
+»suÉ
+.
+sucûss
+) {
+
+889 
+	`®”t
+('âœ… Commªd s’ˆsucûssfuÎy!\\nCÜ»ÏtiÚ ID: ' + 
+»suÉ
+.
+cÜ»ÏtiÚ_id
+);
+
+890 
+	`şo£Pİup
+();
+
+892 
+	`»äeshT”mš®
+();
+
+894 
+	`®”t
+('âŒ Commªd faed: ' + 
+»suÉ
+.
+”rÜ
+);
+
+896 } 
+	`ÿtch
+ (
+”rÜ
+) {
+
+897 
+cÚsŞe
+.
+	`”rÜ
+('E¼Üƒxecutšg commªd:', 
+”rÜ
+);
+
+898 
+	`®”t
+('E¼Ü: ' + 
+”rÜ
+.
+mes§ge
+);
+
+900 
+	}
+}
+
+903 
+funùiÚ
+ 
+	$´ev›wCommªd
+() {
+
+904 cÚ¡ 
+fÜm
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('protobuf-command-form');
+
+905 cÚ¡ 
+fÜmD©a
+ = 
+Ãw
+ 
+	`FÜmD©a
+(
+fÜm
+);
+
+907 cÚ¡ 
+f›ldV®ues
+ = {};
+
+908 
+Ët
+ [
+key
+, 
+v®ue
+] 
+of
+ 
+fÜmD©a
+.
+	`’Œ›s
+()) {
+
+909 ià(
+key
+ !== 'message_type' && key !== 'device_serial' && key !== 'category') {
+
+910 
+f›ldV®ues
+[
+key
+] = 
+v®ue
+;
+
+914 cÚ¡ 
+´ev›w
+ = {
+
+915 
+mes§ge_ty³
+: 
+fÜmD©a
+.
+	`g‘
+('message_type'),
+
+916 
+deviû_£rŸl
+: 
+fÜmD©a
+.
+	`g‘
+('device_serial'),
+
+917 
+ÿ‹gÜy
+: 
+fÜmD©a
+.
+	`g‘
+('category'),
+
+918 
+f›ld_v®ues
+: 
+f›ldV®ues
+
+
+921 cÚ¡ 
+´ev›wDiv
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('command-preview');
+
+922 cÚ¡ 
+´ev›wCÚ‹Á
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('preview-content');
+
+924 
+´ev›wCÚ‹Á
+.
+‹xtCÚ‹Á
+ = 
+JSON
+.
+	`¡ršgify
+(
+´ev›w
+, 
+nuÎ
+, 2);
+
+925 
+´ev›wDiv
+.
+¡yË
+.
+di¥Ïy
+ = 'block';
+
+926 
+	}
+}
+
+929 
+async
+ 
+funùiÚ
+ 
+	$»äeshT”mš®
+() {
+
+930 
+Œy
+ {
+
+931 cÚ¡ 
+»¥Ú£
+ = 
+awa™
+ 
+	`ãtch
+('/api/terminal/logs?limit=50');
+
+932 cÚ¡ 
+logs
+ = 
+awa™
+ 
+»¥Ú£
+.
+	`jsÚ
+();
+
+934 cÚ¡ 
+‹rmš®
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('terminal-display');
+
+935 
+‹rmš®
+.
+šÃrHTML
+ = '';
+
+937 
+logs
+.
+	`fÜEach
+(
+log
+ => {
+
+938 cÚ¡ 
+’Œy
+ = 
+docum’t
+.
+	`ü—‹EËm’t
+('div');
+
+939 
+’Œy
+.
+şassName
+ = 'log-entry';
+
+941 cÚ¡ 
+time¡amp
+ = 
+Ãw
+ 
+	`D©e
+(
+log
+.time¡amp).
+	`toLoÿËTimeSŒšg
+();
+
+942 cÚ¡ 
+ty³CÏss
+ = 'log-' + 
+log
+.
+ty³
+.
+	`toLow”Ca£
+();
+
+944 
+’Œy
+.
+šÃrHTML
+ = '<¥ª cÏss="log-time¡amp">[' + 
+time¡amp
+ + ']</span> ' +
+
+945 '<¥ª cÏss="' + 
+ty³CÏss
+ + '">[' + 
+log
+.
+ty³
+ + ']</span> ' +
+
+946 '<¥ª>' + 
+log
+.
+mes§ge
+ + '</span>';
+
+948 
+‹rmš®
+.
+	`­³ndChd
+(
+’Œy
+);
+
+952 
+‹rmš®
+.
+süŞlTİ
+ =”mš®.
+süŞlHeight
+;
+
+953 } 
+	`ÿtch
+ (
+”rÜ
+) {
+
+954 
+cÚsŞe
+.
+	`”rÜ
+('E¼Ü„eäeshšg”mš®:', 
+”rÜ
+);
+
+956 
+	}
+}
+
+958 
+funùiÚ
+ 
+	$ş—rT”mš®
+() {
+
+959 
+docum’t
+.
+	`g‘EËm’tById
+('‹rmš®-di¥Ïy').
+šÃrHTML
+ = '<div class="log-entry"><span class="log-timestamp">[Cleared]</span> Terminal cleared by user</div>';
+
+960 
+	}
+}
+
+963 
+funùiÚ
+ 
+	$showDeviûT”mš®
+(
+deviûS”Ÿl
+) {
+
+965 
+wšdow
+.
+	`İ’
+('/‹rmš®?deviû=' + 
+deviûS”Ÿl
+, '_blank', 'width=800,height=600');
+
+966 
+	}
+}
+
+969 
+async
+ 
+funùiÚ
+ 
+	$em”g’cyStİ
+() {
+
+970 ià(
+	`cÚfœm
+('ğŸš¨ This will stop ALL sanitizers immediately. Are you sure?')) {
+
+971 
+Œy
+ {
+
+972 cÚ¡ 
+»¥Ú£
+ = 
+awa™
+ 
+	`ãtch
+('/­i/em”g’cy-¡İ', { 
+m‘hod
+: 'POST' });
+
+973 cÚ¡ 
+»suÉ
+ = 
+awa™
+ 
+»¥Ú£
+.
+	`jsÚ
+();
+
+975 ià(
+»suÉ
+.
+sucûss
+) {
+
+976 
+	`®”t
+('ğŸ›‘ Emergency stopƒxecuted successfully!');
+
+977 
+loÿtiÚ
+.
+	`»lßd
+();
+
+979 
+	`®”t
+('âŒ Em”g’cy stİ faed: ' + 
+»suÉ
+.
+”rÜ
+);
+
+981 } 
+	`ÿtch
+ (
+”rÜ
+) {
+
+982 
+cÚsŞe
+.
+	`”rÜ
+('Em”g’cy stİƒ¼Ü:', 
+”rÜ
+);
+
+983 
+	`®”t
+('E¼Ü: ' + 
+”rÜ
+.
+mes§ge
+);
+
+986 
+	}
+}
+
+989 
+funùiÚ
+ 
+	$»äeshDeviûs
+() {
+
+990 
+loÿtiÚ
+.
+	`»lßd
+();
+
+991 
+	}
+}
+
+994 
+funùiÚ
+ 
+	$şo£Pİup
+() {
+
+995 
+docum’t
+.
+	`g‘EËm’tById
+('´ÙobufMod®').
+¡yË
+.
+di¥Ïy
+ = 'none';
+
+996 
+	}
+}
+
+999 
+	gwšdow
+.
+	gÚşick
+ = 
+	$funùiÚ
+(
+ev’t
+) {
+
+1000 cÚ¡ 
+mod®
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('protobufModal');
+
+1001 ià(
+ev’t
+.
+rg‘
+ ==ğ
+mod®
+) {
+
+1002 
+	`şo£Pİup
+();
+
+1004 
+	}
+};
+
+1007 
+	gwšdow
+.
+addEv’tLi¡’”
+('befÜeuÆßd', 
+	$funùiÚ
+() {
+
+1008 ià(
+‹rmš®ReäeshIÁ”v®
+) {
+
+1009 
+	`ş—rIÁ”v®
+(
+‹rmš®ReäeshIÁ”v®
+);
+
+1011 
+	}
+});
+
+1012 </
+	gsüt
+>
+
+1013 </
+	gbody
+>
+
+1014 </
+	ghtml
+>
+
+1018 
+v¬
+ 
+	g´ÙobufIÁ”çûTem¶©eHTML
+ = `
+
+1019 <!
+DOCTYPE
+ 
+html
+>
+
+1020 <
+html
+ 
+Ïng
+="en">
+
+1021 <
+h—d
+>
+
+1022 <
+m‘a
+ 
+ch¬£t
+="UTF-8">
+
+1023 <
+m‘a
+ 
+Çme
+="v›wpÜt" 
+cÚ‹Á
+="width=device-width, initial-scale=1.0">
+
+1024 <
+t™Ë
+>{{.
+T™Ë
+}}</title>
+
+1025 <
+¡yË
+>
+
+1027 * { 
+m¬gš
+: 0; 
+	g·ddšg
+: 0; 
+	gbox
+-
+	gsizšg
+: 
+bÜd”
+-
+box
+; }
+
+1028 
+	gbody
+ { 
+	gfÚt
+-
+	gçmy
+: 'SegÛ UI', 
+	gTahoma
+, 
+	gG’eva
+, 
+	gV”dªa
+, 
+	g§ns
+-
+	g£rif
+; 
+	gbackground
+: 
+lš—r
+-
+g¿d›Á
+(135de
+g
+, #667“¨0%, #764ba2 100%); 
+	gmš
+-
+	gheight
+: 100
+vh
+; 
+	gcŞÜ
+: #333; }
+
+1029 .
+	gcÚš”
+ { 
+	gmax
+-
+	gwidth
+: 1200
+px
+; 
+	gm¬gš
+: 0‡uto; 
+	g·ddšg
+: 20px; }
+
+1031 .
+	gh—d”
+ { 
+	gbackground
+: 
+rgba
+(255, 255, 255, 0.95); 
+	g·ddšg
+: 20
+px
+; 
+	gbÜd”
+-
+	g¿dius
+: 10px; 
+	gm¬gš
+-
+	gbÙtom
+: 20px; 
+	gbox
+-
+	gshadow
+: 0 4px 6px„gba(0, 0, 0, 0.1); }
+
+1033 .
+	gmes§ges
+-
+	ggrid
+ { 
+	gdi¥Ïy
+: 
+grid
+; grid-
+	g‹m¶©e
+-
+	gcŞumns
+: 
+»³©
+×uto-
+f™
+, 
+mšmax
+(300
+px
+, 1f
+r
+)); 
+	gg­
+: 20px; }
+
+1035 .
+	gmes§ge
+-
+	gÿrd
+ { 
+	gbackground
+: 
+rgba
+(255, 255, 255, 0.95); 
+	gbÜd”
+-
+	g¿dius
+: 10
+px
+; 
+	g·ddšg
+: 20px; 
+	gbox
+-
+	gshadow
+: 0 4px 6px„gba(0, 0, 0, 0.1); }
+
+1037 .
+	gmes§ge
+-
+	gty³
+-
+	g»que¡
+ { 
+	gbÜd”
+-
+	gËá
+: 4
+px
+ 
+sŞid
+ #48bb78; }
+
+1038 .
+	gmes§ge
+-
+	gty³
+-
+	g»¥Ú£
+ { 
+	gbÜd”
+-
+	gËá
+: 4
+px
+ 
+sŞid
+ #4299e1; }
+
+1039 .
+	gmes§ge
+-
+	gty³
+-
+	g‹Ëm‘ry
+ { 
+	gbÜd”
+-
+	gËá
+: 4
+px
+ 
+sŞid
+ #ed8936; }
+
+1041 .
+	gmes§ge
+-
+	gh—d”
+ { 
+	gdi¥Ïy
+: 
+æex
+; 
+	gju¡ify
+-
+	gcÚ‹Á
+: 
+b‘w“n
+; 
+	g®ign
+-
+	g™ems
+: fËx-
+¡¬t
+; 
+	gm¬gš
+-
+	gbÙtom
+: 15
+px
+; }
+
+1043 .
+	gmes§ge
+-
+	gÇme
+ { 
+	gfÚt
+-
+	gsize
+: 1.2e
+m
+; fÚt-
+	gweight
+: 
+bŞd
+; 
+	gcŞÜ
+: #2
+d3748
+; }
+
+1044 .
+	gmes§ge
+-
+	g·ckage
+ { 
+	gfÚt
+-
+	gsize
+: 0.8e
+m
+; 
+	gcŞÜ
+: #718096; }
+
+1046 .
+	gmes§ge
+-
+	gÿ‹gÜy
+ { 
+	gbackground
+: #edf2f7; 
+	gcŞÜ
+: #4
+a5568
+; 
+	g·ddšg
+: 4
+px
+ 8px; 
+	gbÜd”
+-
+	g¿dius
+: 12px; 
+	gfÚt
+-
+	gsize
+: 0.7e
+m
+; }
+
+1048 .
+	gf›lds
+-
+	gli¡
+ { 
+	gm¬gš
+: 15
+px
+ 0; }
+
+1049 .
+	gf›ld
+-
+	g™em
+ { 
+	g·ddšg
+: 8
+px
+; 
+	gm¬gš
+: 4px 0; 
+	gbackground
+: #f7çfc; 
+	gbÜd”
+-
+	g¿dius
+: 4px; 
+	gfÚt
+-
+	gsize
+: 0.85e
+m
+; }
+
+1050 .
+	gf›ld
+-
+	gÇme
+ { 
+	gfÚt
+-
+	gweight
+: 
+bŞd
+; 
+	gcŞÜ
+: #2
+d3748
+; }
+
+1051 .
+	gf›ld
+-
+	gty³
+ { 
+	gcŞÜ
+: #718096; }
+
+1053 .
+	gbŠ
+ { 
+	g·ddšg
+: 8
+px
+ 16px; 
+	gbÜd”
+: 
+nÚe
+; bÜd”-
+	g¿dius
+: 5px; 
+	gcursÜ
+: 
+poš‹r
+; 
+	gfÚt
+-
+	gsize
+: 0.9e
+m
+; fÚt-
+	gweight
+: 
+bŞd
+; 
+	gŒªs™iÚ
+: 
+®l
+ 0.3
+s
+ 
+—£
+; 
+	g‹xt
+-
+	gdecÜ©iÚ
+:‚Úe; 
+	gdi¥Ïy
+: 
+šlše
+-
+block
+;ext-
+	g®ign
+: 
+ûÁ”
+; }
+
+1054 .
+	gbŠ
+-
+	g´im¬y
+ { 
+	gbackground
+: #667“a; 
+	gcŞÜ
+: 
+wh™e
+; }
+
+1055 .
+	gbŠ
+-
+	g´im¬y
+:
+hov”
+ { 
+background
+: #5
+a67d8
+; }
+
+1056 </
+	g¡yË
+>
+
+1057 </
+	gh—d
+>
+
+1058 <
+	gbody
+>
+
+1059 <
+div
+ 
+	gşass
+="container">
+
+1060 <
+div
+ 
+şass
+="header">
+
+1061 <
+h1
+>ğŸ§¬ 
+PrÙobuf
+ 
+Mes§ge
+ 
+IÁ”çû
+</h1>
+
+1062 <
+p
+>
+NgaSim
+ 
+v
+{{.
+V”siÚ
+}} - 
+DyÇmic
+ 
+Mes§ge
+ 
+Discov”y
+</p>
+
+1063 <
+div
+ 
+şass
+="nav-links">
+
+1064 <
+a
+ 
+h»f
+="/">ğŸ  
+Maš
+</a>
+
+1065 <
+a
+ 
+h»f
+="/‹rmš®">ğŸ“º 
+T”mš®
+</a>
+
+1066 <
+a
+ 
+h»f
+="/­i/´Ùobuf/mes§ges">ğŸ“Š 
+API
+</a>
+
+1067 </
+div
+>
+
+1068 </
+div
+>
+
+1070 <
+div
+ 
+şass
+="messages-grid">
+
+1071 {{
+¿nge
+ 
+$msgTy³
+, 
+$msg
+ :ğ.
+Mes§ges
+}}
+
+1072 <
+div
+ 
+şass
+="message-card {{if $msg.IsRequest}}message-type-request{{else if $msg.IsResponse}}message-type-response{{else if $msg.IsTelemetry}}message-type-telemetry{{end}}">
+
+1073 <
+div
+ 
+şass
+="message-header">
+
+1074 <
+div
+>
+
+1075 <
+div
+ 
+şass
+="mes§ge-Çme">{{
+$msg
+.
+Name
+}}</div>
+
+1076 <
+div
+ 
+şass
+="mes§ge-·ckage">{{
+$msg
+.
+Package
+}}</div>
+
+1077 </
+div
+>
+
+1078 <
+div
+ 
+şass
+="mes§ge-ÿ‹gÜy">{{
+$msg
+.
+C©egÜy
+}}</div>
+
+1079 </
+div
+>
+
+1081 <
+div
+ 
+şass
+="fields-list">
+
+1082 {{
+¿nge
+ 
+$msg
+.
+F›lds
+}}
+
+1083 <
+div
+ 
+şass
+="field-item">
+
+1084 <
+¥ª
+ 
+şass
+="f›ld-Çme">{{.
+Name
+}}</span>:
+
+1085 <
+¥ª
+ 
+şass
+="f›ld-ty³">{{.
+Ty³
+}}</span>
+
+1086 {{.
+Requœed
+}}<
+¥ª
+ 
+¡yË
+="cŞÜ: #e53e3e;">*</¥ª>{{
+’d
+}}
+
+1087 </
+div
+>
+
+1088 {{
+’d
+}}
+
+1089 </
+div
+>
+
+1091 {{
+$msg
+.
+IsReque¡
+}}
+
+1092 <
+£Ëù
+ 
+id
+="deviû-{{$msgTy³}}" 
+¡yË
+="width: 100%; margin: 10px 0;…adding: 5px;">
+
+1093 <
+İtiÚ
+ 
+v®ue
+="">
+S–eù
+ 
+Deviû
+...</option>
+
+1094 {{
+¿nge
+ 
+$
+.
+Deviûs
+}}
+
+1095 <
+İtiÚ
+ 
+v®ue
+="{{.S”Ÿl}}">{{.
+Name
+}} ({{.
+S”Ÿl
+}})</option>
+
+1096 {{
+’d
+}}
+
+1097 </
+£Ëù
+>
+
+1098 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-´im¬y" 
+Úşick
+="openCommandPopup('{{$msgType}}', '{{$msg.Category}}')">
+
+1099 ğŸš€ 
+S’d
+ 
+Commªd
+
+
+1100 </
+bu‰Ú
+>
+
+1101 {{
+’d
+}}
+
+1102 </
+div
+>
+
+1103 {{
+’d
+}}
+
+1104 </
+div
+>
+
+1105 </
+div
+>
+
+1107 <
+süt
+>
+
+1108 
+funùiÚ
+ 
+	$İ’CommªdPİup
+(
+mes§geTy³
+, 
+ÿ‹gÜy
+) {
+
+1109 cÚ¡ 
+£Ëù
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('deviû-' + 
+mes§geTy³
+);
+
+1110 cÚ¡ 
+deviûS”Ÿl
+ = 
+£Ëù
+.
+v®ue
+;
+
+1112 ià(!
+deviûS”Ÿl
+) {
+
+1113 
+	`®”t
+('Please select‡ device first');
+
+1118 
+wšdow
+.
+İ’”
+.
+	`showPrÙobufPİup
+(
+mes§geTy³
+, 
+deviûS”Ÿl
+, 
+ÿ‹gÜy
+);
+
+1119 
+	}
+}
+
+1120 </
+	gsüt
+>
+
+1121 </
+	gbody
+>
+
+1122 </
+	ghtml
+>
+
+1126 
+v¬
+ 
+	g‹rmš®V›wTem¶©eHTML
+ = `
+
+1127 <!
+DOCTYPE
+ 
+html
+>
+
+1128 <
+html
+ 
+Ïng
+="en">
+
+1129 <
+h—d
+>
+
+1130 <
+m‘a
+ 
+ch¬£t
+="UTF-8">
+
+1131 <
+m‘a
+ 
+Çme
+="v›wpÜt" 
+cÚ‹Á
+="width=device-width, initial-scale=1.0">
+
+1132 <
+t™Ë
+>{{.
+T™Ë
+}} - 
+Live
+ 
+T”mš®
+</title>
+
+1133 <
+¡yË
+>
+
+1134 * { 
+m¬gš
+: 0; 
+	g·ddšg
+: 0; 
+	gbox
+-
+	gsizšg
+: 
+bÜd”
+-
+box
+; }
+
+1135 
+	gbody
+ { 
+	gfÚt
+-
+	gçmy
+: 'SegÛ UI', 
+	gTahoma
+, 
+	gG’eva
+, 
+	gV”dªa
+, 
+	g§ns
+-
+	g£rif
+; 
+	gbackground
+: #1
+a202c
+; 
+	gcŞÜ
+: #e2e8f0; 
+	gheight
+: 100
+vh
+; }
+
+1137 .
+	gh—d”
+ { 
+	gbackground
+: #2
+d3748
+; 
+	g·ddšg
+: 15
+px
+; 
+	gbÜd”
+-
+	gbÙtom
+: 1px 
+sŞid
+ #4
+a5568
+; }
+
+1138 .
+h—d”
+ 
+	gh1
+ { 
+	gcŞÜ
+: #e2e8f0; 
+	gfÚt
+-
+	gsize
+: 1.2e
+m
+; }
+
+1140 .
+	g‹rmš®
+-
+	gcÚš”
+ { 
+	gheight
+: 
+ÿlc
+(100
+vh
+ - 80
+px
+); 
+	gdi¥Ïy
+: 
+æex
+; 
+	gæex
+-
+	gdœeùiÚ
+: 
+cŞumn
+; }
+
+1142 .
+	g‹rmš®
+-
+	gdi¥Ïy
+ {
+
+1143 
+	gæex
+: 1;
+
+1144 
+	gfÚt
+-
+	gçmy
+: 'Cour›¸New', 
+	gmÚo¥aû
+;
+
+1145 
+	gfÚt
+-
+	gsize
+: 0.85e
+m
+;
+
+1146 
+	g·ddšg
+: 15
+px
+;
+
+1147 
+	gov”æow
+-
+	gy
+:‡uto;
+
+1148 
+	gbackground
+: #1
+a202c
+;
+
+1149 
+	glše
+-
+	gheight
+: 1.4;
+
+1152 .
+	glog
+-
+	g’Œy
+ { 
+	gm¬gš
+-
+	gbÙtom
+: 3
+px
+; 
+	g·ddšg
+: 2px 0; }
+
+1153 .
+	glog
+-
+	gtime¡amp
+ { 
+	gcŞÜ
+: #a0aec0; }
+
+1154 .
+	glog
+-
+	g»que¡
+ { 
+	gcŞÜ
+: #63b3ed; }
+
+1155 .
+	glog
+-
+	g»¥Ú£
+ { 
+	gcŞÜ
+: #68d391; }
+
+1156 .
+	glog
+-
+	g”rÜ
+ { 
+	gcŞÜ
+: #fc8181; }
+
+1157 .
+	glog
+-
+	g‹Ëm‘ry
+ { 
+	gcŞÜ
+: #81e6d9; }
+
+1158 .
+	glog
+-
+	gªnounû
+ { 
+	gcŞÜ
+: #d69e2e; }
+
+1160 .
+	gcÚŒŞs
+ { 
+	gbackground
+: #2
+d3748
+; 
+	g·ddšg
+: 10
+px
+; 
+	gbÜd”
+-
+	gtİ
+: 1px 
+sŞid
+ #4
+a5568
+; 
+	gdi¥Ïy
+: 
+æex
+; 
+	gg­
+: 10px; }
+
+1161 .
+	gbŠ
+ { 
+	g·ddšg
+: 8
+px
+ 15px; 
+	gbackground
+: #4
+a5568
+; 
+	gcŞÜ
+: #e2e8f0; 
+	gbÜd”
+: 
+nÚe
+; bÜd”-
+	g¿dius
+: 4px; 
+	gcursÜ
+: 
+poš‹r
+; }
+
+1162 .
+	gbŠ
+:
+hov”
+ { 
+background
+: #718096; }
+
+1163 .
+	gbŠ
+-
+	gsucûss
+ { 
+	gbackground
+: #38a169; }
+
+1164 .
+	gbŠ
+-
+	gdªg”
+ { 
+	gbackground
+: #e53e3e; }
+
+1165 </
+	g¡yË
+>
+
+1166 </
+	gh—d
+>
+
+1167 <
+	gbody
+>
+
+1168 <
+div
+ 
+	gşass
+="header">
+
+1169 <
+h1
+>ğŸ“º 
+NgaSim
+ 
+Live
+ 
+T”mš®
+ 
+v
+{{.
+V”siÚ
+}}</h1>
+
+1170 </
+div
+>
+
+1172 <
+div
+ 
+şass
+="terminal-container">
+
+1173 <
+div
+ 
+şass
+="‹rmš®-di¥Ïy" 
+id
+="terminal-display">
+
+1174 <
+div
+ 
+şass
+="log-entry">
+
+1175 <
+¥ª
+ 
+şass
+="log-time¡amp">[
+Lßdšg
+...]</span>
+
+1176 <
+¥ª
+>
+T”mš®
+ 
+š™Ÿlizšg
+...</span>
+
+1177 </
+div
+>
+
+1178 </
+div
+>
+
+1180 <
+div
+ 
+şass
+="controls">
+
+1181 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-sucûss" 
+Úşick
+="»äeshT”mš®()">ğŸ”„ 
+Reäesh
+</button>
+
+1182 <
+bu‰Ú
+ 
+şass
+="bŠ bŠ-dªg”" 
+Úşick
+="ş—rT”mš®()">ğŸ—‘ï¸ 
+CË¬
+</button>
+
+1183 <
+bu‰Ú
+ 
+şass
+="bŠ" 
+Úşick
+="toggËAutoReäesh()">â¸ï¸ 
+Pau£
+ 
+Auto
+-
+Reäesh
+</button>
+
+1184 <
+¥ª
+ 
+id
+="¡©us">
+Auto
+-
+»äesh
+: 
+ON
+</span>
+
+1185 </
+div
+>
+
+1186 </
+div
+>
+
+1188 <
+süt
+>
+
+1189 
+Ët
+ 
+autoReäesh
+ = 
+Œue
+;
+
+1190 
+Ët
+ 
+	g»äeshIÁ”v®
+;
+
+1192 
+	gdocum’t
+.
+addEv’tLi¡’”
+('DOMCÚ‹ÁLßded', 
+	$funùiÚ
+() {
+
+1193 
+	`»äeshT”mš®
+();
+
+1194 
+	`¡¬tAutoReäesh
+();
+
+1195 
+	}
+});
+
+1197 
+async
+ 
+funùiÚ
+ 
+	$»äeshT”mš®
+() {
+
+1198 
+Œy
+ {
+
+1199 cÚ¡ 
+»¥Ú£
+ = 
+awa™
+ 
+	`ãtch
+('/api/terminal/logs?limit=200');
+
+1200 cÚ¡ 
+logs
+ = 
+awa™
+ 
+»¥Ú£
+.
+	`jsÚ
+();
+
+1202 cÚ¡ 
+‹rmš®
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('terminal-display');
+
+1203 
+‹rmš®
+.
+šÃrHTML
+ = '';
+
+1205 
+logs
+.
+	`fÜEach
+(
+log
+ => {
+
+1206 cÚ¡ 
+’Œy
+ = 
+docum’t
+.
+	`ü—‹EËm’t
+('div');
+
+1207 
+’Œy
+.
+şassName
+ = 'log-entry';
+
+1209 cÚ¡ 
+time¡amp
+ = 
+Ãw
+ 
+	`D©e
+(
+log
+.time¡amp).
+	`toLoÿËTimeSŒšg
+();
+
+1210 cÚ¡ 
+ty³CÏss
+ = 'log-' + 
+log
+.
+ty³
+.
+	`toLow”Ca£
+();
+
+1212 
+’Œy
+.
+šÃrHTML
+ = '<¥ª cÏss="log-time¡amp">[' + 
+time¡amp
+ + ']</span> ' +
+
+1213 '<¥ª cÏss="' + 
+ty³CÏss
+ + '">[' + 
+log
+.
+ty³
+ + ']</span> ' +
+
+1214 '<¥ª>' + 
+log
+.
+mes§ge
+ + '</span>';
+
+1216 
+‹rmš®
+.
+	`­³ndChd
+(
+’Œy
+);
+
+1219 
+‹rmš®
+.
+süŞlTİ
+ =”mš®.
+süŞlHeight
+;
+
+1220 } 
+	`ÿtch
+ (
+”rÜ
+) {
+
+1221 
+cÚsŞe
+.
+	`”rÜ
+('E¼Ü„eäeshšg”mš®:', 
+”rÜ
+);
+
+1223 
+	}
+}
+
+1225 
+funùiÚ
+ 
+	$ş—rT”mš®
+() {
+
+1226 
+docum’t
+.
+	`g‘EËm’tById
+('‹rmš®-di¥Ïy').
+šÃrHTML
+ =
+
+1228 
+Ãw
+ 
+	`D©e
+().
+	`toLoÿËTimeSŒšg
+() + ']</span> Terminal cleared by user</div>';
+
+1229 
+	}
+}
+
+1231 
+funùiÚ
+ 
+	$toggËAutoReäesh
+() {
+
+1232 
+autoReäesh
+ = !autoRefresh;
+
+1233 cÚ¡ 
+bŠ
+ = 
+ev’t
+.
+rg‘
+;
+
+1234 cÚ¡ 
+¡©us
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('status');
+
+1236 ià(
+autoReäesh
+) {
+
+1237 
+bŠ
+.
+‹xtCÚ‹Á
+ = 'â¸ï¸ Pause Auto-Refresh';
+
+1238 
+¡©us
+.
+‹xtCÚ‹Á
+ = 'Auto-refresh: ON';
+
+1239 
+	`¡¬tAutoReäesh
+();
+
+1241 
+bŠ
+.
+‹xtCÚ‹Á
+ = 'â–¶ï¸ Resume Auto-Refresh';
+
+1242 
+¡©us
+.
+‹xtCÚ‹Á
+ = 'Auto-refresh: OFF';
+
+1243 ià(
+»äeshIÁ”v®
+) {
+
+1244 
+	`ş—rIÁ”v®
+(
+»äeshIÁ”v®
+);
+
+1247 
+	}
+}
+
+1249 
+funùiÚ
+ 
+	$¡¬tAutoReäesh
+() {
+
+1250 ià(
+»äeshIÁ”v®
+) {
+
+1251 
+	`ş—rIÁ”v®
+(
+»äeshIÁ”v®
+);
+
+1253 
+»äeshIÁ”v®
+ = 
+	`£tIÁ”v®
+(() => {
+
+1254 ià(
+autoReäesh
+) {
+
+1255 
+	`»äeshT”mš®
+();
+
+1258 
+	}
+}
+
+1261 
+funùiÚ
+ 
+	$upd©eSlid”Di¥Ïy
+(
+f›ldName
+, 
+v®ue
+, 
+un™
+) {
+
+1262 
+docum’t
+.
+	`g‘EËm’tById
+('di¥Ïy_' + 
+f›ldName
+).
+‹xtCÚ‹Á
+ = 
+v®ue
+;
+
+1263 
+	}
+}
+
+1265 
+funùiÚ
+ 
+	$execu‹Sm¬tCommªd
+() {
+
+1266 cÚ¡ 
+fÜm
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('smart-command-form');
+
+1267 cÚ¡ 
+fÜmD©a
+ = 
+Ãw
+ 
+	`FÜmD©a
+(
+fÜm
+);
+
+1270 cÚ¡ 
+f›ldV®ues
+ = {};
+
+1271 
+Ët
+ [
+key
+, 
+v®ue
+] 
+of
+ 
+fÜmD©a
+.
+	`’Œ›s
+()) {
+
+1272 ià(
+key
+ !== 'message_type' && key !== 'device_serial' && key !== 'category') {
+
+1274 ià(
+v®ue
+ === 'true' || value === 'false') {
+
+1275 
+f›ldV®ues
+[
+key
+] = 
+v®ue
+ === 'true';
+
+1276 } ià(!
+	`isNaN
+(
+v®ue
+) && value !== '') {
+
+1277 
+f›ldV®ues
+[
+key
+] = 
+	`·r£Flßt
+(
+v®ue
+);
+
+1279 
+f›ldV®ues
+[
+key
+] = 
+v®ue
+;
+
+1284 cÚ¡ 
+commªdD©a
+ = {
+
+1285 
+mes§ge_ty³
+: 
+fÜmD©a
+.
+	`g‘
+('message_type'),
+
+1286 
+deviû_£rŸl
+: 
+fÜmD©a
+.
+	`g‘
+('device_serial'),
+
+1287 
+ÿ‹gÜy
+: 
+fÜmD©a
+.
+	`g‘
+('category'),
+
+1288 
+f›ld_v®ues
+: 
+f›ldV®ues
+
+
+1291 
+cÚsŞe
+.
+	`log
+('ğŸš€ Executšg sm¬ˆcommªd:', 
+commªdD©a
+);
+
+1294 
+	`execu‹PrÙobufCommªd
+();
+
+1295 
+	}
+}
+
+1297 
+funùiÚ
+ 
+	$ş—rDeviûT”mš®
+(
+deviûS”Ÿl
+) {
+
+1298 cÚ¡ 
+‹rmš®
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('‹rmš®-' + 
+deviûS”Ÿl
+);
+
+1299 ià(
+‹rmš®
+) {
+
+1300 
+‹rmš®
+.
+šÃrHTML
+ = '<div class="terminal-entry"><span style="color: #a0aec0;">Terminal cleared</span></div>';
+
+1302 
+	}
+}
+
+1305 
+£tIÁ”v®
+(
+	$funùiÚ
+() {
+
+1308 ià(
+docum’t
+.
+	`qu”yS–eùÜ
+('.device-terminal')) {
+
+1309 
+loÿtiÚ
+.
+	`»lßd
+();
+
+1311 
+	}
+}, 5000);
+
+1313 </
+	gsüt
+>
+
+1314 </
+	gbody
+>
+
+1315 </
+	ghtml
+>
+
+1319 
+v¬
+ 
+	ggoDemoTem¶©e
+ = 
+‹m¶©e
+.
+Mu¡
+Ñem¶©e.
+New
+("goDemo").
+Funcs
+(
+‹m¶©eFuncs
+).
+	$P¬£
+(
+goDemoTem¶©eHTML
+))
+
+1320 
+v¬
+ 
+´ÙobufIÁ”çûTem¶©e
+ = 
+‹m¶©e
+.
+	`Mu¡
+Ñem¶©e.
+	`New
+("´ÙobufIÁ”çû").
+	`Funcs
+(
+‹m¶©eFuncs
+).
+	$P¬£
+(
+´ÙobufIÁ”çûTem¶©eHTML
+))
+
+1321 
+v¬
+ 
+‹rmš®V›wTem¶©e
+ = 
+‹m¶©e
+.
+	`Mu¡
+Ñem¶©e.
+	`New
+("‹rmš®V›w").
+	`Funcs
+(
+‹m¶©eFuncs
+).
+	$P¬£
+(
+‹rmš®V›wTem¶©eHTML
+))
+
+1324 
+v¬
+ 
+tm¶
+ = 
+‹m¶©e
+.
+	`Mu¡
+Ñem¶©e.
+	`New
+("home").
+	`Funcs
+(
+‹m¶©eFuncs
+).
+	`P¬£
+(`
+
+1325 <!
+DOCTYPE
+ 
+html
+>
+
+1326 <
+html
+>
+
+1327 <
+h—d
+><
+t™Ë
+>
+NgaSim
+ 
+PoŞ
+ 
+CÚŒŞËr
+</title></head>
+
+1328 <
+body
+>
+
+1329 <
+h1
+>
+NgaSim
+ 
+PoŞ
+ 
+CÚŒŞËr
+ 
+v
+{{.
+V”siÚ
+}
+	}
+}</h1>
+
+1330 <
+p
+>
+Sim¶e
+ 
+deviû
+ 
+li¡
+:</p>
+
+1331 <
+ul
+>
+
+1332 {{
+¿nge
+ .
+Deviûs
+}}
+
+1333 <
+li
+>{{.
+Name
+}} ({{.
+S”Ÿl
+}}è- {{.
+Stus
+}}</li>
+
+1334 {{
+’d
+}}
+
+1335 </
+ul
+>
+
+1336 </
+body
+>
+
+1337 </
+html
+>
+
+1340 
+v¬
+ 
+goodbyeTem¶©e
+ = 
+‹m¶©e
+.
+Mu¡
+Ñem¶©e.
+New
+("goodbye").
+Funcs
+(
+‹m¶©eFuncs
+).
+P¬£
+(`
+
+1341 <!
+DOCTYPE
+ 
+html
+>
+
+1342 <
+html
+>
+
+1343 <
+h—d
+><
+t™Ë
+>
+NgaSim
+ - 
+Goodbye
+</title></head>
+
+1344 <
+body
+>
+
+1345 <
+h1
+>ğŸ‘‹ 
+NgaSim
+ 
+PoŞ
+ 
+CÚŒŞËr
+</h1>
+
+1346 <
+p
+>
+AµliÿtiÚ
+ 
+is
+ 
+shu‰šg
+ 
+down
+...</p>
+
+1347 <
+p
+>
+Thªk
+ 
+you
+ 
+usšg
+ 
+NgaSim
+!</p>
+
+1348 </
+body
+>
+
+1349 </
+html
+>
+
+	@terminal_logger.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+13 
+ty³
+ 
+T”mš®Logg”
+ struct {
+
+14 
+logFe
+ *
+	mos
+.
+Fe
+
+
+15 
+	m’Œ›s
+ []
+LogEÁry
+
+
+16 
+mu‹x
+ 
+	msync
+.
+RWMu‹x
+
+
+17 
+maxEÁr›s
+ 
+
+18 
+‹eWr™”
+ 
+	mio
+.
+	mWr™”
+
+
+22 
+ty³
+ 
+LogEÁry
+ struct {
+
+23 
+Time¡amp
+ 
+	mtime
+.
+	mTime
+ `
+	mjsÚ
+:"timestamp"`
+
+24 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"type"`
+
+25 
+Deviû
+ 
+¡ršg
+ `
+jsÚ
+:"device"`
+
+26 
+Mes§ge
+ 
+¡ršg
+ `
+jsÚ
+:"message"`
+
+27 
+Mes§geTy³
+ 
+¡ršg
+ `
+jsÚ
+:"message_type"`
+
+28 
+D©a
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+jsÚ
+:"data,omitempty"`
+
+29 
+Raw
+ []
+by‹
+ `
+jsÚ
+:"raw,omitempty"`
+
+30 
+DœeùiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"direction"`
+
+34 
+func
+ 
+NewT”mš®Logg”
+(
+logFeP©h
+ 
+¡ršg
+, 
+maxEÁr›s
+ è(*
+	gT”mš®Logg”
+, 
+	g”rÜ
+) {
+
+35 
+	glogFe
+, 
+	g”r
+ :ğ
+os
+.
+O³nFe
+(
+logFeP©h
+, os.
+O_CREATE
+|os.
+O_WRONLY
+|os.
+O_APPEND
+, 0644)
+
+36 
+	g”r
+ !ğ
+n
+ {
+
+37  
+n
+, 
+fmt
+.
+E¼Üf
+("çedØİ’†og fe: %v", 
+”r
+)
+
+41 
+‹eWr™”
+ :ğ
+io
+.
+MuÉiWr™”
+(
+os
+.
+Stdout
+, 
+logFe
+)
+
+43  &
+	gT”mš®Logg”
+{
+
+44 
+	glogFe
+: 
+logFe
+,
+
+45 
+	g’Œ›s
+: 
+make
+([]
+LogEÁry
+, 0),
+
+46 
+	gmaxEÁr›s
+: 
+maxEÁr›s
+,
+
+47 
+	g‹eWr™”
+: 
+‹eWr™”
+,
+
+48 }, 
+	gn
+
+
+52 
+	$func
+ (
+
+ *
+T”mš®Logg”
+è
+	`LogPrÙobufMes§ge
+(
+msgTy³
+, 
+deviû
+, 
+dœeùiÚ
+ 
+¡ršg
+, 
+msg
+ 
+š‹rçû
+{
+	}
+}, 
+	g¿w
+ []
+	gby‹
+) {
+
+53 
+	g’Œy
+ :ğ
+LogEÁry
+{
+
+54 
+Time¡amp
+: 
+time
+.
+Now
+(),
+
+55 
+Ty³
+: 
+msgTy³
+,
+
+56 
+Deviû
+: 
+deviû
+,
+
+57 
+DœeùiÚ
+: 
+dœeùiÚ
+,
+
+58 
+Mes§geTy³
+: 
+fmt
+.
+S´štf
+("%T", 
+msg
+),
+
+59 
+Raw
+: 
+¿w
+,
+
+63 
+jsÚD©a
+, 
+	g”r
+ :ğ
+jsÚ
+.
+M¬sh®
+(
+msg
+);ƒ¼ =ğ
+n
+ {
+
+64 
+v¬
+ 
+d©aM­
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{}
+
+65 
+”r
+ :ğ
+jsÚ
+.
+Unm¬sh®
+(
+jsÚD©a
+, &
+d©aM­
+); 
+	g”r
+ =ğ
+n
+ {
+
+66 
+’Œy
+.
+D©a
+ = 
+d©aM­
+
+
+71 
+	g’Œy
+.
+	gMes§ge
+ = 
+fmt
+.
+S´štf
+("[%s] %s %s: %s",
+
+72 
+dœeùiÚ
+, 
+deviû
+, 
+msgTy³
+, 
+’Œy
+.
+Mes§geTy³
+)
+
+74 
+	g
+.
+addEÁry
+(
+’Œy
+)
+
+75 
+	g
+.
+´štToT”mš®
+(
+’Œy
+)
+
+79 
+	$func
+ (
+
+ *
+T”mš®Logg”
+è
+	$LogE¼Ü
+(
+deviû
+, 
+mes§ge
+ 
+¡ršg
+, 
+”r
+ 
+”rÜ
+) {
+
+80 
+’Œy
+ :ğ
+LogEÁry
+{
+
+81 
+Time¡amp
+: 
+time
+.
+	`Now
+(),
+
+82 
+Ty³
+: "ERROR",
+
+83 
+Deviû
+: 
+deviû
+,
+
+84 
+DœeùiÚ
+: "ERROR",
+
+85 
+Mes§ge
+: 
+fmt
+.
+	`S´štf
+("[ERROR] %s: % - %v", 
+deviû
+, 
+mes§ge
+, 
+”r
+),
+
+88 
+
+.
+	`addEÁry
+(
+’Œy
+)
+
+89 
+
+.
+	`´štToT”mš®
+(
+’Œy
+)
+
+90 
+	}
+}
+
+93 
+	$func
+ (
+
+ *
+T”mš®Logg”
+è
+	$addEÁry
+(
+’Œy
+ 
+LogEÁry
+) {
+
+94 
+
+.
+mu‹x
+.
+	`Lock
+()
+
+95 
+deãr
+ 
+
+.
+mu‹x
+.
+	`UÆock
+()
+
+97 
+
+.
+’Œ›s
+ = 
+	`­³nd
+Ñl.’Œ›s, 
+’Œy
+)
+
+100 
+	`Ën
+(
+
+.
+’Œ›s
+è>l.
+maxEÁr›s
+ {
+
+101 
+
+.
+’Œ›s
+ =l.’Œ›s[
+	`Ën
+Ñl.’Œ›s)-.
+maxEÁr›s
+:]
+
+103 
+	}
+}
+
+106 
+	$func
+ (
+
+ *
+T”mš®Logg”
+è
+	$´štToT”mš®
+(
+’Œy
+ 
+LogEÁry
+) {
+
+108 
+time¡amp
+ :ğ
+’Œy
+.
+Time¡amp
+.
+	`FÜm©
+("15:04:05.000")
+
+111 
+v¬
+ 
+cŞÜ
+ 
+¡ršg
+
+
+112 
+’Œy
+.
+Ty³
+ {
+
+114 
+cŞÜ
+ = "\033[34m"
+
+116 
+cŞÜ
+ = "\033[32m"
+
+118 
+cŞÜ
+ = "\033[36m"
+
+120 
+cŞÜ
+ = "\033[35m"
+
+122 
+cŞÜ
+ = "\033[31m"
+
+124 
+cŞÜ
+ = "\033[37m"
+
+126 
+»£t
+ := "\033[0m"
+
+129 
+‹rmš®Lše
+ :ğ
+fmt
+.
+	`S´štf
+("%s%s [%s] %s%s\n",
+
+130 
+cŞÜ
+, 
+time¡amp
+, 
+’Œy
+.
+Ty³
+,ƒÁry.
+Mes§ge
+, 
+»£t
+)
+
+133 
+fmt
+.
+	`Pršt
+(
+‹rmš®Lše
+)
+
+136 
+logLše
+ :ğ
+fmt
+.
+	`S´štf
+("%s [%s] %s\n",
+
+137 
+time¡amp
+, 
+’Œy
+.
+Ty³
+,ƒÁry.
+Mes§ge
+)
+
+139 
+
+.
+logFe
+ !ğ
+n
+ {
+
+140 
+
+.
+logFe
+.
+	`Wr™eSŒšg
+(
+logLše
+)
+
+143 
+’Œy
+.
+D©a
+ !ğ
+n
+ {
+
+144 
+jsÚD©a
+, 
+”r
+ :ğ
+jsÚ
+.
+	`M¬sh®Ind’t
+(
+’Œy
+.
+D©a
+, " ", " ");ƒ¼ =ğ
+n
+ {
+
+145 
+
+.
+logFe
+.
+	`Wr™eSŒšg
+(
+fmt
+.
+	`S´štf
+(" D©a: %s\n", 
+	`¡ršg
+(
+jsÚD©a
+)))
+
+149 
+
+.
+logFe
+.
+	`Sync
+()
+
+151 
+	}
+}
+
+154 
+	$func
+ (
+
+ *
+T”mš®Logg”
+è
+	`G‘ReûÁEÁr›s
+(
+lim™
+ è[]
+LogEÁry
+ {
+
+155 
+
+.
+mu‹x
+.
+	`RLock
+()
+
+156 
+deãr
+ 
+
+.
+mu‹x
+.
+	`RUÆock
+()
+
+158 
+lim™
+ <ğ0 ||†im™ > 
+	`Ën
+(
+
+.
+’Œ›s
+) {
+
+159 
+lim™
+ = 
+	`Ën
+(
+
+.
+’Œ›s
+)
+
+162 
+»suÉ
+ :ğ
+	`make
+([]
+LogEÁry
+, 
+lim™
+)
+
+163 
+	`cİy
+(
+»suÉ
+, 
+
+.
+’Œ›s
+[
+	`Ën
+Ñl.’Œ›s)-
+lim™
+:])
+
+165  
+»suÉ
+
+
+166 
+	}
+}
+
+169 
+	$func
+ (
+
+ *
+T”mš®Logg”
+è
+	$Clo£
+(è
+”rÜ
+ {
+
+170 
+
+.
+logFe
+ !ğ
+n
+ {
+
+171  
+
+.
+logFe
+.
+	`Clo£
+()
+
+173  
+n
+
+
+174 
+	}
+}
+
+	@ui_generator.go
+
+1 
+·ckage
+ 
+maš
+
+
+3 
+impÜt
+ (
+
+11 
+ty³
+ 
+UIG’”©Ü
+ struct {
+
+12 
+»gi¡ry
+ *
+PrÙobufCommªdRegi¡ry
+
+
+13 
+logg”
+ *
+DeviûLogg”
+
+
+14 
+jobEngše
+ *
+	mJobEngše
+
+
+18 
+func
+ 
+NewUIG’”©Ü
+(
+»gi¡ry
+ *
+PrÙobufCommªdRegi¡ry
+, 
+logg”
+ *
+DeviûLogg”
+, 
+jobEngše
+ *
+JobEngše
+è*
+	gUIG’”©Ü
+ {
+
+19  &
+	gUIG’”©Ü
+{
+
+20 
+	g»gi¡ry
+: 
+»gi¡ry
+,
+
+21 
+	glogg”
+: 
+logg”
+,
+
+22 
+	gjobEngše
+: 
+jobEngše
+,
+
+27 
+ty³
+ 
+DeviûD‘aPage
+ struct {
+
+28 
+Deviû
+ *
+	mDeviû
+ `
+	mjsÚ
+:"device"`
+
+29 
+Mes§geTy³s
+ []
+¡ršg
+ `
+jsÚ
+:"message_types"`
+
+30 
+FÜms
+ 
+m­
+[
+¡ršg
+]*
+Mes§geFÜm
+ `
+jsÚ
+:"forms"`
+
+31 
+LogEÁr›s
+ []*
+DeviûLogEÁry
+ `
+jsÚ
+:"log_entries"`
+
+32 
+Sts
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+jsÚ
+:"stats"`
+
+36 
+ty³
+ 
+Mes§geFÜm
+ struct {
+
+37 
+Mes§geTy³
+ 
+¡ršg
+ `
+jsÚ
+:"message_type"`
+
+38 
+T™Ë
+ 
+¡ršg
+ `
+jsÚ
+:"title"`
+
+39 
+DesütiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"description"`
+
+40 
+F›lds
+ []*
+FÜmF›ld
+ `
+jsÚ
+:"fields"`
+
+41 
+AùiÚs
+ []
+¡ršg
+ `
+jsÚ
+:"actions"`
+
+45 
+ty³
+ 
+FÜmF›ld
+ struct {
+
+46 
+Name
+ 
+¡ršg
+ `
+jsÚ
+:"name"`
+
+47 
+Lab–
+ 
+¡ršg
+ `
+jsÚ
+:"label"`
+
+48 
+Ty³
+ 
+¡ršg
+ `
+jsÚ
+:"type"`
+
+49 
+Requœed
+ 
+boŞ
+ `
+jsÚ
+:"required"`
+
+50 
+DeçuÉ
+ 
+š‹rçû
+{} `
+jsÚ
+:"default"`
+
+51 
+O±iÚs
+ []
+FÜmO±iÚ
+ `
+jsÚ
+:"options,omitempty"`
+
+52 
+CÚ¡¿šts
+ 
+m­
+[
+¡ršg
+]
+š‹rçû
+{} `
+jsÚ
+:"constraints,omitempty"`
+
+53 
+DesütiÚ
+ 
+¡ršg
+ `
+jsÚ
+:"description"`
+
+54 
+Group
+ 
+¡ršg
+ `
+jsÚ
+:"group,omitempty"`
+
+58 
+ty³
+ 
+FÜmO±iÚ
+ struct {
+
+59 
+V®ue
+ 
+¡ršg
+ `
+jsÚ
+:"value"`
+
+60 
+Lab–
+ 
+¡ršg
+ `
+jsÚ
+:"label"`
+
+64 
+	$func
+ (
+ug
+ *
+UIG’”©Ü
+è
+	`G’”©eDeviûD‘aPage
+(
+deviûID
+ 
+¡ršg
+è(*
+DeviûD‘aPage
+, 
+”rÜ
+) {
+
+66 
+deviû
+ :ğ&
+Deviû
+{
+
+67 
+ID
+: 
+deviûID
+,
+
+68 
+Ty³
+: "Unknown",
+
+69 
+Name
+: 
+fmt
+.
+	`S´štf
+("Deviû %s", 
+deviûID
+),
+
+70 
+Stus
+: "ONLINE",
+
+74 
+mes§geTy³s
+ :ğ
+ug
+.
+	`g‘Mes§geTy³sFÜDeviû
+(
+deviûID
+)
+
+77 
+fÜms
+ :ğ
+	`make
+(
+m­
+[
+¡ršg
+]*
+Mes§geFÜm
+)
+
+78 
+_
+, 
+msgTy³
+ :ğ
+¿nge
+ 
+mes§geTy³s
+ {
+
+79 
+fÜm
+, 
+”r
+ :ğ
+ug
+.
+	`G’”©eMes§geFÜm
+(
+msgTy³
+);ƒ¼ =ğ
+n
+ {
+
+80 
+fÜms
+[
+msgTy³
+] = 
+fÜm
+
+
+85 
+f‹r
+ :ğ
+LogF‹r
+{
+DeviûID
+: 
+deviûID
+}
+
+86 
+logEÁr›s
+ :ğ
+ug
+.
+logg”
+.
+	`G‘EÁr›s
+(
+f‹r
+)
+
+89 
+¡©s
+ :ğ
+ug
+.
+	`g‘DeviûSts
+(
+deviûID
+)
+
+91  &
+DeviûD‘aPage
+{
+
+92 
+Deviû
+: 
+deviû
+,
+
+93 
+Mes§geTy³s
+: 
+mes§geTy³s
+,
+
+94 
+FÜms
+: 
+fÜms
+,
+
+95 
+LogEÁr›s
+: 
+logEÁr›s
+,
+
+96 
+Sts
+: 
+¡©s
+,
+
+97 }, 
+n
+
+
+98 
+	}
+}
+
+101 
+	$func
+ (
+ug
+ *
+UIG’”©Ü
+è
+	`G’”©eMes§geFÜm
+(
+mes§geTy³
+ 
+¡ršg
+è(*
+Mes§geFÜm
+, 
+”rÜ
+) {
+
+102 
+fÜm
+ :ğ&
+Mes§geFÜm
+{
+
+103 
+Mes§geTy³
+: 
+mes§geTy³
+,
+
+104 
+T™Ë
+: "Generated Form",
+
+105 
+DesütiÚ
+: "Auto-generated form",
+
+106 
+F›lds
+: 
+	`make
+([]*
+FÜmF›ld
+, 0),
+
+107 
+AùiÚs
+: []
+¡ršg
+{"Send", "Clear"},
+
+129  
+fÜm
+, 
+n
+
+
+130 
+	}
+}
+
+205 
+	$func
+ (
+ug
+ *
+UIG’”©Ü
+è
+	$g’”©eFÜmT™Ë
+(
+mes§geName
+ 
+¡ršg
+) string {
+
+207 
+t™Ë
+ :ğ
+¡ršgs
+.
+	`TrimSuffix
+(
+mes§geName
+, "Request")
+
+208 
+t™Ë
+ = 
+¡ršgs
+.
+	`TrimSuffix
+(title, "Response")
+
+209 
+t™Ë
+ = 
+¡ršgs
+.
+	`TrimSuffix
+(title, "Payload")
+
+212 
+»suÉ
+ := ""
+
+213 
+i
+, 
+r
+ :ğ
+¿nge
+ 
+t™Ë
+ {
+
+214 
+i
+ > 0 && 
+r
+ >= 'A' &&„ <= 'Z' {
+
+215 
+»suÉ
+ += " "
+
+217 
+»suÉ
+ +ğ
+	`¡ršg
+(
+r
+)
+
+220  
+»suÉ
+
+
+221 
+	}
+}
+
+224 
+	$func
+ (
+ug
+ *
+UIG’”©Ü
+è
+	$g’”©eEnumLab–
+(
+’umName
+ 
+¡ršg
+) string {
+
+226 
+·¹s
+ :ğ
+¡ršgs
+.
+	`S¶™
+(
+’umName
+, "_")
+
+227 
+i
+, 
+·¹
+ :ğ
+¿nge
+ 
+·¹s
+ {
+
+228 
+	`Ën
+(
+·¹
+) > 0 {
+
+229 
+·¹s
+[
+i
+] = 
+¡ršgs
+.
+	`ToUµ”
+(
+·¹
+[:1]è+ sŒšgs.
+	`ToLow”
+(part[1:])
+
+232  
+¡ršgs
+.
+	`Još
+(
+·¹s
+, " ")
+
+233 
+	}
+}
+
+236 
+	$func
+ (
+ug
+ *
+UIG’”©Ü
+è
+	`g‘Mes§geTy³sFÜDeviû
+(
+deviûID
+ 
+¡ršg
+) []string {
+
+240  []
+¡ršg
+{"SetSanitizerTargetPercentageRequestPayload", "GetSanitizerStatusRequestPayload"}
+
+241 
+	}
+}
+
+244 
+	$func
+ (
+ug
+ *
+UIG’”©Ü
+è
+	$g‘DeviûSts
+(
+deviûID
+ 
+¡ršg
+è
+m­
+[¡ršg]
+š‹rçû
+{
+	}
+} {
+
+245 
+	gf‹r
+ :ğ
+LogF‹r
+{
+DeviûID
+: 
+deviûID
+}
+
+246 
+’Œ›s
+ :ğ
+ug
+.
+logg”
+.
+G‘EÁr›s
+(
+f‹r
+)
+
+248 
+¡©s
+ :ğ
+m­
+[
+¡ršg
+]
+š‹rçû
+{}{
+
+249 "tÙ®_mes§ges": 
+Ën
+(
+’Œ›s
+),
+
+252 "mes§ge_ty³s": 
+make
+(
+m­
+[
+¡ršg
+]),
+
+256 
+Ën
+(
+’Œ›s
+) == 0 {
+
+257  
+¡©s
+
+
+260 
+sucûssCouÁ
+ := 0
+
+261 
+_
+, 
+	g’Œy
+ :ğ
+¿nge
+ 
+’Œ›s
+ {
+
+262 
+’Œy
+.
+Sucûss
+ {
+
+263 
+sucûssCouÁ
+++
+
+265 
+¡©s
+["error_count"] = stats["error_count"].() + 1
+
+269 
+mes§geTy³s
+ :ğ
+¡©s
+["mes§ge_ty³s"].(
+m­
+[
+¡ršg
+])
+
+270 
+mes§geTy³s
+[
+’Œy
+.
+Mes§geTy³
+]++
+
+274 
+¡©s
+["sucûss_¿‹"] = 
+æßt64
+(
+sucûssCouÁ
+è/ flßt64(
+Ën
+(
+’Œ›s
+)) * 100
+
+277 
+Ën
+(
+’Œ›s
+) > 0 {
+
+278 
+¡©s
+["Ï¡_aùiv™y"] = 
+’Œ›s
+[
+Ën
+ÓÁr›s)-1].
+Time¡amp
+.
+FÜm©
+("2006-01-02 15:04:05")
+
+281  
+¡©s
+
+
+285 
+	$func
+ (
+ug
+ *
+UIG’”©Ü
+è
+	$HªdËDeviûD‘aReque¡
+(
+w
+ 
+h‰p
+.
+Re¥Ú£Wr™”
+, 
+r
+ *h‰p.
+Reque¡
+) {
+
+286 
+deviûID
+ :ğ
+r
+.
+URL
+.
+	`Qu”y
+().
+	`G‘
+("device_id")
+
+287 
+deviûID
+ == "" {
+
+288 
+h‰p
+.
+	`E¼Ü
+(
+w
+, "deviû_id…¬am‘”„equœed", h‰p.
+StusBadReque¡
+)
+
+292 
+·geD©a
+, 
+”r
+ :ğ
+ug
+.
+	`G’”©eDeviûD‘aPage
+(
+deviûID
+)
+
+293 
+”r
+ !ğ
+n
+ {
+
+294 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("E¼Ü g’”©šg deviû…age: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+299 
+tm¶
+ :ğ
+ug
+.
+	`ü—‹DeviûD‘aTem¶©e
+()
+
+300 
+w
+.
+	`H—d”
+().
+	`S‘
+("Content-Type", "text/html")
+
+301 
+”r
+ :ğ
+tm¶
+.
+	`Execu‹
+(
+w
+, 
+·geD©a
+);ƒ¼ !ğ
+n
+ {
+
+302 
+h‰p
+.
+	`E¼Ü
+(
+w
+, 
+fmt
+.
+	`S´štf
+("E¼Ü„’d”šgem¶©e: %v", 
+”r
+), h‰p.
+StusIÁ”ÇlS”v”E¼Ü
+)
+
+304 
+	}
+}
+
+307 
+	$func
+ (
+ug
+ *
+UIG’”©Ü
+è
+	`ü—‹DeviûD‘aTem¶©e
+(è*
+‹m¶©e
+.
+Tem¶©e
+ {
+
+308 
+‹m¶©eHTML
+ := `
+
+309 <!
+DOCTYPE
+ 
+html
+>
+
+310 <
+html
+>
+
+311 <
+h—d
+>
+
+312 <
+t™Ë
+>{{.
+Deviû
+.
+Name
+}} - Deviû 
+D‘as
+</title>
+
+313 <
+¡yË
+>
+
+314 
+body
+ { 
+fÚt
+-
+çmy
+: 
+ArŸl
+, 
+§ns
+-
+£rif
+; 
+m¬gš
+: 20
+px
+; }
+
+315 .
+deviû
+-
+h—d”
+ { 
+background
+: #f0f0f0; 
+·ddšg
+: 20
+px
+; 
+bÜd”
+-
+¿dius
+: 8px; 
+m¬gš
+-
+bÙtom
+: 20px; }
+
+316 .
+¡©us
+-
+Úlše
+ { 
+cŞÜ
+: 
+g»’
+; }
+
+317 .
+¡©us
+-
+ofæše
+ { 
+cŞÜ
+: 
+»d
+; }
+
+318 .
+bs
+ { 
+bÜd”
+-
+bÙtom
+: 1
+px
+ 
+sŞid
+ #ccc; 
+m¬gš
+-bottom: 20px; }
+
+319 .
+b
+ { 
+di¥Ïy
+: 
+šlše
+-
+block
+; 
+·ddšg
+: 10
+px
+ 20px; 
+cursÜ
+: 
+poš‹r
+; 
+bÜd”
+-
+bÙtom
+: 2px 
+sŞid
+ 
+Œª¥¬’t
+; }
+
+320 .
+b
+.
+aùive
+ { 
+bÜd”
+-
+bÙtom
+-
+cŞÜ
+: #007cba; 
+background
+: #f9f9f9; }
+
+321 .
+b
+-
+cÚ‹Á
+ { 
+di¥Ïy
+: 
+nÚe
+; }
+
+322 .
+b
+-
+cÚ‹Á
+.
+aùive
+ { 
+di¥Ïy
+: 
+block
+; }
+
+323 .
+fÜm
+-
+group
+ { 
+m¬gš
+-
+bÙtom
+: 15
+px
+; }
+
+324 .
+fÜm
+-
+Ïb–
+ { 
+di¥Ïy
+: 
+block
+; 
+fÚt
+-
+weight
+: 
+bŞd
+; 
+m¬gš
+-
+bÙtom
+: 5
+px
+; }
+
+325 .
+fÜm
+-
+šput
+ { 
+width
+: 100%; 
+·ddšg
+: 8
+px
+; 
+bÜd”
+: 1px 
+sŞid
+ #ddd; bÜd”-
+¿dius
+: 4px; }
+
+326 .
+fÜm
+-
+£Ëù
+ { 
+width
+: 100%; 
+·ddšg
+: 8
+px
+; 
+bÜd”
+: 1px 
+sŞid
+ #ddd; bÜd”-
+¿dius
+: 4px; }
+
+327 .
+fÜm
+-
+checkbox
+ { 
+m¬gš
+-
+right
+: 8
+px
+; }
+
+328 .
+bu‰Ú
+ { 
+background
+: #007cba; 
+cŞÜ
+: 
+wh™e
+; 
+·ddšg
+: 10
+px
+ 20px; 
+bÜd”
+: 
+nÚe
+; bÜd”-
+¿dius
+: 4px; 
+cursÜ
+: 
+poš‹r
+; }
+
+329 .
+bu‰Ú
+:
+hov”
+ { 
+background
+: #005a87; }
+
+330 .
+log
+-
+’Œy
+ { 
+bÜd”
+: 1
+px
+ 
+sŞid
+ #ddd; 
+m¬gš
+-
+bÙtom
+: 10px; 
+·ddšg
+: 10px; bÜd”-
+¿dius
+: 4px; }
+
+331 .
+log
+-
+sucûss
+ { 
+bÜd”
+-
+Ëá
+: 4
+px
+ 
+sŞid
+ 
+g»’
+; }
+
+332 .
+log
+-
+”rÜ
+ { 
+bÜd”
+-
+Ëá
+: 4
+px
+ 
+sŞid
+ 
+»d
+; }
+
+333 .
+¡©s
+-
+grid
+ { 
+di¥Ïy
+: grid; grid-
+‹m¶©e
+-
+cŞumns
+: 
+	`»³©
+×uto-
+f™
+, 
+	`mšmax
+(200
+px
+, 1f
+r
+)); 
+g­
+: 15px; }
+
+334 .
+¡©
+-
+ÿrd
+ { 
+background
+: #f9f9f9; 
+·ddšg
+: 15
+px
+; 
+bÜd”
+-
+¿dius
+: 8px; 
+‹xt
+-
+®ign
+: 
+ûÁ”
+; }
+
+335 </
+¡yË
+>
+
+336 </
+h—d
+>
+
+337 <
+body
+>
+
+338 <
+div
+ 
+şass
+="device-header">
+
+339 <
+h1
+>{{.
+Deviû
+.
+Name
+}}</h1>
+
+340 <
+p
+><
+¡rÚg
+>
+Deviû
+ 
+ID
+:</strong> {{.Device.ID}}</p>
+
+341 <
+p
+><
+¡rÚg
+>
+Ty³
+:</¡rÚg> {{.
+Deviû
+.Type}}</p>
+
+342 <
+p
+><
+¡rÚg
+>
+Stus
+:</¡rÚg> <
+¥ª
+ 
+şass
+="¡©us-{{.Deviû.Stu |†ow”}}">{{.
+Deviû
+.Status}}</span></p>
+
+343 </
+div
+>
+
+345 <
+div
+ 
+şass
+="tabs">
+
+346 <
+div
+ 
+şass
+="b‡ùive" 
+Úşick
+="showTab('commªds')">
+Commªds
+</div>
+
+347 <
+div
+ 
+şass
+="b" 
+Úşick
+="showTab('logs')">
+CommuniÿtiÚ
+ 
+Log
+</div>
+
+348 <
+div
+ 
+şass
+="b" 
+Úşick
+="showTab('¡©s')">
+Sti¡ics
+</div>
+
+349 </
+div
+>
+
+351 <
+div
+ 
+id
+="commªds" 
+şass
+="tab-content‡ctive">
+
+352 {{
+¿nge
+ 
+$msgTy³
+, 
+$fÜm
+ :ğ.
+FÜms
+}}
+
+353 <
+div
+ 
+şass
+="message-form">
+
+354 <
+h3
+>{{
+$fÜm
+.
+T™Ë
+}}</h3>
+
+355 {{
+$fÜm
+.
+DesütiÚ
+}}<
+p
+>{{$fÜm.DesütiÚ}}</p>{{
+’d
+}}
+
+357 <
+fÜm
+ 
+id
+="form-{{$msgType}}">
+
+358 {{
+¿nge
+ 
+$fÜm
+.
+F›lds
+}}
+
+359 <
+div
+ 
+şass
+="form-group">
+
+360 <
+Ïb–
+ 
+şass
+="fÜm-Ïb–">{{.
+Lab–
+}}{{.
+Requœed
+}} *{{
+’d
+}}</label>
+
+361 {{
+eq
+ .
+Ty³
+ "text"}}
+
+362 <
+šput
+ 
+ty³
+="‹xt" 
+Çme
+="{{.Name}}" 
+şass
+="fÜm-šput" {{.
+Requœed
+}}
+»quœed
+{{
+’d
+}} {{.
+DeçuÉ
+}}
+v®ue
+="{{.Default}}"{{end}}>
+
+363 {{
+eq
+ .
+Ty³
+ "number"}}
+
+364 <
+šput
+ 
+ty³
+="numb”" 
+Çme
+="{{.Name}}" 
+şass
+="fÜm-šput" {{.
+Requœed
+}}
+»quœed
+{{
+’d
+}} {{.
+DeçuÉ
+}}
+v®ue
+="{{.Default}}"{{end}}>
+
+365 {{
+eq
+ .
+Ty³
+ "checkbox"}}
+
+366 <
+šput
+ 
+ty³
+="checkbox" 
+Çme
+="{{.Name}}" 
+şass
+="fÜm-checkbox" {{.
+DeçuÉ
+}}
+checked
+{{
+’d
+}}>
+
+367 {{
+eq
+ .
+Ty³
+ "select"}}
+
+368 <
+£Ëù
+ 
+Çme
+="{{.Name}}" 
+şass
+="fÜm-£Ëù" {{.
+Requœed
+}}
+»quœed
+{{
+’d
+}}>
+
+369 {{
+¿nge
+ .
+O±iÚs
+}}
+
+370 <
+İtiÚ
+ 
+v®ue
+="{{.V®ue}}">{{.
+Lab–
+}}</option>
+
+371 {{
+’d
+}}
+
+372 </
+£Ëù
+>
+
+373 {{
+’d
+}}
+
+374 {{.
+DesütiÚ
+}}<
+sm®l
+>{{.DesütiÚ}}</sm®l>{{
+’d
+}}
+
+375 </
+div
+>
+
+376 {{
+’d
+}}
+
+378 <
+bu‰Ú
+ 
+ty³
+="bu‰Ú" 
+şass
+="bu‰Ú" 
+Úşick
+="£ndCommªd('{{$msgTy³}}')">
+S’d
+ 
+Commªd
+</button>
+
+379 <
+bu‰Ú
+ 
+ty³
+="bu‰Ú" 
+şass
+="bu‰Ú" 
+Úşick
+="ş—rFÜm('{{$msgTy³}}')">
+CË¬
+</button>
+
+380 </
+fÜm
+>
+
+381 </
+div
+>
+
+382 <
+hr
+>
+
+383 {{
+’d
+}}
+
+384 </
+div
+>
+
+386 <
+div
+ 
+id
+="logs" 
+şass
+="tab-content">
+
+387 <
+h3
+>
+CommuniÿtiÚ
+ 
+Log
+</h3>
+
+388 {{
+¿nge
+ .
+LogEÁr›s
+}}
+
+389 <
+div
+ 
+şass
+="log-entry {{if .Success}}log-success{{else}}log-error{{end}}">
+
+390 <
+¡rÚg
+>{{.
+Time¡amp
+.
+FÜm©
+ "15:04:05"}}</strong>
+
+391 {{.
+DœeùiÚ
+}} {{.
+Mes§geTy³
+}}
+
+392 {{
+nÙ
+ .
+Sucûss
+}} - 
+E¼Ü
+: {{.E¼Ü}}{{
+’d
+}}
+
+393 </
+div
+>
+
+394 {{
+’d
+}}
+
+395 </
+div
+>
+
+397 <
+div
+ 
+id
+="¡©s" 
+şass
+="tab-content">
+
+398 <
+h3
+>
+Deviû
+ 
+Sti¡ics
+</h3>
+
+399 <
+div
+ 
+şass
+="stats-grid">
+
+400 <
+div
+ 
+şass
+="stat-card">
+
+401 <
+h4
+>
+TÙ®
+ 
+Mes§ges
+</h4>
+
+402 <
+p
+>{{.
+Sts
+.
+tÙ®_mes§ges
+}}</p>
+
+403 </
+div
+>
+
+404 <
+div
+ 
+şass
+="stat-card">
+
+405 <
+h4
+>
+Sucûss
+ 
+R©e
+</h4>
+
+406 <
+p
+>{{
+´štf
+ "%.1f" .
+Sts
+.
+sucûss_¿‹
+}}%</p>
+
+407 </
+div
+>
+
+408 <
+div
+ 
+şass
+="stat-card">
+
+409 <
+h4
+>
+E¼Ü
+ 
+CouÁ
+</h4>
+
+410 <
+p
+>{{.
+Sts
+.
+”rÜ_couÁ
+}}</p>
+
+411 </
+div
+>
+
+412 <
+div
+ 
+şass
+="stat-card">
+
+413 <
+h4
+>
+La¡
+ 
+Aùiv™y
+</h4>
+
+414 <
+p
+>{{.
+Sts
+.
+Ï¡_aùiv™y
+}}</p>
+
+415 </
+div
+>
+
+416 </
+div
+>
+
+417 </
+div
+>
+
+419 <
+süt
+>
+
+420 
+funùiÚ
+ 
+	`showTab
+(
+bName
+) {
+
+422 
+v¬
+ 
+cÚ‹Ás
+ = 
+docum’t
+.
+	`qu”yS–eùÜAÎ
+('.tab-content');
+
+423 
+cÚ‹Ás
+.
+	`fÜEach
+(
+	`funùiÚ
+(
+cÚ‹Á
+) {
+
+424 
+cÚ‹Á
+.
+şassLi¡
+.
+	`»move
+('active');
+
+428 
+v¬
+ 
+bs
+ = 
+docum’t
+.
+	`qu”yS–eùÜAÎ
+('.tab');
+
+429 
+bs
+.
+	`fÜEach
+(
+	`funùiÚ
+(
+b
+) {
+
+430 
+b
+.
+şassLi¡
+.
+	`»move
+('active');
+
+434 
+docum’t
+.
+	`g‘EËm’tById
+(
+bName
+).
+şassLi¡
+.
+	`add
+('active');
+
+437 
+ev’t
+.
+rg‘
+.
+şassLi¡
+.
+	`add
+('active');
+
+440 
+funùiÚ
+ 
+	`£ndCommªd
+(
+mes§geTy³
+) {
+
+441 
+v¬
+ 
+fÜm
+ = 
+docum’t
+.
+	`g‘EËm’tById
+('fÜm-' + 
+mes§geTy³
+);
+
+442 
+v¬
+ 
+fÜmD©a
+ = 
+Ãw
+ 
+	`FÜmD©a
+(
+fÜm
+);
+
+443 
+v¬
+ 
+d©a
+ = {};
+
+445 
+v¬
+ 
+·œ
+ 
+of
+ 
+fÜmD©a
+.
+	`’Œ›s
+()) {
+
+446 
+d©a
+[
+·œ
+[0]] =…air[1];
+
+449 
+	`ãtch
+('/api/send-command', {
+
+450 
+m‘hod
+: 'POST',
+
+451 
+h—d”s
+: {
+
+454 
+body
+: 
+JSON
+.
+	`¡ršgify
+({
+
+455 
+deviû_id
+: '{{.Device.ID}}',
+
+456 
+mes§ge_ty³
+: 
+mes§geTy³
+,
+
+457 
+·¿m‘”s
+: 
+d©a
+
+
+460 .
+	`th’
+(
+»¥Ú£
+ =>„e¥Ú£.
+	`jsÚ
+())
+
+461 .
+	`th’
+(
+d©a
+ => {
+
+462 
+	`®”t
+('Commªd s’t: ' + 
+JSON
+.
+	`¡ršgify
+(
+d©a
+));
+
+463 
+loÿtiÚ
+.
+	`»lßd
+();
+
+465 .
+	`ÿtch
+(
+”rÜ
+ => {
+
+466 
+	`®”t
+('E¼Ü: ' + 
+”rÜ
+);
+
+470 
+funùiÚ
+ 
+	`ş—rFÜm
+(
+mes§geTy³
+) {
+
+471 
+docum’t
+.
+	`g‘EËm’tById
+('fÜm-' + 
+mes§geTy³
+).
+	`»£t
+();
+
+473 </
+süt
+>
+
+474 </
+body
+>
+
+475 </
+html
+>
+
+479 
+funcM­
+ :ğ
+‹m¶©e
+.
+FuncM­
+{
+
+480 "low”": 
+¡ršgs
+.
+ToLow”
+,
+
+483  
+‹m¶©e
+.
+	`Mu¡
+Ñem¶©e.
+	`New
+("deviû-d‘a").
+	`Funcs
+(
+funcM­
+).
+	`P¬£
+(
+‹m¶©eHTML
+))
+
+484 
+	}
+}
+
+	@
+1
+.
+1
+/usr/include
+15
+233
+demo_devices.go
+device.go
+device_logger.go
+handlers.go
+job_engine.go
+main.go
+mqtt.go
+popup_generator.go
+protobuf_parser.go
+protobuf_reflection.go
+sanitizer_controller.go
+smart_forms.go
+templates.go
+terminal_logger.go
+ui_generator.go
