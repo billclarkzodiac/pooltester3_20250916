@@ -59,20 +59,20 @@ func (tl *TerminalLogger) LogProtobufMessage(msgType, device, direction string, 
 		Raw:         raw,
 	}
 
-	// Convert protobuf message to JSON for readable logging
-	if jsonData, err := json.Marshal(msg); err == nil {
-		var dataMap map[string]interface{}
-		if err := json.Unmarshal(jsonData, &dataMap); err == nil {
-			entry.Data = dataMap
+	// Convert message to map for data field
+	if msg != nil {
+		if data, err := json.Marshal(msg); err == nil {
+			var msgData map[string]interface{}
+			if json.Unmarshal(data, &msgData) == nil {
+				entry.Data = msgData
+			}
 		}
 	}
 
-	// Create human-readable message
-	entry.Message = fmt.Sprintf("[%s] %s %s: %s",
-		direction, device, msgType, entry.MessageType)
+	// Generate human-readable message
+	entry.Message = fmt.Sprintf("[%s] %s: %s", direction, msgType, device)
 
 	tl.addEntry(entry)
-	tl.printToTerminal(entry)
 }
 
 // LogError logs an error message
@@ -81,68 +81,51 @@ func (tl *TerminalLogger) LogError(device, message string, err error) {
 		Timestamp: time.Now(),
 		Type:      "ERROR",
 		Device:    device,
-		Direction: "ERROR",
-		Message:   fmt.Sprintf("[ERROR] %s: %s - %v", device, message, err),
+		Message:   fmt.Sprintf("ERROR: %s - %v", message, err),
+		Direction: "SYSTEM",
 	}
 
 	tl.addEntry(entry)
-	tl.printToTerminal(entry)
 }
 
-// addEntry adds an entry to the circular buffer
+// addEntry adds an entry to the log with thread safety
 func (tl *TerminalLogger) addEntry(entry LogEntry) {
 	tl.mutex.Lock()
 	defer tl.mutex.Unlock()
 
 	tl.entries = append(tl.entries, entry)
 
-	// Keep only maxEntries in memory
+	// Keep only maxEntries entries
 	if len(tl.entries) > tl.maxEntries {
 		tl.entries = tl.entries[len(tl.entries)-tl.maxEntries:]
 	}
+
+	// Also print to terminal and file
+	tl.printToTerminal(entry)
 }
 
-// printToTerminal prints to terminal and file via tee
+// printToTerminal prints log entry to terminal and file
 func (tl *TerminalLogger) printToTerminal(entry LogEntry) {
-	// Format for terminal display
-	timestamp := entry.Timestamp.Format("15:04:05.000")
+	if tl.teeWriter != nil {
+		timestamp := entry.Timestamp.Format("15:04:05.000")
 
-	// Color coding for terminal
-	var color string
-	switch entry.Type {
-	case "REQUEST":
-		color = "\033[34m" // Blue
-	case "RESPONSE":
-		color = "\033[32m" // Green
-	case "TELEMETRY":
-		color = "\033[36m" // Cyan
-	case "ANNOUNCE":
-		color = "\033[35m" // Magenta
-	case "ERROR":
-		color = "\033[31m" // Red
-	default:
-		color = "\033[37m" // White
-	}
-	reset := "\033[0m"
+		// Terminal output (colored and formatted)
+		fmt.Printf("[%s] 📡 %s\n", timestamp, entry.Message)
 
-	// Terminal output with colors
-	terminalLine := fmt.Sprintf("%s%s [%s] %s%s\n",
-		color, timestamp, entry.Type, entry.Message, reset)
+		// File output (structured and searchable)
+		if tl.logFile != nil {
+			tl.logFile.WriteString(fmt.Sprintf("[%s] TYPE=%s DEVICE=%s DIR=%s MSG=%s\n",
+				entry.Timestamp.Format("2006-01-02 15:04:05.000"),
+				entry.Type,
+				entry.Device,
+				entry.Direction,
+				entry.Message))
 
-	// Write to terminal (stdout)
-	fmt.Print(terminalLine)
-
-	// Write to log file (plain text, no colors)
-	logLine := fmt.Sprintf("%s [%s] %s\n",
-		timestamp, entry.Type, entry.Message)
-
-	if tl.logFile != nil {
-		tl.logFile.WriteString(logLine)
-
-		// Write detailed JSON data if available
-		if entry.Data != nil {
-			if jsonData, err := json.MarshalIndent(entry.Data, "  ", "  "); err == nil {
-				tl.logFile.WriteString(fmt.Sprintf("  Data: %s\n", string(jsonData)))
+			// Add data if available
+			if entry.Data != nil {
+				if jsonData, err := json.Marshal(entry.Data); err == nil {
+					tl.logFile.WriteString(fmt.Sprintf("  Data: %s\n", string(jsonData)))
+				}
 			}
 		}
 
@@ -163,6 +146,54 @@ func (tl *TerminalLogger) GetRecentEntries(limit int) []LogEntry {
 	copy(result, tl.entries[len(tl.entries)-limit:])
 
 	return result
+}
+
+// GetRecentEntriesForDevice returns recent log entries filtered by device
+func (tl *TerminalLogger) GetRecentEntriesForDevice(deviceSerial string, limit int) []LogEntry {
+	tl.mutex.RLock()
+	defer tl.mutex.RUnlock()
+
+	// Filter entries by device
+	var filteredEntries []LogEntry
+	for _, entry := range tl.entries {
+		if entry.Device == deviceSerial {
+			filteredEntries = append(filteredEntries, entry)
+		}
+	}
+
+	// Apply limit
+	if limit <= 0 || limit > len(filteredEntries) {
+		limit = len(filteredEntries)
+	}
+
+	if limit == 0 {
+		return []LogEntry{}
+	}
+
+	result := make([]LogEntry, limit)
+	copy(result, filteredEntries[len(filteredEntries)-limit:])
+
+	return result
+}
+
+// GetAllDevicesInTerminal returns a list of all devices that have terminal entries
+func (tl *TerminalLogger) GetAllDevicesInTerminal() []string {
+	tl.mutex.RLock()
+	defer tl.mutex.RUnlock()
+
+	deviceSet := make(map[string]bool)
+	for _, entry := range tl.entries {
+		if entry.Device != "" {
+			deviceSet[entry.Device] = true
+		}
+	}
+
+	var devices []string
+	for device := range deviceSet {
+		devices = append(devices, device)
+	}
+
+	return devices
 }
 
 // Close closes the log file

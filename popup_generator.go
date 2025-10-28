@@ -489,20 +489,52 @@ func (pug *PopupUIGenerator) handleMessageTypes(w http.ResponseWriter, r *http.R
 	json.NewEncoder(w).Encode(requestMessages)
 }
 
-// handleTerminalLogs returns recent terminal log entries
+// handleTerminalLogs serves filtered terminal logs as JSON
 func (pug *PopupUIGenerator) handleTerminalLogs(w http.ResponseWriter, r *http.Request) {
-	limitStr := r.URL.Query().Get("limit")
-	limit := 100 // default
+	log.Println("📋 Terminal logs request received")
 
+	// Get query parameters
+	limitStr := r.URL.Query().Get("limit")
+	deviceFilter := r.URL.Query().Get("device")
+
+	limit := 50 // Default limit
 	if limitStr != "" {
-		if parsed, err := strconv.Atoi(limitStr); err == nil {
-			limit = parsed
+		if parsedLimit, err := strconv.Atoi(limitStr); err == nil && parsedLimit > 0 {
+			limit = parsedLimit
 		}
 	}
 
-	entries := pug.terminalLogger.GetRecentEntries(limit)
+	var entries []LogEntry
+	if deviceFilter != "" {
+		// Get filtered entries for specific device
+		entries = pug.terminalLogger.GetRecentEntriesForDevice(deviceFilter, limit)
+		log.Printf("📤 Sending %d terminal entries for device %s", len(entries), deviceFilter)
+	} else {
+		// Get all entries
+		entries = pug.terminalLogger.GetRecentEntries(limit)
+		log.Printf("📤 Sending %d terminal entries (all devices)", len(entries))
+	}
+
+	// Add device list for filtering UI
+	availableDevices := pug.terminalLogger.GetAllDevicesInTerminal()
+
+	response := struct {
+		Entries          []LogEntry `json:"entries"`
+		AvailableDevices []string   `json:"available_devices"`
+		FilteredDevice   string     `json:"filtered_device"`
+		TotalEntries     int        `json:"total_entries"`
+	}{
+		Entries:          entries,
+		AvailableDevices: availableDevices,
+		FilteredDevice:   deviceFilter,
+		TotalEntries:     len(entries),
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	json.NewEncoder(w).Encode(entries)
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding JSON: %v", err), http.StatusInternalServerError)
+		return
+	}
 }

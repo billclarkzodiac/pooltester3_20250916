@@ -359,12 +359,27 @@ func (n *NgaSim) handleProtobufMessages(w http.ResponseWriter, r *http.Request) 
 func (n *NgaSim) handleTerminalView(w http.ResponseWriter, r *http.Request) {
 	log.Println("📺 Serving terminal view page")
 
+	// Check for device filter parameter
+	deviceFilter := r.URL.Query().Get("device")
+
+	// Get list of devices with terminal entries
+	var availableDevices []string
+	if n.terminalLogger != nil {
+		availableDevices = n.terminalLogger.GetAllDevicesInTerminal()
+	}
+
 	data := struct {
-		Title   string
-		Version string
+		Title            string
+		Version          string
+		DeviceFilter     string
+		AvailableDevices []string
+		Devices          []*Device
 	}{
-		Title:   "NgaSim - Live Terminal",
-		Version: NgaSimVersion,
+		Title:            "NgaSim - Live Terminal",
+		Version:          NgaSimVersion,
+		DeviceFilter:     deviceFilter,
+		AvailableDevices: availableDevices,
+		Devices:          n.getSortedDevices(), // For device selection dropdown
 	}
 
 	w.Header().Set("Content-Type", "text/html")

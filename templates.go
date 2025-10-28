@@ -249,33 +249,6 @@ var goDemoTemplateHTML = `
             background: #805ad5;
         }
         
-        .terminal-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .terminal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .terminal-display {
-            background: #1a202c;
-            color: #e2e8f0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8em;
-            padding: 15px;
-            border-radius: 5px;
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #4a5568;
-        }
-        
         .log-entry {
             margin-bottom: 5px;
             padding: 2px 0;
@@ -569,23 +542,6 @@ var goDemoTemplateHTML = `
             <button class="btn btn-warning" onclick="refreshDevices()">🔄 Refresh Devices</button>
         </div>
 
-        <!-- Live Terminal Display -->
-        <div class="terminal-section">
-            <div class="terminal-header">
-                <h3>📺 Live Terminal (Last 50 entries)</h3>
-                <div>
-                    <button class="btn btn-secondary" onclick="clearTerminal()">🗑️ Clear</button>
-                    <button class="btn btn-primary" onclick="refreshTerminal()">🔄 Refresh</button>
-                </div>
-            </div>
-            <div class="terminal-display" id="terminal-display">
-                <div class="log-entry">
-                    <span class="log-timestamp">[Loading...]</span>
-                    <span>Terminal initializing...</span>
-                </div>
-            </div>
-        </div>
-
         <!-- Devices Grid -->
         <div class="devices-grid">
             {{range .Devices}}
@@ -726,14 +682,6 @@ var goDemoTemplateHTML = `
     <script>
         // Global variables
         let currentDevice = null;
-        let terminalRefreshInterval = null;
-
-        // Initialize terminal refresh
-        document.addEventListener('DOMContentLoaded', function() {
-            refreshTerminal();
-            // Auto-refresh terminal every 2 seconds
-            terminalRefreshInterval = setInterval(refreshTerminal, 2000);
-        });
 
         // Sanitizer control function
         async function sendSanitizerCommand(serial, percentage) {
@@ -888,8 +836,8 @@ var goDemoTemplateHTML = `
                 if (result.success) {
                     alert('✅ Command sent successfully!\\nCorrelation ID: ' + result.correlation_id);
                     closePopup();
-                    // Refresh terminal to see the command
-                    refreshTerminal();
+                    // Refresh page to see the command in device terminals
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     alert('❌ Command failed: ' + result.error);
                 }
@@ -923,40 +871,6 @@ var goDemoTemplateHTML = `
             
             previewContent.textContent = JSON.stringify(preview, null, 2);
             previewDiv.style.display = 'block';
-        }
-
-        // Terminal functions
-        async function refreshTerminal() {
-            try {
-                const response = await fetch('/api/terminal/logs?limit=50');
-                const logs = await response.json();
-                
-                const terminal = document.getElementById('terminal-display');
-                terminal.innerHTML = '';
-                
-                logs.forEach(log => {
-                    const entry = document.createElement('div');
-                    entry.className = 'log-entry';
-                    
-                    const timestamp = new Date(log.timestamp).toLocaleTimeString();
-                    const typeClass = 'log-' + log.type.toLowerCase();
-                    
-                    entry.innerHTML = '<span class="log-timestamp">[' + timestamp + ']</span> ' +
-                                    '<span class="' + typeClass + '">[' + log.type + ']</span> ' +
-                                    '<span>' + log.message + '</span>';
-                    
-                    terminal.appendChild(entry);
-                });
-                
-                // Auto-scroll to bottom
-                terminal.scrollTop = terminal.scrollHeight;
-            } catch (error) {
-                console.error('Error refreshing terminal:', error);
-            }
-        }
-
-        function clearTerminal() {
-            document.getElementById('terminal-display').innerHTML = '<div class="log-entry"><span class="log-timestamp">[Cleared]</span> Terminal cleared by user</div>';
         }
 
         // Show device-specific terminal
@@ -1003,12 +917,58 @@ var goDemoTemplateHTML = `
             }
         };
 
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', function() {
-            if (terminalRefreshInterval) {
-                clearInterval(terminalRefreshInterval);
+        // Enhanced JavaScript for smart forms and live terminals
+        function updateSliderDisplay(fieldName, value, unit) {
+            document.getElementById('display_' + fieldName).textContent = value;
+        }
+
+        function executeSmartCommand() {
+            const form = document.getElementById('smart-command-form');
+            const formData = new FormData(form);
+            
+            // Convert form data to object with smart processing
+            const fieldValues = {};
+            for (let [key, value] of formData.entries()) {
+                if (key !== 'message_type' && key !== 'device_serial' && key !== 'category') {
+                    // Smart type conversion
+                    if (value === 'true' || value === 'false') {
+                        fieldValues[key] = value === 'true';
+                    } else if (!isNaN(value) && value !== '') {
+                        fieldValues[key] = parseFloat(value);
+                    } else {
+                        fieldValues[key] = value;
+                    }
+                }
             }
-        });
+            
+            const commandData = {
+                message_type: formData.get('message_type'),
+                device_serial: formData.get('device_serial'),
+                category: formData.get('category'),
+                field_values: fieldValues
+            };
+            
+            console.log('🚀 Executing smart command:', commandData);
+            
+            // Execute the command (same as before but with better feedback)
+            executeProtobufCommand(); // Reuse existing function
+        }
+
+        function clearDeviceTerminal(deviceSerial) {
+            const terminal = document.getElementById('terminal-' + deviceSerial);
+            if (terminal) {
+                terminal.innerHTML = '<div class="terminal-entry"><span style="color: #a0aec0;">Terminal cleared</span></div>';
+            }
+        }
+
+        // Auto-refresh device terminals every 5 seconds
+        setInterval(function() {
+            // Refresh page to get updated device terminals
+            // In a real implementation, this would be WebSocket updates
+            if (document.querySelector('.device-terminal')) {
+                location.reload();
+            }
+        }, 5000);
     </script>
 </body>
 </html>
@@ -1053,6 +1013,26 @@ var protobufInterfaceTemplateHTML = `
         .btn { padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: all 0.3s ease; text-decoration: none; display: inline-block; text-align: center; }
         .btn-primary { background: #667eea; color: white; }
         .btn-primary:hover { background: #5a67d8; }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 15px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -1166,7 +1146,7 @@ var terminalViewTemplateHTML = `
 </head>
 <body>
     <div class="header">
-        <h1>📺 NgaSim Live Terminal v{{.Version}}</h1>
+        <h1>📺 NgaSim Live Terminal v{{.Version}}{{if .DeviceFilter}} - Device: {{.DeviceFilter}}{{end}}</h1>
     </div>
     
     <div class="terminal-container">
@@ -1182,12 +1162,22 @@ var terminalViewTemplateHTML = `
             <button class="btn btn-danger" onclick="clearTerminal()">🗑️ Clear</button>
             <button class="btn" onclick="toggleAutoRefresh()">⏸️ Pause Auto-Refresh</button>
             <span id="status">Auto-refresh: ON</span>
+            {{if .AvailableDevices}}
+            <select id="device-filter" onchange="changeDeviceFilter()">
+                <option value="">All Devices</option>
+                {{range .AvailableDevices}}
+                <option value="{{.}}"{{if eq . $.DeviceFilter}} selected{{end}}>{{.}}</option>
+                {{end}}
+            </select>
+            {{end}}
         </div>
     </div>
 
     <script>
         let autoRefresh = true;
         let refreshInterval;
+        const urlParams = new URLSearchParams(window.location.search);
+        const deviceFilter = urlParams.get('device');
 
         document.addEventListener('DOMContentLoaded', function() {
             refreshTerminal();
@@ -1196,8 +1186,14 @@ var terminalViewTemplateHTML = `
 
         async function refreshTerminal() {
             try {
-                const response = await fetch('/api/terminal/logs?limit=200');
-                const logs = await response.json();
+                let url = '/api/terminal/logs?limit=200';
+                if (deviceFilter) {
+                    url += '&device=' + encodeURIComponent(deviceFilter);
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                const logs = data.entries || data; // Handle both old and new format
                 
                 const terminal = document.getElementById('terminal-display');
                 terminal.innerHTML = '';
@@ -1256,60 +1252,17 @@ var terminalViewTemplateHTML = `
                 }
             }, 1000);
         }
-            // Enhanced JavaScript for smart forms and live terminals
 
-function updateSliderDisplay(fieldName, value, unit) {
-    document.getElementById('display_' + fieldName).textContent = value;
-}
-
-function executeSmartCommand() {
-    const form = document.getElementById('smart-command-form');
-    const formData = new FormData(form);
-    
-    // Convert form data to object with smart processing
-    const fieldValues = {};
-    for (let [key, value] of formData.entries()) {
-        if (key !== 'message_type' && key !== 'device_serial' && key !== 'category') {
-            // Smart type conversion
-            if (value === 'true' || value === 'false') {
-                fieldValues[key] = value === 'true';
-            } else if (!isNaN(value) && value !== '') {
-                fieldValues[key] = parseFloat(value);
+        function changeDeviceFilter() {
+            const select = document.getElementById('device-filter');
+            const newDevice = select.value;
+            
+            if (newDevice) {
+                window.location.search = '?device=' + encodeURIComponent(newDevice);
             } else {
-                fieldValues[key] = value;
+                window.location.search = '';
             }
         }
-    }
-    
-    const commandData = {
-        message_type: formData.get('message_type'),
-        device_serial: formData.get('device_serial'),
-        category: formData.get('category'),
-        field_values: fieldValues
-    };
-    
-    console.log('🚀 Executing smart command:', commandData);
-    
-    // Execute the command (same as before but with better feedback)
-    executeProtobufCommand(); // Reuse existing function
-}
-
-function clearDeviceTerminal(deviceSerial) {
-    const terminal = document.getElementById('terminal-' + deviceSerial);
-    if (terminal) {
-        terminal.innerHTML = '<div class="terminal-entry"><span style="color: #a0aec0;">Terminal cleared</span></div>';
-    }
-}
-
-// Auto-refresh device terminals every 5 seconds
-setInterval(function() {
-    // Refresh page to get updated device terminals
-    // In a real implementation, this would be WebSocket updates
-    if (document.querySelector('.device-terminal')) {
-        location.reload();
-    }
-}, 5000);
-
     </script>
 </body>
 </html>
@@ -1320,7 +1273,6 @@ var goDemoTemplate = template.Must(template.New("goDemo").Funcs(templateFuncs).P
 var protobufInterfaceTemplate = template.Must(template.New("protobufInterface").Funcs(templateFuncs).Parse(protobufInterfaceTemplateHTML))
 var terminalViewTemplate = template.Must(template.New("terminalView").Funcs(templateFuncs).Parse(terminalViewTemplateHTML))
 
-// Keep your existing templates (tmpl, goodbyeTemplate, etc.)
 var tmpl = template.Must(template.New("home").Funcs(templateFuncs).Parse(`
 <!DOCTYPE html>
 <html>
