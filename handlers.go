@@ -15,13 +15,8 @@ import (
 func (n *NgaSim) handleGoDemo(w http.ResponseWriter, r *http.Request) {
 	log.Println("🎯 Serving Go-centric demo page")
 
-	// Get devices for template
-	n.mutex.RLock()
-	devices := make([]*Device, 0, len(n.devices))
-	for _, device := range n.devices {
-		devices = append(devices, device)
-	}
-	n.mutex.RUnlock()
+	// Use getSortedDevices() for consistent ordering
+	devices := n.getSortedDevices()
 
 	// Get available commands for each device type
 	deviceCommands := make(map[string]DeviceCommands)
@@ -65,13 +60,8 @@ func (n *NgaSim) handleDemo(w http.ResponseWriter, r *http.Request) {
 func (n *NgaSim) handleHome(w http.ResponseWriter, r *http.Request) {
 	log.Println("🏠 Serving main dashboard")
 
-	// Get devices for template
-	n.mutex.RLock()
-	devices := make([]*Device, 0, len(n.devices))
-	for _, device := range n.devices {
-		devices = append(devices, device)
-	}
-	n.mutex.RUnlock()
+	// Use getSortedDevices() for consistent ordering
+	devices := n.getSortedDevices()
 
 	data := struct {
 		Version string
@@ -130,12 +120,8 @@ func (n *NgaSim) handleExit(w http.ResponseWriter, r *http.Request) {
 func (n *NgaSim) handleAPI(w http.ResponseWriter, r *http.Request) {
 	log.Println("📡 API request: /api/devices")
 
-	n.mutex.RLock()
-	devices := make([]*Device, 0, len(n.devices))
-	for _, device := range n.devices {
-		devices = append(devices, device)
-	}
-	n.mutex.RUnlock()
+	// Use getSortedDevices() for consistent ordering
+	devices := n.getSortedDevices()
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")

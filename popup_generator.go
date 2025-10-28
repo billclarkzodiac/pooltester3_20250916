@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -89,7 +90,7 @@ func (pug *PopupUIGenerator) generateFormHTML(msgDesc MessageDescriptor, deviceS
 	// Popup header
 	html.WriteString(fmt.Sprintf(`
 <div class="popup-header">
-    <h3>%s</h3>
+    <h3>%s Command</h3>
     <p>Device: <strong>%s</strong> | Category: <strong>%s</strong></p>
     <button class="close-btn" onclick="closePopup()">&times;</button>
 </div>
@@ -100,7 +101,28 @@ func (pug *PopupUIGenerator) generateFormHTML(msgDesc MessageDescriptor, deviceS
         <input type="hidden" name="category" value="%s">
 `, msgDesc.Name, deviceSerial, category, msgDesc.Package+"."+msgDesc.Name, deviceSerial, category))
 
-	// Generate form fields
+	// Check if command_uuid field exists in protobuf - if not, add it manually
+	hasUUIDField := false
+	for _, field := range msgDesc.Fields {
+		if field.Name == "command_uuid" {
+			hasUUIDField = true
+			break
+		}
+	}
+
+	if !hasUUIDField {
+		// Add UUID field manually if not in protobuf definition
+		html.WriteString(`
+<div class="form-group">
+    <label for="field_command_uuid">Command UUID</label>
+    <div class="field-description">Unique identifier for this command (auto-generated)</div>
+    <input type="text" name="command_uuid" id="field_command_uuid" class="form-control" 
+           value="" style="background-color: #e3f2fd; border: 2px solid #2196f3;">
+    <small style="color: #1976d2;">🆔 Manual UUID Field - Auto-generated (editable for testing)</small>
+</div>`)
+	}
+
+	// Generate form fields for all protobuf fields
 	for _, field := range msgDesc.Fields {
 		html.WriteString(pug.generateFieldHTML(field))
 	}
@@ -118,6 +140,67 @@ func (pug *PopupUIGenerator) generateFormHTML(msgDesc MessageDescriptor, deviceS
     <h4>Message Preview:</h4>
     <pre id="preview-content"></pre>
 </div>
+
+<script>
+// Auto-generate UUID immediately (don't wait for DOMContentLoaded)
+(function() {
+    // Use setTimeout to ensure DOM elements are rendered
+    setTimeout(function() {
+        console.log('🆔 Generating UUIDs for popup form...');
+        
+        // Find all UUID fields (both manual and protobuf-generated)
+        const uuidSelectors = [
+            'input[name="command_uuid"]',
+            'input[id*="command_uuid"]', 
+            '.uuid-field',
+            'input[id*="uuid"]'
+        ];
+        
+        uuidSelectors.forEach(function(selector) {
+            const uuidFields = document.querySelectorAll(selector);
+            console.log('Found ' + uuidFields.length + ' UUID fields with selector: ' + selector);
+            
+            uuidFields.forEach(function(uuidField) {
+                if (!uuidField.value || uuidField.value === '') {
+                    let newUUID;
+                    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                        // Modern browser UUID generation
+                        newUUID = crypto.randomUUID();
+                        console.log('✅ Generated crypto UUID: ' + newUUID);
+                    } else {
+                        // Fallback UUID generation
+                        newUUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                            var r = Math.random() * 16 | 0;
+                            var v = c == 'x' ? r : (r & 0x3 | 0x8);
+                            return v.toString(16);
+                        });
+                        console.log('✅ Generated fallback UUID: ' + newUUID);
+                    }
+                    
+                    uuidField.value = newUUID;
+                    console.log('🔧 Set UUID field ' + uuidField.id + ' to: ' + newUUID);
+                    
+                    // Make field visually distinctive
+                    uuidField.style.backgroundColor = '#e3f2fd';
+                    uuidField.style.border = '2px solid #2196f3';
+                }
+            });
+        });
+    }, 50); // Very short delay to ensure DOM is ready
+})();
+
+// Also add event listener for future DOM loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('📋 DOM loaded - checking for UUID fields again...');
+        // Run the same UUID generation code again as backup
+        setTimeout(function() {
+            const allUUIDs = document.querySelectorAll('input[name*="uuid"], input[id*="uuid"], .uuid-field');
+            console.log('DOM loaded - found ' + allUUIDs.length + ' UUID fields total');
+        }, 100);
+    });
+}
+</script>
 `)
 
 	return html.String()
@@ -133,81 +216,89 @@ func (pug *PopupUIGenerator) generateFieldHTML(field FieldDescriptor) string {
     <div class="field-description">%s</div>
 `, field.Name, field.Label, field.Description))
 
-	switch field.Type {
-	case "boolean":
+	// Special handling for UUID fields - detect by name
+	if strings.Contains(strings.ToLower(field.Name), "uuid") {
 		html.WriteString(fmt.Sprintf(`
+    <input type="text" name="%s" id="field_%s" class="form-control uuid-field" 
+           value="" style="background-color: #e3f2fd; border: 2px solid #2196f3;">
+    <small style="color: #1976d2;">🆔 Protobuf UUID Field - Auto-generated (editable for testing)</small>
+`, field.Name, field.Name))
+	} else {
+		// Handle normal field types
+		switch field.Type {
+		case "boolean":
+			html.WriteString(fmt.Sprintf(`
     <select name="%s" id="field_%s" class="form-control">
         <option value="false">False</option>
         <option value="true">True</option>
     </select>`, field.Name, field.Name))
 
-	case "int32", "int64", "uint32", "uint64":
-		min := ""
-		max := ""
-		if field.Min != nil {
-			min = fmt.Sprintf(`min="%v"`, field.Min)
-		}
-		if field.Max != nil {
-			max = fmt.Sprintf(`max="%v"`, field.Max)
-		}
-		defaultVal := ""
-		if field.DefaultValue != nil {
-			defaultVal = fmt.Sprintf(`value="%v"`, field.DefaultValue)
-		}
+		case "int32", "int64", "uint32", "uint64":
+			min := ""
+			max := ""
+			if field.Min != nil {
+				min = fmt.Sprintf(`min="%v"`, field.Min)
+			}
+			if field.Max != nil {
+				max = fmt.Sprintf(`max="%v"`, field.Max)
+			}
+			defaultVal := ""
+			if field.DefaultValue != nil {
+				defaultVal = fmt.Sprintf(`value="%v"`, field.DefaultValue)
+			}
 
-		html.WriteString(fmt.Sprintf(`
+			html.WriteString(fmt.Sprintf(`
     <input type="number" name="%s" id="field_%s" class="form-control" %s %s %s>
 `, field.Name, field.Name, min, max, defaultVal))
 
-	case "float", "double":
-		defaultVal := ""
-		if field.DefaultValue != nil {
-			defaultVal = fmt.Sprintf(`value="%v"`, field.DefaultValue)
-		}
+		case "float", "double":
+			defaultVal := ""
+			if field.DefaultValue != nil {
+				defaultVal = fmt.Sprintf(`value="%v"`, field.DefaultValue)
+			}
 
-		html.WriteString(fmt.Sprintf(`
+			html.WriteString(fmt.Sprintf(`
     <input type="number" name="%s" id="field_%s" class="form-control" step="0.01" %s>
 `, field.Name, field.Name, defaultVal))
 
-	case "string":
-		defaultVal := ""
-		if field.DefaultValue != nil {
-			defaultVal = fmt.Sprintf(`value="%v"`, field.DefaultValue)
-		}
+		case "string":
+			defaultVal := ""
+			if field.DefaultValue != nil {
+				defaultVal = fmt.Sprintf(`value="%v"`, field.DefaultValue)
+			}
 
-		html.WriteString(fmt.Sprintf(`
+			html.WriteString(fmt.Sprintf(`
     <input type="text" name="%s" id="field_%s" class="form-control" %s>
 `, field.Name, field.Name, defaultVal))
 
-	case "enum":
-		html.WriteString(fmt.Sprintf(`
+		case "enum":
+			html.WriteString(fmt.Sprintf(`
     <select name="%s" id="field_%s" class="form-control">`, field.Name, field.Name))
 
-		for _, enumValue := range field.EnumValues {
-			selected := ""
-			if field.DefaultValue != nil && fmt.Sprintf("%v", field.DefaultValue) == enumValue {
-				selected = "selected"
-			}
-			html.WriteString(fmt.Sprintf(`
+			for _, enumValue := range field.EnumValues {
+				selected := ""
+				if field.DefaultValue != nil && fmt.Sprintf("%v", field.DefaultValue) == enumValue {
+					selected = "selected"
+				}
+				html.WriteString(fmt.Sprintf(`
         <option value="%s" %s>%s</option>`, enumValue, selected, enumValue))
-		}
+			}
 
-		html.WriteString(`
+			html.WriteString(`
     </select>`)
 
-	case "bytes":
-		html.WriteString(fmt.Sprintf(`
+		case "bytes":
+			html.WriteString(fmt.Sprintf(`
     <textarea name="%s" id="field_%s" class="form-control" rows="3" placeholder="Enter hex data (e.g., 0x1A2B3C or 1A2B3C)"></textarea>
 `, field.Name, field.Name))
 
-	default:
-		// Default to text input for unknown types
-		html.WriteString(fmt.Sprintf(`
+		default:
+			html.WriteString(fmt.Sprintf(`
     <input type="text" name="%s" id="field_%s" class="form-control" placeholder="%s">
 `, field.Name, field.Name, field.Type))
+		}
 	}
 
-	// Add required indicator
 	if field.Required {
 		html.WriteString(`<small class="required-indicator">* Required</small>`)
 	}
@@ -221,6 +312,16 @@ func (pug *PopupUIGenerator) generateFieldHTML(field FieldDescriptor) string {
 func (pug *PopupUIGenerator) ExecuteProtobufCommand(req CommandExecutionRequest) (*CommandExecutionResponse, error) {
 	log.Printf("🚀 Executing protobuf command: %s for device %s", req.MessageType, req.DeviceSerial)
 
+	// Generate UUID for command correlation (CRITICAL: This prevents import removal!)
+	commandUUID := uuid.New().String()
+
+	// Use UUID from form if provided, otherwise use generated one
+	if formUUID, exists := req.FieldValues["command_uuid"]; exists && formUUID != "" {
+		if uuidStr, ok := formUUID.(string); ok && uuidStr != "" {
+			commandUUID = uuidStr
+		}
+	}
+
 	// Create the protobuf message
 	msg, err := pug.reflectionEngine.CreateMessage(req.MessageType)
 	if err != nil {
@@ -230,8 +331,15 @@ func (pug *PopupUIGenerator) ExecuteProtobufCommand(req CommandExecutionRequest)
 		}, err
 	}
 
-	// Populate the message with form values
-	if err := pug.reflectionEngine.PopulateMessage(msg, req.FieldValues); err != nil {
+	// Populate the message with form values (excluding command_uuid for inner message)
+	innerFieldValues := make(map[string]interface{})
+	for k, v := range req.FieldValues {
+		if k != "command_uuid" {
+			innerFieldValues[k] = v
+		}
+	}
+
+	if err := pug.reflectionEngine.PopulateMessage(msg, innerFieldValues); err != nil {
 		return &CommandExecutionResponse{
 			Success: false,
 			Error:   fmt.Sprintf("Failed to populate message: %v", err),
@@ -247,8 +355,8 @@ func (pug *PopupUIGenerator) ExecuteProtobufCommand(req CommandExecutionRequest)
 		}, err
 	}
 
-	// Generate correlation ID
-	correlationID := fmt.Sprintf("popup_%d", time.Now().UnixNano())
+	// Use UUID as correlation ID
+	correlationID := commandUUID
 
 	// Log to terminal
 	pug.terminalLogger.LogProtobufMessage("REQUEST", req.DeviceSerial, "OUTGOING", msg, msgBytes)
@@ -272,6 +380,8 @@ func (pug *PopupUIGenerator) ExecuteProtobufCommand(req CommandExecutionRequest)
 	if sendErr != nil {
 		response.Error = sendErr.Error()
 		pug.terminalLogger.LogError(req.DeviceSerial, "Command execution failed", sendErr)
+	} else {
+		log.Printf("✅ Protobuf command sent with UUID: %s", commandUUID)
 	}
 
 	return response, sendErr

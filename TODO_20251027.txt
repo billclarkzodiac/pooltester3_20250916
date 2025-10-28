@@ -2,6 +2,11 @@ TODO_20251027.txt
 
 A short list of fixes and then a bigger request:
 
+0.  Why is the amount of javascript code creeping up ?    Is javascript easier
+    to create ?  Maybe we should have created the whole project in javascript,
+    (not really). Please keep all the logic and initialization in Go.
+    We know that keeping 2 separate states synchronized is very difficult.
+
 1.  Having devices displayed in random positions with devices changing their
     positions is disturbing to the human observer. It is preferred the
     devices are sorted by serial number obtained from the Announce message.
@@ -20,8 +25,20 @@ A short list of fixes and then a bigger request:
     ANNOUNCE string, it should display as much information as is available from
     using protobuf reflection.
 
+4.  The grey Clear button doesn't Clear anything apparently, I'm guessing it's 
+    meant to clear the terminal window.
+    
+
 ===  The bigger request:
 The Protobuf Command sub page Show Available Commands give a list of available
-protobuf requests and responses, very nice. Can you describe how to use these
-commands please.  Also in the commands there are fields that should be 
-pre-filled, for example, the UUID 
+protobuf requests and responses, very nice. Can you create a document describing
+how best to use these commands please. Currently it appears to me as a set of 
+empty boxes with protobuf labels with no description on what the type/contents,
+or range of values. The boxes should be prefilled with default valid data or 
+commands eg. a chlorinate command for the sanitizer.
+Also in the commands there are fields that should be pre-filled, for example, 
+the UUID should be pre-filled and displayed before the command is sent, 
+also editable for testing, Someone may find that feature useful.
+
+Lets do what we know works here, small code increments that are testable.
+thankyou,

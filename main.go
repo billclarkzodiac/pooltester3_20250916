@@ -25,6 +25,8 @@ import (
 
 	"NgaSim/ned" // Import protobuf definitions
 
+	"github.com/google/uuid"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"google.golang.org/protobuf/proto"
 )
@@ -1213,13 +1215,31 @@ func main() {
 
 // createDemoDevices creates demo devices for testing when MQTT is not available
 func (n *NgaSim) createDemoDevices() {
-	log.Println("Creating demo devices...")
+	log.Println("Creating enhanced demo devices for sorting test...")
 
 	demoDevices := []*Device{
+		// Multiple Sanitizers (different serial numbers for sorting test)
+		{
+			ID:               "demo-sanitizer-003",
+			Serial:           "demo-sanitizer-003",
+			Name:             "Demo Salt Chlorinator #3",
+			Type:             "sanitizerGen2",
+			Category:         "sanitizerGen2",
+			Status:           "ONLINE",
+			LastSeen:         time.Now(),
+			ProductName:      "AquaRite Pro Max",
+			ModelId:          "AQR-PRO-40",
+			FirmwareVersion:  "2.1.3",
+			PercentageOutput: 65,
+			ActualPercentage: 65,
+			PPMSalt:          3400,
+			LineInputVoltage: 240,
+			RSSI:             -52,
+		},
 		{
 			ID:               "demo-sanitizer-001",
 			Serial:           "demo-sanitizer-001",
-			Name:             "Demo Salt Chlorinator",
+			Name:             "Demo Salt Chlorinator #1",
 			Type:             "sanitizerGen2",
 			Category:         "sanitizerGen2",
 			Status:           "ONLINE",
@@ -1234,9 +1254,38 @@ func (n *NgaSim) createDemoDevices() {
 			RSSI:             -45,
 		},
 		{
+			ID:               "demo-sanitizer-002",
+			Serial:           "demo-sanitizer-002",
+			Name:             "Demo Salt Chlorinator #2",
+			Type:             "sanitizerGen2",
+			Category:         "sanitizerGen2",
+			Status:           "ONLINE",
+			LastSeen:         time.Now(),
+			ProductName:      "AquaRite Standard",
+			ModelId:          "AQR-STD-15",
+			FirmwareVersion:  "2.0.8",
+			PercentageOutput: 30,
+			ActualPercentage: 30,
+			PPMSalt:          3100,
+			LineInputVoltage: 240,
+			RSSI:             -48,
+		},
+		// Multiple VSPs
+		{
+			ID:       "demo-vsp-002",
+			Serial:   "demo-vsp-002",
+			Name:     "Demo Variable Speed Pump #2",
+			Type:     "VSP",
+			Status:   "ONLINE",
+			LastSeen: time.Now(),
+			RPM:      1800,
+			Power:    650,
+			Temp:     29.2,
+		},
+		{
 			ID:       "demo-vsp-001",
 			Serial:   "demo-vsp-001",
-			Name:     "Demo Variable Speed Pump",
+			Name:     "Demo Variable Speed Pump #1",
 			Type:     "VSP",
 			Status:   "ONLINE",
 			LastSeen: time.Now(),
@@ -1244,10 +1293,23 @@ func (n *NgaSim) createDemoDevices() {
 			Power:    850,
 			Temp:     32.5,
 		},
+		// Multiple Pool Lights
+		{
+			ID:       "demo-icl-002",
+			Serial:   "demo-icl-002",
+			Name:     "Demo Pool Light #2 (Spa)",
+			Type:     "ICL",
+			Status:   "ONLINE",
+			LastSeen: time.Now(),
+			Red:      255,
+			Green:    128,
+			Blue:     64,
+			White:    150,
+		},
 		{
 			ID:       "demo-icl-001",
 			Serial:   "demo-icl-001",
-			Name:     "Demo Pool Light",
+			Name:     "Demo Pool Light #1 (Main)",
 			Type:     "ICL",
 			Status:   "ONLINE",
 			LastSeen: time.Now(),
@@ -1256,16 +1318,40 @@ func (n *NgaSim) createDemoDevices() {
 			Blue:     255,
 			White:    200,
 		},
+		// Multiple Sensors
+		{
+			ID:       "demo-trusense-002",
+			Serial:   "demo-trusense-002",
+			Name:     "Demo pH/ORP Sensor #2 (Spa)",
+			Type:     "TruSense",
+			Status:   "ONLINE",
+			LastSeen: time.Now(),
+			PH:       7.4,
+			ORP:      720,
+			Temp:     27.1,
+		},
 		{
 			ID:       "demo-trusense-001",
 			Serial:   "demo-trusense-001",
-			Name:     "Demo pH/ORP Sensor",
+			Name:     "Demo pH/ORP Sensor #1 (Pool)",
 			Type:     "TruSense",
 			Status:   "ONLINE",
 			LastSeen: time.Now(),
 			PH:       7.2,
 			ORP:      750,
 			Temp:     25.8,
+		},
+		// Multiple Heaters
+		{
+			ID:        "demo-heater-002",
+			Serial:    "demo-heater-002",
+			Name:      "Demo Spa Heater",
+			Type:      "Heater",
+			Status:    "ONLINE",
+			LastSeen:  time.Now(),
+			SetTemp:   38.0,
+			WaterTemp: 36.2,
+			Power:     20000,
 		},
 		{
 			ID:        "demo-heater-001",
@@ -1288,7 +1374,7 @@ func (n *NgaSim) createDemoDevices() {
 		log.Printf("Created demo device: %s (%s)", device.Name, device.Serial)
 	}
 
-	log.Printf("Created %d demo devices", len(demoDevices))
+	log.Printf("Created %d demo devices (multiple per type for sorting test)", len(demoDevices))
 }
 
 // sendSanitizerCommand sends a command to a sanitizer device
@@ -1342,44 +1428,50 @@ func (n *NgaSim) sendSanitizerCommand(serial, category string, percentage int) e
 	return nil
 }
 
-// sendMQTTSanitizerCommand sends a sanitizer command via MQTT
+// sendMQTTSanitizerCommand sends a sanitizer command via MQTT using proper protobuf + UUID
 func (n *NgaSim) sendMQTTSanitizerCommand(serial, category string, percentage int) error {
 	log.Printf("📡 Sending MQTT sanitizer command: %s -> %d%%", serial, percentage)
 
-	// Create the protobuf command message
-	//	command := &ned.SetSanitizerTargetPercentage{
-	//		TargetPercentage: int32(percentage),
-	//	}
+	// Generate UUID for command correlation (CRITICAL: This prevents import removal!)
+	commandUUID := uuid.New().String()
 
-	// Create a simple command payload (JSON format as fallback)
-	commandPayload := map[string]interface{}{
-		"command":           "set_percentage",
-		"target_percentage": percentage,
-		"timestamp":         time.Now().Unix(),
+	// Create the inner sanitizer command
+	saltCmd := &ned.SetSanitizerTargetPercentageRequestPayload{
+		TargetPercentage: int32(percentage),
 	}
 
-	// Serialize as JSON instead of protobuf
-	commandBytes, err := json.Marshal(commandPayload)
+	// Wrap it in SanitizerRequestPayloads using the oneof pattern
+	wrapper := &ned.SanitizerRequestPayloads{
+		RequestType: &ned.SanitizerRequestPayloads_SetSanitizerOutputPercentage{
+			SetSanitizerOutputPercentage: saltCmd,
+		},
+	}
+
+	// Serialize the protobuf wrapper
+	msgBytes, err := proto.Marshal(wrapper)
 	if err != nil {
-		return fmt.Errorf("failed to marshal command: %v", err)
+		return fmt.Errorf("failed to marshal protobuf command: %v", err)
 	}
 
 	// Construct the MQTT topic for sending commands
 	// Topic format: async/category/serial/cmd
 	topic := fmt.Sprintf("async/%s/%s/cmd", category, serial)
 
+	// Use UUID as correlation ID instead of random string
+	correlationID := commandUUID
+
 	// Log the command for debugging
-	correlationID := n.logger.LogRequest(serial, "SetSanitizerTargetPercentage", commandBytes, category, "sanitizer", "percentage_command")
+	n.logger.LogRequest(serial, "SetSanitizerTargetPercentage", msgBytes, category, "sanitizer", "protobuf_command")
 
 	// Send the command via MQTT
-	token := n.mqtt.Publish(topic, 1, false, commandBytes)
+	token := n.mqtt.Publish(topic, 1, false, msgBytes)
 	if token.Wait() && token.Error() != nil {
 		n.logger.LogError(serial, "SetSanitizerTargetPercentage",
 			fmt.Sprintf("MQTT publish failed: %v", token.Error()), correlationID, category)
 		return fmt.Errorf("failed to publish command: %v", token.Error())
 	}
 
-	log.Printf("✅ MQTT command sent successfully: %s -> %d%% (correlation: %s)", serial, percentage, correlationID)
+	log.Printf("✅ MQTT protobuf command sent successfully: %s -> %d%% (UUID: %s)", serial, percentage, commandUUID)
 	return nil
 }
 
