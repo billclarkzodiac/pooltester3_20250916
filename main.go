@@ -1072,8 +1072,10 @@ func (n *NgaSim) Start() error {
 	// ==================== PROTOBUF INTERFACE ROUTES ====================
 	// These provide dynamic device control based on discovered protobuf capabilities
 
-	mux.HandleFunc("/protobuf", n.handleProtobufMessages) // Interactive protobuf message browser
-	mux.HandleFunc("/terminal", n.handleTerminalView)     // Live terminal view of device communications
+	//	mux.HandleFunc("/protobuf", n.handleProtobufMessages)                      // Interactive protobuf message browser
+	mux.HandleFunc("/terminal", n.handleTerminalView)                          // Live terminal view of device communications
+	mux.HandleFunc("/protobuf", n.handleEnhancedProtobufMessages)              // Enhanced Go-heavy version
+	mux.HandleFunc("/api/protobuf/command", n.handleProtobufCommandSubmission) // Process command form submissions
 
 	// ==================== ADVANCED PROTOBUF API ROUTES ====================
 	// These routes are only available if the protobuf reflection system initialized successfully
@@ -1081,10 +1083,12 @@ func (n *NgaSim) Start() error {
 
 	if n.popupGenerator != nil {
 		// Dynamic popup generation based on protobuf message definitions
-		mux.HandleFunc("/api/protobuf/popup", n.popupGenerator.handleProtobufPopup)     // Generate device-specific popup forms
-		mux.HandleFunc("/api/protobuf/command", n.popupGenerator.handleProtobufCommand) // Execute protobuf commands
-		mux.HandleFunc("/api/protobuf/messages", n.popupGenerator.handleMessageTypes)   // List available message types
-		mux.HandleFunc("/api/terminal/logs", n.popupGenerator.handleTerminalLogs)       // Get formatted terminal logs
+		mux.HandleFunc("/api/protobuf/popup", n.popupGenerator.handleProtobufPopup) // Generate device-specific popup forms
+		// REMOVED: Duplicate /api/protobuf/command route - using handleProtobufCommandSubmission instead
+		mux.HandleFunc("/api/protobuf/messages", n.popupGenerator.handleMessageTypes) // List available message types
+		mux.HandleFunc("/api/terminal/logs", n.popupGenerator.handleTerminalLogs)     // Get formatted terminal logs
+		mux.HandleFunc("/api/terminal/clear", n.handleClearTerminal)                  // Clear global terminal
+		mux.HandleFunc("/api/terminal/clear-device", n.handleClearDeviceTerminal)     // Clear device-specific terminal
 	} else {
 		log.Println("⚠️ Protobuf popup routes disabled (popupGenerator not available)")
 	}
@@ -1529,6 +1533,23 @@ func (n *NgaSim) testProtobufSystem() {
 	}
 
 	log.Println("✅ Protobuf system test complete")
+}
+
+// clearDeviceTerminal clears the live terminal for a specific device
+func (n *NgaSim) clearDeviceTerminal(deviceSerial string) bool {
+	n.mutex.Lock()
+	defer n.mutex.Unlock()
+
+	device, exists := n.devices[deviceSerial]
+	if !exists {
+		return false
+	}
+
+	// Clear the device's live terminal
+	device.LiveTerminal = make([]TerminalEntry, 0, 50)
+
+	log.Printf("🗑️ Device terminal cleared for %s", deviceSerial)
+	return true
 }
 
 // Enhanced addDeviceTerminalEntry with protobuf parsing

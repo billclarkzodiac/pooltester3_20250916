@@ -480,3 +480,64 @@ func (n *NgaSim) handleDevices(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(devices)
 }
+
+// handleClearTerminal clears the global terminal
+func (n *NgaSim) handleClearTerminal(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Clear global terminal
+	if n.terminalLogger != nil {
+		n.terminalLogger.ClearAll()
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"message": "Global terminal cleared successfully",
+	})
+}
+
+// handleClearDeviceTerminal clears the terminal for a specific device
+func (n *NgaSim) handleClearDeviceTerminal(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var request struct {
+		DeviceSerial string `json:"device_serial"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	if request.DeviceSerial == "" {
+		http.Error(w, "device_serial is required", http.StatusBadRequest)
+		return
+	}
+
+	// Clear device terminal
+	success := n.clearDeviceTerminal(request.DeviceSerial)
+	if !success {
+		http.Error(w, "Device not found", http.StatusNotFound)
+		return
+	}
+
+	// Also clear global terminal entries for this device
+	if n.terminalLogger != nil {
+		n.terminalLogger.ClearDevice(request.DeviceSerial)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"message": fmt.Sprintf("Terminal cleared for device %s", request.DeviceSerial),
+	})
+}
+
+// ...existing code...

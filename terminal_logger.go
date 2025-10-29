@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"sync"
 	"time"
@@ -202,4 +203,34 @@ func (tl *TerminalLogger) Close() error {
 		return tl.logFile.Close()
 	}
 	return nil
+}
+
+// ClearAll clears all terminal entries
+func (tl *TerminalLogger) ClearAll() {
+	tl.mutex.Lock()
+	defer tl.mutex.Unlock()
+
+	tl.entries = make([]LogEntry, 0, tl.maxEntries)
+	log.Printf("🗑️ Terminal cleared - all entries removed")
+}
+
+// ClearDevice clears terminal entries for a specific device
+func (tl *TerminalLogger) ClearDevice(deviceSerial string) {
+	tl.mutex.Lock()
+	defer tl.mutex.Unlock()
+
+	// Create new slice without entries from the specified device
+	filteredEntries := make([]LogEntry, 0, len(tl.entries))
+	removedCount := 0
+
+	for _, entry := range tl.entries {
+		if entry.Device != deviceSerial {
+			filteredEntries = append(filteredEntries, entry)
+		} else {
+			removedCount++
+		}
+	}
+
+	tl.entries = filteredEntries
+	log.Printf("🗑️ Terminal cleared for device %s - removed %d entries", deviceSerial, removedCount)
 }

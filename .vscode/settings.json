@@ -19,8 +19,7 @@
     "remote.SSH.reconnectOnAnyKeyPress": true,
     // FILE WATCHING AND MONITORING
     "files.watcherExclude": {
-        "**/.git/objects/**": true,
-        "**/.git/subtree-cache/**": true,
+        "**/.git/**": true,
         "**/node_modules/*/**": true,
         "**/.hg/store/**": true,
         "**/tmp/**": true,
@@ -55,7 +54,9 @@
     "diffEditor.ignoreTrimWhitespace": false,
     
     // Go language server settings
-    "go.useLanguageServer": true,
+    "go.useLanguageServer": false,
+    "go.lintOnSave": "off",
+    "go.formatOnSave": false,
     "go.languageServerFlags": [
         "-rpc.trace",
         "serve",
@@ -89,6 +90,7 @@
     "git.enabled": true,
     "git.autorefresh": false,
     "git.decorations.enabled": false,
+    "git.autoRepositoryDetection": false,
     
     // Terminal optimizations
     "terminal.integrated.rendererType": "dom",
