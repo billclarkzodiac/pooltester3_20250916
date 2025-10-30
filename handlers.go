@@ -213,7 +213,7 @@ func (n *NgaSim) handlePowerLevels(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handleEmergencyStop handles emergency stop API
+// Enhanced handleEmergencyStop with better logging and verification
 func (n *NgaSim) handleEmergencyStop(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -232,26 +232,54 @@ func (n *NgaSim) handleEmergencyStop(w http.ResponseWriter, r *http.Request) {
 	}
 	n.mutex.RUnlock()
 
+	if len(sanitizers) == 0 {
+		log.Println("⚠️ No sanitizers found for emergency stop")
+	} else {
+		log.Printf("🛑 Found %d sanitizers for emergency stop", len(sanitizers))
+	}
+
 	results := make(map[string]interface{})
+	successCount := 0
+
 	for _, sanitizer := range sanitizers {
+		log.Printf("🛑 Emergency stopping sanitizer: %s (%s)", sanitizer.Name, sanitizer.Serial)
+
 		err := n.sendSanitizerCommand(sanitizer.Serial, "sanitizerGen2", 0)
-		results[sanitizer.Serial] = map[string]interface{}{
-			"success": err == nil,
-			"error":   err,
+		success := err == nil
+		if success {
+			successCount++
 		}
+
+		results[sanitizer.Serial] = map[string]interface{}{
+			"name":    sanitizer.Name,
+			"success": success,
+			"error": func() string {
+				if err != nil {
+					return err.Error()
+				}
+				return ""
+			}(),
+		}
+
+		// Log to device terminal
+		n.addDeviceTerminalEntry(sanitizer.Serial, "EMERGENCY",
+			"🛑 EMERGENCY STOP COMMAND - Setting power to 0%",
+			[]byte(`{"emergency_stop":true,"target_percentage":0}`))
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	response := map[string]interface{}{
-		"success": true,
-		"message": "Emergency stop executed",
-		"results": results,
+		"success":            successCount > 0,
+		"message":            fmt.Sprintf("Emergency stop executed on %d/%d sanitizers", successCount, len(sanitizers)),
+		"sanitizers_found":   len(sanitizers),
+		"sanitizers_stopped": successCount,
+		"results":            results,
 	}
 
 	json.NewEncoder(w).Encode(response)
-	log.Printf("🛑 Emergency stop completed for %d sanitizers", len(sanitizers))
+	log.Printf("🛑 Emergency stop completed: %d/%d sanitizers successfully commanded to 0%%", successCount, len(sanitizers))
 }
 
 // handleUISpecAPI serves the UI specification as JSON

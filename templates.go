@@ -585,7 +585,11 @@ var goDemoTemplateHTML = `
                 <!-- Device-Specific Controls -->
                 {{if eq .Type "sanitizerGen2"}}
                 <div class="control-group">
+                    {{if .PendingPercentage}}
+                    <div class="control-label">💧 Sanitizer Control (Setting to: {{.PendingPercentage}}% ⏳)</div>
+                    {{else}}
                     <div class="control-label">💧 Sanitizer Control (Current: {{.ActualPercentage}}%)</div>
+                    {{end}}
                     <div class="controls">
                         <button class="btn btn-secondary" onclick="sendSanitizerCommand('{{.Serial}}', 0)">OFF</button>
                         <button class="btn btn-primary" onclick="sendSanitizerCommand('{{.Serial}}', 10)">10%</button>

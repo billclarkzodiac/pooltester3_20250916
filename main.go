@@ -424,12 +424,25 @@ func (n *NgaSim) handleDeviceTelemetry(topic string, payload []byte) {
 			log.Printf("is_cell_flow_reversed: %t", telemetry.GetIsCellFlowReversed())
 			log.Printf("========================================")
 
+			// Get device for status info (need device to check PendingPercentage)
+			n.mutex.RLock()
+			device, exists := n.devices[deviceSerial]
+			n.mutex.RUnlock()
+
+			// Add to device terminal with more detailed info
+			statusInfo := "normal"
+			if exists && device.PendingPercentage != 0 && telemetry.GetPercentageOutput() != device.PendingPercentage {
+				statusInfo = fmt.Sprintf("ramping to %d%%", device.PendingPercentage)
+			}
+
+			n.addDeviceTerminalEntry(deviceSerial, "TELEMETRY",
+				fmt.Sprintf("← Current power: %d%% (%s) | Salt: %dppm | RSSI: %ddBm",
+					telemetry.GetPercentageOutput(), statusInfo, telemetry.GetPpmSalt(), telemetry.GetRssi()), payload)
+
 			n.updateDeviceFromSanitizerTelemetry(deviceSerial, telemetry)
 
-			// Add to device terminal
-			n.addDeviceTerminalEntry(deviceSerial, "TELEMETRY",
-				fmt.Sprintf("Telemetry received - Output: %d%%", telemetry.GetPercentageOutput()), payload)
 			return
+
 		} else {
 			log.Printf("Failed to parse as sanitizer TelemetryMessage: %v", err)
 		}
@@ -729,13 +742,15 @@ func (sim *NgaSim) updateDeviceFromSanitizerTelemetry(deviceSerial string, telem
 	device.LineInputVoltage = telemetry.GetLineInputVoltage()
 	device.IsCellFlowReversed = telemetry.GetIsCellFlowReversed()
 
-	// Check if pending command has been achieved
-	if device.PendingPercentage != 0 && device.ActualPercentage == device.PendingPercentage {
+	// FIXED: Check if pending command has been achieved
+	// The key fix: Don't exclude 0% commands - check if we have ANY pending command time
+	if !device.LastCommandTime.IsZero() && device.ActualPercentage == device.PendingPercentage {
 		log.Printf("✅ Command achieved! %s: Pending %d%% = Actual %d%% (clearing pending state)",
 			deviceSerial, device.PendingPercentage, device.ActualPercentage)
 		device.PendingPercentage = 0
 		device.LastCommandTime = time.Time{}
-	} else if device.PendingPercentage != 0 {
+	} else if !device.LastCommandTime.IsZero() {
+		// FIXED: Check timeout for ANY pending command, including 0%
 		timeSinceCommand := time.Since(device.LastCommandTime)
 		if timeSinceCommand > 30*time.Second {
 			log.Printf("⏰ Command timeout: %s: Pending %d%% != Actual %d%% after %v (clearing pending)",
@@ -1381,7 +1396,7 @@ func (n *NgaSim) createDemoDevices() {
 	log.Printf("Created %d demo devices (multiple per type for sorting test)", len(demoDevices))
 }
 
-// sendSanitizerCommand sends a command to a sanitizer device
+// Enhanced sendSanitizerCommand with continuous 0% safety mode
 func (n *NgaSim) sendSanitizerCommand(serial, category string, percentage int) error {
 	log.Printf("🧪 Sending sanitizer command: %s -> %d%%", serial, percentage)
 
@@ -1405,12 +1420,29 @@ func (n *NgaSim) sendSanitizerCommand(serial, category string, percentage int) e
 	device.LastCommandTime = time.Now()
 	n.mutex.Unlock()
 
+	// Log command to device terminal for immediate feedback
+	n.addDeviceTerminalEntry(serial, "COMMAND",
+		fmt.Sprintf("→ Set power level to %d%%", percentage),
+		[]byte(fmt.Sprintf(`{"command":"set_power","percentage":%d}`, percentage)))
+
 	// If MQTT is connected, send the real command
 	if n.mqtt != nil && n.mqtt.IsConnected() {
-		return n.sendMQTTSanitizerCommand(serial, category, percentage)
+		err := n.sendMQTTSanitizerCommand(serial, category, percentage)
+
+		// ENHANCED: For 0% (safety/emergency) commands, start continuous sending
+		if percentage == 0 {
+			go n.startContinuous0PercentMode(serial, category)
+		}
+
+		return err
 	}
 
 	// Demo mode - simulate the command execution
+	// Log demo completion to device terminal
+	n.addDeviceTerminalEntry(serial, "DEMO",
+		fmt.Sprintf("✅ Demo command completed: Power set to %d%%", percentage),
+		[]byte(fmt.Sprintf(`{"result":"success","percentage":%d}`, percentage)))
+
 	log.Printf("🔧 Demo mode: Simulating command execution for %s", serial)
 
 	// Simulate command processing in a goroutine
@@ -1430,6 +1462,60 @@ func (n *NgaSim) sendSanitizerCommand(serial, category string, percentage int) e
 	}()
 
 	return nil
+}
+
+// startContinuous0PercentMode sends 0% commands every 5 seconds until device reaches 0%
+func (n *NgaSim) startContinuous0PercentMode(serial, category string) {
+	log.Printf("🚨 Starting continuous 0%% safety mode for %s", serial)
+
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	maxDuration := 2 * time.Minute // Stop after 2 minutes max
+	startTime := time.Now()
+
+	for {
+		select {
+		case <-ticker.C:
+			// Check if we've been running too long
+			if time.Since(startTime) > maxDuration {
+				log.Printf("🕒 Continuous 0%% mode timeout for %s after 2 minutes", serial)
+				return
+			}
+
+			// Check device current status
+			n.mutex.RLock()
+			device, exists := n.devices[serial]
+			if !exists {
+				n.mutex.RUnlock()
+				log.Printf("❌ Device %s disappeared during continuous 0%% mode", serial)
+				return
+			}
+
+			currentLevel := device.ActualPercentage
+			n.mutex.RUnlock()
+
+			// If device reached 0%, we can stop
+			if currentLevel == 0 {
+				log.Printf("✅ Device %s reached 0%% - stopping continuous mode", serial)
+				return
+			}
+
+			// Device not at 0% yet, send another 0% command
+			log.Printf("🔄 Continuous 0%% mode: %s still at %d%%, sending another 0%% command", serial, currentLevel)
+
+			if err := n.sendMQTTSanitizerCommand(serial, category, 0); err != nil {
+				log.Printf("❌ Failed to send continuous 0%% command to %s: %v", serial, err)
+				// Don't stop on single failure - keep trying
+			}
+
+		default:
+			// Non-blocking check - continue loop
+		}
+
+		// Small delay to prevent busy loop
+		time.Sleep(100 * time.Millisecond)
+	}
 }
 
 // sendMQTTSanitizerCommand sends a sanitizer command via MQTT using proper protobuf + UUID
@@ -1460,6 +1546,10 @@ func (n *NgaSim) sendMQTTSanitizerCommand(serial, category string, percentage in
 	// Construct the MQTT topic for sending commands
 	// Topic format: async/category/serial/cmd
 	topic := fmt.Sprintf("async/%s/%s/cmd", category, serial)
+
+	// Log successful command transmission to device terminal
+	n.addDeviceTerminalEntry(serial, "MQTT_CMD",
+		fmt.Sprintf("📡 MQTT command sent: Set power to %d%% (UUID: %s)", percentage, commandUUID), msgBytes)
 
 	// Use UUID as correlation ID instead of random string
 	correlationID := commandUUID

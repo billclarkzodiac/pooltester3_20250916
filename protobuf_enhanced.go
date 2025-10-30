@@ -73,9 +73,17 @@ func (n *NgaSim) generatePrefilledCommands(devices []*Device) []ProtobufCommandD
 		switch device.Category {
 		case "sanitizerGen2":
 			// Get current device state for pre-filling
+			// Use pending command if available, otherwise use actual device state
 			currentPowerLevel := device.PowerLevel
-			if currentPowerLevel == 0 && device.Status == "ONLINE" {
-				currentPowerLevel = 50 // Reasonable default if no data
+			if device.PendingPercentage != 0 {
+				// Show the command we sent (pending state)
+				currentPowerLevel = int(device.PendingPercentage)
+			} else if device.PercentageOutput != 0 {
+				// Use actual telemetry data
+				currentPowerLevel = int(device.PercentageOutput)
+			} else {
+				// Default to OFF (0%) - safer assumption than arbitrary power level
+				currentPowerLevel = 0
 			}
 
 			// Set Chlorine Output Command - pre-filled with current state
